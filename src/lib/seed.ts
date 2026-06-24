@@ -1,9 +1,9 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind,
+  RsvpStatus, AttendeeKind, Health,
 } from './types';
 
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 2;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -78,12 +78,13 @@ const shift = (roleId: string, name: string, start?: string, end?: string) => {
 const duty = (campId: string, roleId: string, name: string, o: { email?: string; shiftId?: string } = {}) => {
   duties.push({ id: `duty-${++dn}`, campId, roleId, shiftId: o.shiftId, personId: o.email ? undefined : pid(name), name, email: o.email });
 };
-type AO = { email?: string; status?: RsvpStatus; role?: string; busId?: string; cabinId?: string; cabinRoomId?: string; cabinLeader?: boolean };
+type AO = { email?: string; status?: RsvpStatus; role?: string; busId?: string; cabinId?: string; cabinRoomId?: string; cabinLeader?: boolean; health?: Health };
 const att = (campId: string, kind: AttendeeKind, name: string, o: AO = {}) => {
   attendees.push({
     id: `att-${++an}`, campId, kind, name,
     personId: o.email ? undefined : pid(name), email: o.email, role: o.role,
     busId: o.busId, cabinId: o.cabinId, cabinRoomId: o.cabinRoomId, cabinLeader: o.cabinLeader,
+    health: o.health,
     status: o.status ?? 'accepted', invitedAt: '2026-09-01T12:00:00Z',
     respondedAt: (o.status ?? 'accepted') === 'invited' ? undefined : '2026-09-02T12:00:00Z',
   });
@@ -102,11 +103,11 @@ const willow = cabin('camp-ww', 'Willow Cabin', 'parent', 6);
 const birch = cabin('camp-ww', 'Birch Cottage', 'guest', 4);
 
 // campers
-att('camp-ww', 'camper', 'Eli Robinson', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper' });
-att('camp-ww', 'camper', 'Noah Park', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper' });
-att('camp-ww', 'camper', 'Ava Whitfield', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', email: 'ava@demo.camp' });
+att('camp-ww', 'camper', 'Eli Robinson', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', health: { allergies: 'Peanuts (EpiPen in his bag)', emergencyName: 'Donna Robinson', emergencyPhone: '(305) 555-0142' } });
+att('camp-ww', 'camper', 'Noah Park', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', health: { meds: 'Inhaler — albuterol, as needed', dietary: 'Vegetarian', emergencyName: 'Grace Park', emergencyPhone: '(305) 555-0177' } });
+att('camp-ww', 'camper', 'Ava Whitfield', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', email: 'ava@demo.camp', health: { dietary: 'Gluten-free', emergencyName: 'Mark Whitfield', emergencyPhone: '(786) 555-0119' } });
 att('camp-ww', 'camper', 'Sofia Marin', { busId: wBus2, cabinId: cedar, role: 'Camper' });
-att('camp-ww', 'camper', 'Maria Soto', { busId: wBus2, cabinId: cedar, role: 'Camper', email: 'maria@demo.camp' });
+att('camp-ww', 'camper', 'Maria Soto', { busId: wBus2, cabinId: cedar, role: 'Camper', email: 'maria@demo.camp', health: { allergies: 'Bee stings', emergencyName: 'Rosa Soto', emergencyPhone: '(305) 555-0188' } });
 att('camp-ww', 'camper', 'Caleb Nguyen', { busId: wBus2, cabinId: cedar, role: 'Camper', status: 'invited', email: 'caleb@demo.camp' });
 // cabin leaders
 att('camp-ww', 'staff', 'Dan Rivera', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, cabinLeader: true, role: 'Cabin Leader' });

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
 import { initials } from '../lib/format';
-import { attendeesOf, rsvp } from '../lib/camps';
+import { attendeesOf, rsvp, isFlagged } from '../lib/camps';
 import type { Camp, Attendee, RsvpStatus, AttendeeKind } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
+import AttendeeModal from './AttendeeModal';
 
 const STATUS: Record<RsvpStatus, { label: string; cls: string }> = {
   accepted: { label: 'Accepted', cls: 'ok' },
@@ -16,11 +17,12 @@ const KINDS: { key: AttendeeKind; label: string }[] = [
   { key: 'parent', label: 'Parents' }, { key: 'guest', label: 'Guests' },
 ];
 
-export default function RosterPanel({ camp }: { camp: Camp }) {
+export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initialFilter?: 'flagged' }) {
   const { db, respond, removeAttendee } = useStore();
   const [showInvite, setShowInvite] = useState(false);
-  const [filter, setFilter] = useState<AttendeeKind | 'all'>('all');
-  const list = attendeesOf(db, camp.id).filter((a) => filter === 'all' || a.kind === filter);
+  const [open, setOpen] = useState<Attendee | null>(null);
+  const [filter, setFilter] = useState<AttendeeKind | 'all' | 'flagged'>(initialFilter ?? 'all');
+  const list = attendeesOf(db, camp.id).filter((a) => filter === 'all' ? true : filter === 'flagged' ? isFlagged(a) : a.kind === filter);
   const r = rsvp(db, camp.id);
 
   function copyLink(a: Attendee) {
@@ -43,17 +45,20 @@ export default function RosterPanel({ camp }: { camp: Camp }) {
       <div className="seg">
         <button className={filter === 'all' ? 'on' : ''} onClick={() => setFilter('all')}>All</button>
         {KINDS.map((k) => <button key={k.key} className={filter === k.key ? 'on' : ''} onClick={() => setFilter(k.key)}>{k.label}</button>)}
+        <button className={'flag' + (filter === 'flagged' ? ' on' : '')} onClick={() => setFilter('flagged')}><i className="ti ti-medical-cross" /> Medical</button>
       </div>
 
       <div className="rows">
         {list.length === 0 && <div className="empty">No one here yet.</div>}
         {list.map((a) => (
           <div key={a.id} className="row">
+            <button className="row-open" onClick={() => setOpen(a)}>
             <span className="avatar sm">{initials(a.name)}</span>
             <span className="row-main">
-              <span className="row-title">{a.name}{a.role && <span className="tagchip">{a.role}</span>}</span>
+              <span className="row-title">{a.name}{isFlagged(a) && <i className="ti ti-medical-cross med-flag" title="Medical flag" />}{a.role && <span className="tagchip">{a.role}</span>}</span>
               <span className="row-sub">{a.personId ? 'Has an account' : a.email ?? 'No email'}</span>
             </span>
+            </button>
             <span className="seg-status">
               {(['accepted', 'tentative', 'declined'] as RsvpStatus[]).map((s) => (
                 <button key={s} className={'mini-rsvp ' + s + (a.status === s ? ' on' : '')} title={STATUS[s].label} onClick={() => respond(a.id, s)}>
@@ -68,6 +73,7 @@ export default function RosterPanel({ camp }: { camp: Camp }) {
       </div>
 
       {showInvite && <InviteModal camp={camp} onClose={() => setShowInvite(false)} />}
+      {open && <AttendeeModal attendee={open} onClose={() => setOpen(null)} />}
     </div>
   );
 }

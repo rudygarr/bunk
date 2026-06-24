@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { fmtRange } from '../lib/format';
-import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps } from '../lib/camps';
+import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps, flaggedCount } from '../lib/camps';
 import RosterPanel from '../components/RosterPanel';
 import BusPanel from '../components/BusPanel';
 import CabinPanel from '../components/CabinPanel';
@@ -22,8 +22,12 @@ export default function CampDashboard() {
   const nav = useNavigate();
   const { db } = useStore();
   const [tab, setTab] = useState<Tab>('overview');
+  const [rosterFilter, setRosterFilter] = useState<'flagged' | undefined>(undefined);
   const camp = campById(db, id ?? '');
   if (!camp) return <div className="empty" style={{ marginTop: 40 }}>Camp not found.</div>;
+
+  // Navigate to a tab, optionally pre-filtering the roster (e.g. medical flags).
+  const go = (t: Tab, filter?: 'flagged') => { setRosterFilter(filter); setTab(t); };
 
   return (
     <>
@@ -39,15 +43,15 @@ export default function CampDashboard() {
 
       <div className="tabs">
         {TABS.map((t) => (
-          <button key={t.key} className={'tab' + (tab === t.key ? ' on' : '')} onClick={() => setTab(t.key)}>
+          <button key={t.key} className={'tab' + (tab === t.key ? ' on' : '')} onClick={() => go(t.key)}>
             <i className={'ti ' + t.icon} /> {t.label}
           </button>
         ))}
       </div>
 
       <div className="tab-body">
-        {tab === 'overview' && <Overview camp={camp} go={setTab} />}
-        {tab === 'roster' && <RosterPanel camp={camp} />}
+        {tab === 'overview' && <Overview camp={camp} go={go} />}
+        {tab === 'roster' && <RosterPanel camp={camp} initialFilter={rosterFilter} />}
         {tab === 'buses' && <BusPanel camp={camp} />}
         {tab === 'cabins' && <CabinPanel camp={camp} />}
         {tab === 'roles' && <RolePanel camp={camp} />}
@@ -56,7 +60,7 @@ export default function CampDashboard() {
   );
 }
 
-function Overview({ camp, go }: { camp: import('../lib/types').Camp; go: (t: Tab) => void }) {
+function Overview({ camp, go }: { camp: import('../lib/types').Camp; go: (t: Tab, filter?: 'flagged') => void }) {
   const { db } = useStore();
   const r = rsvp(db, camp.id);
   const att = attendeesOf(db, camp.id);
@@ -67,6 +71,7 @@ function Overview({ camp, go }: { camp: import('../lib/types').Camp; go: (t: Tab
   const onBus = att.filter((a) => a.busId).length;
   const roles = rolesOf(db, camp.id);
   const gaps = coverageGaps(db, camp.id);
+  const flags = flaggedCount(db, camp.id);
   const pct = r.total ? Math.round((r.accepted / r.total) * 100) : 0;
 
   return (
@@ -91,6 +96,11 @@ function Overview({ camp, go }: { camp: import('../lib/types').Camp; go: (t: Tab
           <div className="stat-top"><span>Crew coverage</span><i className="ti ti-clipboard-check" /></div>
           <div className="stat-num">{gaps === 0 ? '✓' : gaps}</div>
           <div className="stat-sub">{roles.length} roles · {gaps === 0 ? 'all shifts covered' : `${gaps} open shift${gaps === 1 ? '' : 's'}`}</div>
+        </button>
+        <button className={'stat' + (flags > 0 ? ' med' : '')} onClick={() => go('roster', 'flagged')}>
+          <div className="stat-top"><span>Medical flags</span><i className="ti ti-medical-cross" /></div>
+          <div className="stat-num">{flags}</div>
+          <div className="stat-sub">{flags === 0 ? 'none recorded' : 'allergies / meds to know'}</div>
         </button>
       </div>
 

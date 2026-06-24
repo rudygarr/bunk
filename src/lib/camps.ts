@@ -1,4 +1,27 @@
-import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty } from './types';
+import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty, CheckStage } from './types';
+
+// ---- Health / safety ----
+// "Flagged" = has allergies or meds the team should know about.
+export function isFlagged(a: Attendee): boolean {
+  return !!(a.health?.allergies?.trim() || a.health?.meds?.trim());
+}
+export function hasHealthInfo(a: Attendee): boolean {
+  const h = a.health;
+  return !!(h && (h.allergies || h.meds || h.dietary || h.emergencyName || h.emergencyPhone || h.notes));
+}
+export function flaggedCount(db: Database, campId: string): number {
+  return db.attendees.filter((a) => a.campId === campId && isFlagged(a)).length;
+}
+
+// ---- Attendance / roll call ----
+export const CHECK_STAGES: { key: CheckStage; label: string; icon: string }[] = [
+  { key: 'depart', label: 'Boarded (out)', icon: 'ti-bus' },
+  { key: 'onsite', label: 'On site', icon: 'ti-map-pin-check' },
+  { key: 'return', label: 'Boarded (back)', icon: 'ti-bus-stop' },
+];
+export function checkedCount(db: Database, campId: string, stage: CheckStage): number {
+  return db.attendees.filter((a) => a.campId === campId && a.checkIn?.[stage]).length;
+}
 
 // ---- Attendees / RSVP ----
 export function attendeesOf(db: Database, campId: string): Attendee[] {

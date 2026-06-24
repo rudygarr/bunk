@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -21,6 +21,8 @@ interface Ctx {
   invite: (campId: string, who: Partial<Attendee> & { name: string; kind: AttendeeKind }) => Attendee;
   respond: (attendeeId: string, status: RsvpStatus) => void;
   removeAttendee: (id: string) => void;
+  setHealth: (attendeeId: string, health: Health) => void;
+  setCheckIn: (attendeeId: string, stage: CheckStage, on: boolean) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
   removeBus: (id: string) => void;
@@ -105,6 +107,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     removeAttendee(id) {
       commit((d) => ({ ...d, attendees: d.attendees.filter((a) => a.id !== id) }));
+    },
+    setHealth(attendeeId, health) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, health } : a)) }));
+    },
+    setCheckIn(attendeeId, stage, on) {
+      commit((d) => ({
+        ...d,
+        attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, checkIn: { ...a.checkIn, [stage]: on } } : a)),
+      }));
     },
     addBus(campId, bus) {
       const b: Bus = { ...bus, id: uid('bus'), campId };

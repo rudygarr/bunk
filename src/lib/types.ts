@@ -51,7 +51,24 @@ export interface Attendee {
   cabinLeader?: boolean;
   invitedAt: string;
   respondedAt?: string;
+  health?: Health;
+  // Day-of accountability — stamped when checked in at each stage (see lib/camps).
+  checkIn?: Partial<Record<CheckStage, boolean>>;
 }
+
+// Safety info the nurse and cabin leaders need at a glance. All optional; an
+// attendee with allergies or meds is "flagged" on the roster.
+export interface Health {
+  allergies?: string;
+  meds?: string;
+  dietary?: string;
+  emergencyName?: string;
+  emergencyPhone?: string;
+  notes?: string;
+}
+
+// Stages of the day-of roll call.
+export type CheckStage = 'depart' | 'onsite' | 'return';
 
 export interface Bus {
   id: string;

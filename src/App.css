@@ -202,3 +202,18 @@
   .ov-grid { grid-template-columns: 1fr 1fr; }
   .page-h { font-size: 24px; }
 }
+
+/* ===== health / attendee modal ===== */
+.row-open { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; background: none; border: none; cursor: pointer; text-align: left; padding: 0; }
+.med-flag { color: var(--bad); font-size: 14px; }
+.seg .flag { display: inline-flex; align-items: center; gap: 4px; }
+.seg .flag.on { color: var(--bad); }
+.seg .flag .ti { font-size: 14px; }
+.stat.med { border-color: color-mix(in srgb, var(--bad) 35%, transparent); }
+.stat.med .stat-top .ti { color: var(--bad); }
+.am-tags { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.am-kind { font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-3); }
+.am-assign { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; color: var(--text-2); background: var(--surface-2); border-radius: var(--r-sm); padding: 11px 13px; margin-bottom: 16px; }
+.am-assign .ti { color: var(--pine); margin-right: 6px; }
+.am-section { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 12px; }
+.am-section .ti { color: var(--bad); }
