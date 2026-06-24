@@ -43,6 +43,10 @@ export interface Attendee {
   personId?: string;
   name: string;
   email?: string;
+  phone?: string;
+  // Camper-app login (demo only — plaintext; a real build hashes server-side).
+  // They log in by email/phone and set this on first sign-in.
+  password?: string;
   kind: AttendeeKind;
   role?: string; // free label e.g. "Cabin Leader", "Camper"
   status: RsvpStatus;

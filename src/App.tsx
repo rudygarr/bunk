@@ -7,10 +7,11 @@ import Camps from './pages/Camps';
 import CampDashboard from './pages/CampDashboard';
 import Rsvp from './pages/Rsvp';
 import Join from './pages/Join';
+import CamperApp from './camper/CamperApp';
 import './App.css';
 
 function Gate() {
-  const { authed } = useSession();
+  const { authed, mode } = useSession();
   // Public links (emailed RSVP, QR sign-up) render outside the auth gate.
   const hash = typeof window !== 'undefined' ? window.location.hash : '';
   if (hash.startsWith('#/rsvp/') || hash.startsWith('#/join/')) {
@@ -25,6 +26,7 @@ function Gate() {
     );
   }
   if (!authed) return <Login />;
+  if (mode === 'camper') return <CamperApp />;
   return (
     <HashRouter>
       <Shell>
