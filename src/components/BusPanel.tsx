@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { useStore } from '../lib/store';
 import { initials } from '../lib/format';
 import { busesOf, busRoster, attendeesOf, busLabel } from '../lib/camps';
+import { autoAssignBuses } from '../lib/assign';
 import type { Camp, Bus } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
+import AutoFillPreview from './AutoFillPreview';
 
 export default function BusPanel({ camp }: { camp: Camp }) {
-  const { db, removeBus, assignBus } = useStore();
+  const { db, removeBus, assignBus, applyBusPlan } = useStore();
   const [showAdd, setShowAdd] = useState(false);
   const [assignTo, setAssignTo] = useState<Bus | null>(null);
+  const [plan, setPlan] = useState<ReturnType<typeof autoAssignBuses> | null>(null);
   const buses = busesOf(db, camp.id);
   const unassigned = attendeesOf(db, camp.id).filter((a) => !a.busId);
 
@@ -16,7 +19,10 @@ export default function BusPanel({ camp }: { camp: Camp }) {
     <div>
       <div className="panel-head">
         <div className="panel-title"><i className="ti ti-bus" /> Buses <span className="rental">rental</span></div>
-        <button className="btn-primary sm" onClick={() => setShowAdd(true)}><i className="ti ti-plus" /> Charter a bus</button>
+        <div className="panel-actions">
+          {buses.length > 0 && <button className="btn-soft sm" onClick={() => setPlan(autoAssignBuses(db, camp.id))}><i className="ti ti-wand" /> Auto-fill</button>}
+          <button className="btn-primary sm" onClick={() => setShowAdd(true)}><i className="ti ti-plus" /> Charter a bus</button>
+        </div>
       </div>
 
       {buses.length === 0 && <div className="empty">No buses yet. Charter a rental bus and assign riders.</div>}
@@ -57,6 +63,16 @@ export default function BusPanel({ camp }: { camp: Camp }) {
 
       {showAdd && <AddBusModal camp={camp} onClose={() => setShowAdd(false)} />}
       {assignTo && <AssignModal camp={camp} bus={assignTo} onClose={() => setAssignTo(null)} />}
+      {plan && (
+        <AutoFillPreview
+          title="Auto-fill buses"
+          subtitle="Filled by capacity, keeping cabinmates on the same bus."
+          rows={plan.placements.map((p) => ({ name: p.name, target: p.busName }))}
+          unplaced={plan.unplaced.map((a) => a.name)}
+          onApply={() => { applyBusPlan(plan.placements); setPlan(null); }}
+          onClose={() => setPlan(null)}
+        />
+      )}
     </div>
   );
 }

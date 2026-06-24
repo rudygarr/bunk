@@ -5,6 +5,7 @@
 export type RsvpStatus = 'invited' | 'accepted' | 'declined' | 'tentative';
 export type AttendeeKind = 'camper' | 'staff' | 'parent' | 'guest';
 export type CabinKind = 'student' | 'staff' | 'parent' | 'guest';
+export type Gender = 'male' | 'female' | 'other';
 
 // A known person in the directory you can invite from (vs. an ad-hoc email).
 export interface Person {
@@ -49,6 +50,10 @@ export interface Attendee {
   cabinId?: string;
   cabinRoomId?: string;
   cabinLeader?: boolean;
+  // Inputs the auto-fill algorithm sorts on (all optional).
+  grade?: number; // school grade / age band
+  gender?: Gender; // for gender-specific cabins
+  friends?: string; // requested bunkmate name(s), comma-separated
   invitedAt: string;
   respondedAt?: string;
   health?: Health;
@@ -86,6 +91,7 @@ export interface Cabin {
   name: string;
   kind: CabinKind;
   beds?: number; // simple mode; when the cabin has rooms, beds come from them
+  gender?: Gender; // gender-specific cabin (auto-fill matches campers to it)
 }
 export interface CabinRoom {
   id: string;

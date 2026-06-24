@@ -277,3 +277,18 @@
   .pp-line { font-size: 12px; margin: 2px 0; }
   @page { margin: 14mm; }
 }
+
+/* ===== auto-fill ===== */
+.panel-actions { display: flex; gap: 8px; }
+.btn-soft.sm .ti { color: var(--pine); }
+.af-sub { display: flex; align-items: flex-start; gap: 7px; font-size: 13px; color: var(--text-2); background: var(--pine-tint); border-radius: var(--r-sm); padding: 10px 12px; margin-bottom: 14px; line-height: 1.4; }
+.af-sub .ti { color: var(--pine); margin-top: 1px; }
+.af-groups { display: flex; flex-direction: column; gap: 12px; }
+.af-group-h { font-size: 13.5px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.af-n { font-size: 11px; font-weight: 700; color: var(--pine); background: var(--pine-tint); padding: 1px 8px; border-radius: 999px; }
+.af-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.af-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 999px; padding: 3px 10px; }
+.af-chip-note { font-size: 11px; color: var(--text-3); }
+.af-unplaced { display: flex; align-items: flex-start; gap: 7px; font-size: 12.5px; color: var(--warn); margin-top: 14px; line-height: 1.4; }
+.am-section.grouping { margin-top: 4px; }
+.am-section.grouping .ti { color: var(--pine); }

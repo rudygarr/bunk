@@ -23,6 +23,9 @@ interface Ctx {
   removeAttendee: (id: string) => void;
   setHealth: (attendeeId: string, health: Health) => void;
   setCheckIn: (attendeeId: string, stage: CheckStage, on: boolean) => void;
+  updateAttendee: (id: string, patch: Partial<Attendee>) => void;
+  applyCabinPlan: (placements: { attendeeId: string; cabinId: string; roomId?: string }[]) => void;
+  applyBusPlan: (placements: { attendeeId: string; busId: string }[]) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
   removeBus: (id: string) => void;
@@ -115,6 +118,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       commit((d) => ({
         ...d,
         attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, checkIn: { ...a.checkIn, [stage]: on } } : a)),
+      }));
+    },
+    updateAttendee(id, patch) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === id ? { ...a, ...patch } : a)) }));
+    },
+    applyCabinPlan(placements) {
+      const m = new Map(placements.map((p) => [p.attendeeId, p]));
+      commit((d) => ({
+        ...d,
+        attendees: d.attendees.map((a) => { const p = m.get(a.id); return p ? { ...a, cabinId: p.cabinId, cabinRoomId: p.roomId } : a; }),
+      }));
+    },
+    applyBusPlan(placements) {
+      const m = new Map(placements.map((p) => [p.attendeeId, p.busId]));
+      commit((d) => ({
+        ...d,
+        attendees: d.attendees.map((a) => { const b = m.get(a.id); return b ? { ...a, busId: b } : a; }),
       }));
     },
     addBus(campId, bus) {

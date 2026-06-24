@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { useStore } from '../lib/store';
 import { initials } from '../lib/format';
 import { cabinsOf, roomsOf, cabinBeds, cabinRoster, roomRoster, cabinLeaders, unhoused, CABIN_KINDS } from '../lib/camps';
+import { autoAssignCabins } from '../lib/assign';
 import type { Camp, Cabin, CabinRoom, CabinKind, Attendee } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
+import AutoFillPreview from './AutoFillPreview';
 
 const KIND_LABEL: Record<CabinKind, string> = { student: 'Students', staff: 'Staff', parent: 'Parents', guest: 'Guests' };
 
 export default function CabinPanel({ camp }: { camp: Camp }) {
-  const { db, removeCabin, removeRoom, assignCabin, setLeader } = useStore();
+  const { db, removeCabin, removeRoom, assignCabin, setLeader, applyCabinPlan } = useStore();
   const [showAdd, setShowAdd] = useState(false);
   const [assignTo, setAssignTo] = useState<{ cabin: Cabin; room?: CabinRoom } | null>(null);
+  const [plan, setPlan] = useState<ReturnType<typeof autoAssignCabins> | null>(null);
   const cabins = cabinsOf(db, camp.id);
   const byKind = CABIN_KINDS.map((k) => ({ ...k, cabins: cabins.filter((c) => c.kind === k.key) })).filter((g) => g.cabins.length > 0);
   const homeless = unhoused(db, camp.id);
@@ -29,7 +32,10 @@ export default function CabinPanel({ camp }: { camp: Camp }) {
     <div>
       <div className="panel-head">
         <div className="panel-title"><i className="ti ti-home" /> Cabins</div>
-        <button className="btn-primary sm" onClick={() => setShowAdd(true)}><i className="ti ti-plus" /> Add cabin</button>
+        <div className="panel-actions">
+          {cabins.length > 0 && <button className="btn-soft sm" onClick={() => setPlan(autoAssignCabins(db, camp.id))}><i className="ti ti-wand" /> Auto-fill</button>}
+          <button className="btn-primary sm" onClick={() => setShowAdd(true)}><i className="ti ti-plus" /> Add cabin</button>
+        </div>
       </div>
       {cabins.length === 0 && <div className="empty">No cabins yet. Add one with a bed count, or split it into rooms.</div>}
 
@@ -86,6 +92,16 @@ export default function CabinPanel({ camp }: { camp: Camp }) {
 
       {showAdd && <AddCabinModal camp={camp} onClose={() => setShowAdd(false)} />}
       {assignTo && <AssignModal camp={camp} cabin={assignTo.cabin} room={assignTo.room} onClose={() => setAssignTo(null)} />}
+      {plan && (
+        <AutoFillPreview
+          title="Auto-fill cabins"
+          subtitle="Matched by gender and bed space, friends kept together, grouped by grade."
+          rows={plan.placements.map((p) => ({ name: p.name, target: p.roomName ? `${p.cabinName} · ${p.roomName}` : p.cabinName }))}
+          unplaced={plan.unplaced.map((a) => a.name)}
+          onApply={() => { applyCabinPlan(plan.placements); setPlan(null); }}
+          onClose={() => setPlan(null)}
+        />
+      )}
     </div>
   );
 }
