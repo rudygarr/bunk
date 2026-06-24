@@ -292,3 +292,16 @@
 .af-unplaced { display: flex; align-items: flex-start; gap: 7px; font-size: 12.5px; color: var(--warn); margin-top: 14px; line-height: 1.4; }
 .am-section.grouping { margin-top: 4px; }
 .am-section.grouping .ti { color: var(--pine); }
+
+/* ===== intake: csv + qr ===== */
+.csv-file { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--pine); background: var(--pine-tint); border-radius: var(--r-sm); padding: 9px 13px; cursor: pointer; margin-bottom: 10px; }
+.csv-preview { margin-top: 14px; }
+.csv-stat { font-size: 13px; color: var(--text-2); margin-bottom: 8px; }
+.csv-stat strong { color: var(--text-1); }
+.csv-rows { border: 1px solid var(--border-2); border-radius: var(--r-sm); overflow: hidden; }
+.csv-row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 11px; font-size: 13px; border-bottom: 1px solid var(--border-2); }
+.csv-row:last-child { border-bottom: none; }
+.csv-dim { color: var(--text-3); font-size: 12px; }
+.qr-wrap { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.qr { border-radius: var(--r-md); overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.qr-url { font-size: 11px; color: var(--text-3); word-break: break-all; margin: 12px 0 12px; max-width: 280px; }

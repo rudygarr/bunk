@@ -5,6 +5,8 @@ import { attendeesOf, rsvp, isFlagged } from '../lib/camps';
 import type { Camp, Attendee, RsvpStatus, AttendeeKind } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
 import AttendeeModal from './AttendeeModal';
+import QrCode from './QrCode';
+import { parseCsv } from '../lib/csv';
 
 const STATUS: Record<RsvpStatus, { label: string; cls: string }> = {
   accepted: { label: 'Accepted', cls: 'ok' },
@@ -39,7 +41,7 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
           {r.declined > 0 && <> · {r.declined} out</>}
           {r.noReply > 0 && <> · {r.noReply} no reply</>}
         </div>
-        <button className="btn-primary sm" onClick={() => setShowInvite(true)}><i className="ti ti-plus" /> Invite</button>
+        <button className="btn-primary sm" onClick={() => setShowInvite(true)}><i className="ti ti-user-plus" /> Add people</button>
       </div>
 
       <div className="seg">
@@ -78,7 +80,24 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
   );
 }
 
+type AddTab = 'one' | 'csv' | 'qr';
 function InviteModal({ camp, onClose }: { camp: Camp; onClose: () => void }) {
+  const [tab, setTab] = useState<AddTab>('one');
+  return (
+    <Modal title={`Add people to ${camp.name}`} onClose={onClose}>
+      <div className="seg" style={{ marginBottom: 16 }}>
+        <button className={tab === 'one' ? 'on' : ''} onClick={() => setTab('one')}>One by one</button>
+        <button className={tab === 'csv' ? 'on' : ''} onClick={() => setTab('csv')}>Import CSV</button>
+        <button className={tab === 'qr' ? 'on' : ''} onClick={() => setTab('qr')}>Sign-up code</button>
+      </div>
+      {tab === 'one' && <OneByOne camp={camp} />}
+      {tab === 'csv' && <CsvImport camp={camp} onDone={onClose} />}
+      {tab === 'qr' && <SignupQr camp={camp} />}
+    </Modal>
+  );
+}
+
+function OneByOne({ camp }: { camp: Camp }) {
   const { db, invite } = useStore();
   const [kind, setKind] = useState<AttendeeKind>('camper');
   const [q, setQ] = useState('');
@@ -86,9 +105,8 @@ function InviteModal({ camp, onClose }: { camp: Camp; onClose: () => void }) {
   const [email, setEmail] = useState('');
   const already = new Set(attendeesOf(db, camp.id).map((a) => a.personId).filter(Boolean));
   const matches = db.people.filter((p) => !already.has(p.id) && q.trim() !== '' && p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6);
-
   return (
-    <Modal title={`Invite to ${camp.name}`} onClose={onClose}>
+    <>
       <label className="flabel">They are a…
         <select style={{ ...field, appearance: 'auto' }} value={kind} onChange={(e) => setKind(e.target.value as AttendeeKind)}>
           {KINDS.map((k) => <option key={k.key} value={k.key}>{k.label.replace(/s$/, '')}</option>)}
@@ -103,16 +121,64 @@ function InviteModal({ camp, onClose }: { camp: Camp; onClose: () => void }) {
         ))}
         {q.trim() !== '' && matches.length === 0 && <div className="empty" style={{ margin: 0 }}>No matches.</div>}
       </div>
-      <div className="divider-or"><span>or invite by email — no account needed</span></div>
+      <div className="divider-or"><span>or add by email — no account needed</span></div>
       <div className="ext">
         <input style={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
         <input style={field} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" />
         <button style={{ ...primaryBtn, height: 42, opacity: name.trim() && email.trim() ? 1 : 0.5 }} disabled={!name.trim() || !email.trim()}
           onClick={() => { invite(camp.id, { name: name.trim(), email: email.trim(), kind, role: kindRole(kind) }); setName(''); setEmail(''); }}>
-          Email an invite
+          Add
         </button>
       </div>
-    </Modal>
+    </>
+  );
+}
+
+function CsvImport({ camp, onDone }: { camp: Camp; onDone: () => void }) {
+  const { inviteMany } = useStore();
+  const [text, setText] = useState('');
+  const result = text.trim() ? parseCsv(text) : null;
+  function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    f.text().then(setText);
+  }
+  return (
+    <>
+      <div className="note"><i className="ti ti-info-circle" /> Paste rows or upload a .csv. First row = headers. Recognized: name, email, kind, grade, gender, friends.</div>
+      <label className="csv-file"><i className="ti ti-upload" /> Upload a CSV file<input type="file" accept=".csv,text/csv" onChange={onFile} hidden /></label>
+      <textarea style={{ ...field, height: 120, padding: '10px 12px', resize: 'vertical' }} value={text} onChange={(e) => setText(e.target.value)} placeholder={'name,email,kind,grade,gender,friends\nJake Miller,jake@x.com,camper,10,male,Tyler Brooks'} />
+      {result && (
+        <div className="csv-preview">
+          <div className="csv-stat"><strong>{result.rows.length}</strong> rows ready{result.skipped > 0 ? ` · ${result.skipped} skipped (no name)` : ''}</div>
+          <div className="csv-rows">
+            {result.rows.slice(0, 6).map((r, i) => (
+              <div key={i} className="csv-row"><span>{r.name}</span><span className="csv-dim">{[r.kind, r.grade ? `gr ${r.grade}` : '', r.gender, r.email].filter(Boolean).join(' · ')}</span></div>
+            ))}
+            {result.rows.length > 6 && <div className="csv-dim" style={{ padding: '4px 0' }}>+{result.rows.length - 6} more…</div>}
+          </div>
+          <button style={{ ...primaryBtn, marginTop: 12, opacity: result.rows.length ? 1 : 0.5 }} disabled={!result.rows.length}
+            onClick={() => { inviteMany(camp.id, result.rows); onDone(); }}>
+            Add {result.rows.length} {result.rows.length === 1 ? 'person' : 'people'}
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+function SignupQr({ camp }: { camp: Camp }) {
+  const url = `${location.origin}${location.pathname}#/join/${camp.id}`;
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="qr-wrap">
+      <div className="note" style={{ marginBottom: 14 }}><i className="ti ti-info-circle" /> Print this or show it at registration — campers scan it to add themselves, no account needed.</div>
+      <QrCode value={url} size={200} />
+      <div className="qr-url">{url}</div>
+      <button className="btn-soft" onClick={() => { navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {}); }}>
+        <i className={'ti ' + (copied ? 'ti-check' : 'ti-link')} /> {copied ? 'Copied!' : 'Copy sign-up link'}
+      </button>
+    </div>
   );
 }
 

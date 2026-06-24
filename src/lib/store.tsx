@@ -19,6 +19,7 @@ interface Ctx {
   removeCamp: (id: string) => void;
   // attendees / rsvp
   invite: (campId: string, who: Partial<Attendee> & { name: string; kind: AttendeeKind }) => Attendee;
+  inviteMany: (campId: string, list: (Partial<Attendee> & { name: string; kind: AttendeeKind })[]) => number;
   respond: (attendeeId: string, status: RsvpStatus) => void;
   removeAttendee: (id: string) => void;
   setHealth: (attendeeId: string, health: Health) => void;
@@ -97,10 +98,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         id: uid('att'), campId, name: who.name, kind: who.kind,
         personId: who.personId, email: who.email, role: who.role,
         busId: who.busId, cabinId: who.cabinId, cabinRoomId: who.cabinRoomId, cabinLeader: who.cabinLeader,
-        status: 'invited', invitedAt: now(),
+        grade: who.grade, gender: who.gender, friends: who.friends,
+        status: who.status ?? 'invited', invitedAt: now(),
       };
       commit((d) => ({ ...d, attendees: [...d.attendees, a] }));
       return a;
+    },
+    inviteMany(campId, list) {
+      const batch: Attendee[] = list.map((who) => ({
+        id: uid('att'), campId, name: who.name, kind: who.kind,
+        personId: who.personId, email: who.email, role: who.role ?? (who.kind === 'camper' ? 'Camper' : undefined),
+        grade: who.grade, gender: who.gender, friends: who.friends,
+        status: who.status ?? 'invited', invitedAt: now(),
+      }));
+      commit((d) => ({ ...d, attendees: [...d.attendees, ...batch] }));
+      return batch.length;
     },
     respond(attendeeId, status) {
       commit((d) => ({
