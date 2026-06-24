@@ -1,0 +1,73 @@
+:root {
+  /* Bunk brand — pine/teal primary, campfire-amber accent. Its own identity,
+     distinct from Steward's school green/gold. */
+  --pine: #1f6f5c;
+  --pine-deep: #185546;
+  --amber: #e08a3c;
+  --ok: #2f7d3a;
+  --ok-tint: #e6f1ea;
+  --warn: #b9791f;
+  --warn-tint: #f6edda;
+  --bad: #c0392b;
+  --bad-tint: #f7e6e3;
+  --info: #2563a8;
+  --info-tint: #e7f0fa;
+
+  --surface: #ffffff;
+  --surface-2: #f1f4f2;
+  --text-1: #16201c;
+  --text-2: #43534d;
+  --text-3: #7d8b85;
+  --border: #dfe6e2;
+  --border-2: #e8ede9;
+  --pine-tint: #e6f1ec;
+  --amber-tint: #fbf0e2;
+
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+
+  --bg: #f6f8f6;
+
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pine: #3a9b81;
+    --pine-deep: #2c7a65;
+    --amber: #e9a45f;
+    --ok: #4cc25c;
+    --ok-tint: #16291b;
+    --warn: #d99a3c;
+    --warn-tint: #2c2412;
+    --bad: #e2564b;
+    --bad-tint: #2e1815;
+    --info: #5aa2e8;
+    --info-tint: #14202e;
+
+    --surface: #161b19;
+    --surface-2: #1f2623;
+    --text-1: #eef2ef;
+    --text-2: #b6c1bb;
+    --text-3: #7e8b85;
+    --border: #2a322e;
+    --border-2: #232a27;
+    --pine-tint: #14241f;
+    --amber-tint: #2a2013;
+
+    --bg: #0f1311;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body { background: var(--bg); }
+button { font-family: inherit; }
+a { color: inherit; }
+input, select, textarea { font-family: inherit; }
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
