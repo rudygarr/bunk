@@ -35,6 +35,8 @@ export interface Camp {
   mapUrl?: string; // camp map image (data URL in the demo)
   departInfo?: string; // staggered departure / check-in details
   contact?: string; // who to reach with questions
+  kickoff?: string; // ISO datetime of the first departure — drives the countdown
+  kickoffLabel?: string; // what happens at kickoff, e.g. "Seniors & Student Leadership depart"
 }
 
 // One line on a camp's packing checklist, grouped by category.

@@ -3,7 +3,7 @@ import type {
   RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem,
 } from './types';
 
-export const SEED_VERSION = 8;
+export const SEED_VERSION = 9;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -29,14 +29,16 @@ const users: User[] = [
 
 const camps: Camp[] = [
   {
-    id: 'camp-ww', name: 'Warrior Week', startDate: '2026-09-23', endDate: '2026-09-25',
-    location: 'Lake Aurora Retreat', organizer: 'Rudy Garrido', accent: '#1f6f5c',
+    id: 'camp-ww', name: 'Warrior Week', startDate: '2026-08-09', endDate: '2026-08-13',
+    location: 'Sharptop Cove · Jasper, GA', organizer: 'Rudy Garrido', accent: '#1f6f5c',
     blurb: 'Annual high-school overnight retreat — buses, cabins, and a full adult crew.',
+    kickoff: '2026-08-08T09:00:00', kickoffLabel: 'Seniors & Student Leadership depart',
   },
   {
-    id: 'camp-gr8', name: 'GR8 Escape', startDate: '2026-10-07', endDate: '2026-10-09',
-    location: 'Cypress Springs Camp', organizer: 'Middle School Office', accent: '#e08a3c',
+    id: 'camp-gr8', name: 'GR8 Escape', startDate: '2026-08-26', endDate: '2026-08-28',
+    location: 'Southwind · Young Life', organizer: 'Middle School Office', accent: '#e08a3c',
     blurb: '8th-grade getaway. Just getting set up — add your buses and cabins.',
+    kickoff: '2026-08-26T06:00:00', kickoffLabel: 'Buses depart',
   },
 ];
 
@@ -179,7 +181,7 @@ const announcements: Announcement[] = [
 
 // A 3-day Warrior Week schedule (Wed–Fri). Mostly camp-wide, with one
 // cabin-scoped activity rotation to show audience-aware scheduling.
-const D1 = '2026-09-23', D2 = '2026-09-24', D3 = '2026-09-25';
+const D1 = '2026-08-09', D2 = '2026-08-10', D3 = '2026-08-11';
 let scn = 0;
 const sch = (day: string, start: string, end: string, title: string, location?: string, audienceKind: ScheduleItem['audienceKind'] = 'everyone', audienceId?: string): ScheduleItem =>
   ({ id: `sch-${++scn}`, campId: 'camp-ww', day, start, end, title, location, audienceKind, audienceId });
