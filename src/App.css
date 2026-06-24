@@ -240,3 +240,40 @@
 .att-check.on { background: var(--ok); border-color: var(--ok); color: #fff; }
 .att-name { flex: 1; font-size: 14.5px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
 .att-role { font-size: 11px; color: var(--text-3); }
+
+/* ===== print packets ===== */
+.camp-hero-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.hero-print { display: inline-flex; align-items: center; gap: 5px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 7px 13px; font-size: 13px; font-weight: 500; color: var(--text-1); cursor: pointer; white-space: nowrap; }
+.hero-print:hover { border-color: var(--pine); color: var(--pine); }
+.pp-opts { display: flex; flex-direction: column; gap: 8px; }
+.pp-opt { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--border-2); border-radius: var(--r-md); background: var(--surface); cursor: pointer; text-align: left; }
+.pp-opt:hover { border-color: var(--pine); }
+.pp-opt > .ti { font-size: 22px; color: var(--pine); }
+.pp-opt span { display: flex; flex-direction: column; font-size: 12.5px; color: var(--text-3); }
+.pp-opt strong { font-size: 14.5px; color: var(--text-1); margin-bottom: 1px; }
+
+/* printable is hidden on screen, revealed for print */
+.printable { display: none; }
+@media print {
+  .topbar, .back, .tabs, .tab-body, .camp-hero, .modal-backdrop, .hero-print { display: none !important; }
+  .printable { display: block; color: #000; }
+  .printable section { display: none; }
+  .printable.show-all section, .printable.show-bus .pp-bus, .printable.show-cabin .pp-cabin, .printable.show-role .pp-role { display: block; }
+  .pp-doc-head { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 14px; }
+  .pp-doc-head h1 { font-size: 22px; margin: 0; }
+  .pp-doc-head div { font-size: 12px; color: #444; }
+  .printable h2 { font-size: 16px; border-bottom: 1px solid #999; padding-bottom: 3px; margin: 18px 0 10px; page-break-after: avoid; }
+  .pp-kind { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #555; margin: 12px 0 4px; }
+  .pp-block { margin-bottom: 12px; page-break-inside: avoid; }
+  .pp-block h3 { font-size: 13.5px; margin: 8px 0 4px; }
+  .pp-sub { font-weight: 400; font-size: 11px; color: #555; }
+  .pp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .pp-table td { padding: 3px 6px; border-bottom: 1px solid #ddd; vertical-align: top; }
+  .pp-chk { width: 16px; border: 1px solid #000 !important; height: 14px; }
+  .pp-dim { color: #666; }
+  .pp-med { color: #b00; font-weight: 600; }
+  .pp-room { margin: 6px 0 6px 8px; }
+  .pp-room-h { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .pp-line { font-size: 12px; margin: 2px 0; }
+  @page { margin: 14mm; }
+}

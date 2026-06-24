@@ -8,6 +8,7 @@ import BusPanel from '../components/BusPanel';
 import CabinPanel from '../components/CabinPanel';
 import RolePanel from '../components/RolePanel';
 import AttendancePanel from '../components/AttendancePanel';
+import PrintPackets from '../components/PrintPackets';
 
 type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'roles' | 'attendance';
 const TABS: { key: Tab; label: string; icon: string }[] = [
@@ -35,7 +36,10 @@ export default function CampDashboard() {
     <>
       <button className="back" onClick={() => nav('/')}><i className="ti ti-chevron-left" /> All camps</button>
       <div className="camp-hero" style={{ ['--accent' as string]: camp.accent ?? 'var(--pine)' }}>
-        <h1 className="camp-hero-name">{camp.name}</h1>
+        <div className="camp-hero-row">
+          <h1 className="camp-hero-name">{camp.name}</h1>
+          <PrintPackets camp={camp} />
+        </div>
         <div className="camp-hero-meta">
           <span><i className="ti ti-calendar" /> {fmtRange(camp.startDate, camp.endDate)}</span>
           <span><i className="ti ti-map-pin" /> {camp.location}</span>
