@@ -1,9 +1,9 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team,
+  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem,
 } from './types';
 
-export const SEED_VERSION = 7;
+export const SEED_VERSION = 8;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -216,9 +216,36 @@ const photos: Photo[] = [
   { id: 'ph-3', campId: 'camp-ww', authorName: 'Rudy Garrido', dataUrl: grad('#e08a3c', '#c0392b', '🔥'), caption: 'Campfire night — what a worship set.', createdAt: '2026-09-24T21:15:00Z' },
 ];
 
+// Packing checklist (from the real Warrior Week packing list).
+let pkn = 0;
+const packing: PackingItem[] = [];
+const pk = (category: string, text: string) => packing.push({ id: `pk-${++pkn}`, campId: 'camp-ww', category, text });
+['T-shirts (short & long-sleeved)', 'Sweatshirts or hoodies', 'Bottoms (shorts, pants, etc.)', 'Undergarments & socks', 'Pajamas / sleepwear', 'Modest swimwear', 'Athletic wear for activities', 'Walking shoes / sneakers (extra pairs)', 'Sandals or flip-flops', 'Rain jacket or poncho', 'Hat or cap', 'Themed-night outfits'].forEach((t) => pk('Clothing', t));
+['Toothbrush & toothpaste', 'Shampoo / conditioner', 'Body wash / soap', 'Deodorant', 'Hairbrush / comb', 'Sunscreen', 'Insect repellent', 'Twin-sized sheets', 'Pillow & blanket', '2 towels (bath & pool)'].forEach((t) => pk('Toiletries, bedding & linens', t));
+['Refillable water bottle', 'Flashlight / headlamp + batteries', 'Spending money', 'Small backpack', 'Sunglasses', 'Phone & portable charger', 'Bible, notebook & pen', 'Snacks (NO nuts — allergies)', 'Medications (coordinate w/ Nurse)', 'Large plastic bags for wet clothing'].forEach((t) => pk('Miscellaneous', t));
+
+// A stylized camp map (organizers can upload the real one). Demo asset, inline.
+const campMap = 'data:image/svg+xml,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="460" font-family="sans-serif">
+  <rect width="640" height="460" fill="#dfeede"/>
+  <path d="M0 300 Q160 270 320 300 T640 300 L640 460 L0 460 Z" fill="#bfe0d6"/>
+  <ellipse cx="150" cy="380" rx="130" ry="60" fill="#7fc0d8"/><text x="150" y="385" font-size="18" fill="#1b5566" text-anchor="middle">Lake Aurora</text>
+  <path d="M300 120 C 280 200, 360 240, 380 360" stroke="#caa66a" stroke-width="8" fill="none" stroke-dasharray="2 10" stroke-linecap="round"/>
+  <g fill="#2f6b4f"><rect x="380" y="60" width="110" height="64" rx="8"/><rect x="510" y="120" width="96" height="58" rx="8"/></g>
+  <g fill="#3a7c5c"><rect x="70" y="70" width="100" height="56" rx="8"/><rect x="200" y="60" width="100" height="56" rx="8"/></g>
+  <rect x="280" y="180" width="120" height="64" rx="8" fill="#b8702f"/>
+  <circle cx="470" cy="300" r="26" fill="#e08a3c"/><circle cx="470" cy="300" r="11" fill="#c0392b"/>
+  <g fill="#fff" font-size="13" text-anchor="middle"><text x="435" y="96">Dining Hall</text><text x="558" y="153">Pavilion</text><text x="120" y="102">Pine Lodge</text><text x="250" y="92">Cedar Lodge</text><text x="340" y="217">Main Office</text></g>
+  <text x="470" y="345" font-size="12" fill="#7a4a17" text-anchor="middle">Fire Ring</text>
+  <text x="320" y="34" font-size="22" fill="#1f4d3a" text-anchor="middle" font-weight="bold">Lake Aurora Retreat — Camp Map</text>
+  </svg>`);
+camps[0].mapUrl = campMap;
+camps[0].departInfo = 'Check-in at the Student Activities Center (SAC). Buses depart by grade — see the schedule for your group’s time.';
+camps[0].contact = 'Rudy Garrido · Director of Student Life';
+
 export function buildSeed(): Database {
   return {
-    users, people, camps, teams: [...teams], announcements: [...announcements], schedule: [...schedule], photos: [...photos],
+    users, people, camps, teams: [...teams], announcements: [...announcements], schedule: [...schedule], photos: [...photos], packing: [...packing],
     attendees: [...attendees], buses: [...buses], cabins: [...cabins], cabinRooms: [...cabinRooms],
     roles: [...roles], shifts: [...shifts], duties: [...duties],
     seedVersion: SEED_VERSION,

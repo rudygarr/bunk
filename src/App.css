@@ -471,3 +471,32 @@
 .c-stand-dot { width: 10px; height: 10px; border-radius: 999px; }
 .c-stand-name { flex: 1; }
 .c-stand-pts { font-weight: 700; color: var(--text-2); }
+
+/* ===== camp info (camper) ===== */
+.c-info-line { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: var(--text-2); padding: 3px 0; }
+.c-info-line .ti { color: var(--pine); margin-top: 2px; flex-shrink: 0; }
+.c-map-btn { display: block; width: 100%; padding: 0; border: none; background: none; cursor: pointer; position: relative; border-radius: var(--r-md); overflow: hidden; }
+.c-map-btn img { width: 100%; display: block; border-radius: var(--r-md); }
+.c-map-zoom { position: absolute; right: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #fff; background: rgba(0,0,0,0.55); padding: 4px 9px; border-radius: 999px; }
+.c-pack-count { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--pine); background: var(--pine-tint); padding: 1px 9px; border-radius: 999px; }
+.c-pack-group { margin-top: 6px; }
+.c-pack-cat { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-3); margin: 10px 0 4px; }
+.c-pack-item { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: none; padding: 7px 2px; font-size: 14.5px; color: var(--text-1); cursor: pointer; text-align: left; }
+.c-pack-item .ti { font-size: 20px; color: var(--text-3); }
+.c-pack-item.on { color: var(--text-3); text-decoration: line-through; }
+.c-pack-item.on .ti { color: var(--pine); }
+.c-lightbox { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.85); display: grid; place-items: center; padding: 16px; }
+.c-lightbox img { max-width: 100%; max-height: 90vh; border-radius: var(--r-sm); }
+.c-lightbox-x { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border: none; background: rgba(255,255,255,0.15); color: #fff; border-radius: 999px; font-size: 20px; cursor: pointer; }
+
+/* ===== camp info (organizer) ===== */
+.info-block { margin-bottom: 20px; }
+.info-block-h { font-size: 13px; font-weight: 700; color: var(--text-2); margin-bottom: 8px; }
+.info-upload { width: 100%; padding: 18px; border: 1.5px dashed var(--border); border-radius: var(--r-md); background: var(--surface-2); color: var(--text-2); font-size: 14px; cursor: pointer; }
+.info-map img { width: 100%; border-radius: var(--r-md); display: block; border: 1px solid var(--border-2); }
+.info-map-actions { display: flex; gap: 8px; margin-top: 8px; }
+.info-add { display: flex; gap: 8px; margin-bottom: 12px; }
+.info-pk-group { margin-bottom: 10px; }
+.info-pk-cat { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-3); margin-bottom: 4px; }
+.info-pk-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border-2); border-radius: 8px; font-size: 13.5px; margin-bottom: 4px; }
+.info-pk-item button { width: 24px; height: 24px; border: none; background: var(--surface-2); border-radius: 6px; color: var(--text-3); cursor: pointer; }

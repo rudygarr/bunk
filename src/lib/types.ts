@@ -32,6 +32,17 @@ export interface Camp {
   organizer: string;
   blurb?: string;
   accent?: string; // a brand color per camp
+  mapUrl?: string; // camp map image (data URL in the demo)
+  departInfo?: string; // staggered departure / check-in details
+  contact?: string; // who to reach with questions
+}
+
+// One line on a camp's packing checklist, grouped by category.
+export interface PackingItem {
+  id: string;
+  campId: string;
+  category: string;
+  text: string;
 }
 
 // One person attending a camp — camper or adult — with their RSVP and the
@@ -188,6 +199,7 @@ export interface Database {
   announcements: Announcement[];
   schedule: ScheduleItem[];
   photos: Photo[];
+  packing: PackingItem[];
   buses: Bus[];
   cabins: Cabin[];
   cabinRooms: CabinRoom[];

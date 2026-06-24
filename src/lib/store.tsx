@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -17,6 +17,8 @@ interface Ctx {
   addCamp: (c: Omit<Camp, 'id'>) => Camp;
   updateCamp: (id: string, patch: Partial<Camp>) => void;
   removeCamp: (id: string) => void;
+  addPackingItem: (campId: string, category: string, text: string) => void;
+  removePackingItem: (id: string) => void;
   // attendees / rsvp
   invite: (campId: string, who: Partial<Attendee> & { name: string; kind: AttendeeKind }) => Attendee;
   inviteMany: (campId: string, list: (Partial<Attendee> & { name: string; kind: AttendeeKind })[]) => number;
@@ -93,6 +95,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     updateCamp(id, patch) {
       commit((d) => ({ ...d, camps: d.camps.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
+    },
+    addPackingItem(campId, category, text) {
+      const item: PackingItem = { id: uid('pk'), campId, category, text };
+      commit((d) => ({ ...d, packing: [...(d.packing ?? []), item] }));
+    },
+    removePackingItem(id) {
+      commit((d) => ({ ...d, packing: (d.packing ?? []).filter((p) => p.id !== id) }));
     },
     removeCamp(id) {
       commit((d) => ({
