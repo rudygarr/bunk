@@ -143,12 +143,27 @@ export interface Announcement {
   createdAt: string;
 }
 
+// One block on the camp schedule. Reuses the announcement audience scoping so a
+// session can be camp-wide or aimed at a bus/cabin/person (activity rotations).
+export interface ScheduleItem {
+  id: string;
+  campId: string;
+  day: string; // "YYYY-MM-DD"
+  start: string; // "HH:MM"
+  end?: string;
+  title: string;
+  location?: string;
+  audienceKind: AudienceKind;
+  audienceId?: string;
+}
+
 export interface Database {
   users: User[];
   people: Person[];
   camps: Camp[];
   attendees: Attendee[];
   announcements: Announcement[];
+  schedule: ScheduleItem[];
   buses: Bus[];
   cabins: Cabin[];
   cabinRooms: CabinRoom[];

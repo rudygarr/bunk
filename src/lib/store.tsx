@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -30,6 +30,8 @@ interface Ctx {
   postAnnouncement: (campId: string, a: { title?: string; body: string; audienceKind: AudienceKind; audienceId?: string; author: string; pinned?: boolean }) => void;
   removeAnnouncement: (id: string) => void;
   togglePin: (id: string) => void;
+  addScheduleItem: (campId: string, s: Omit<ScheduleItem, 'id' | 'campId'>) => void;
+  removeScheduleItem: (id: string) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
   removeBus: (id: string) => void;
@@ -247,6 +249,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     togglePin(id) {
       commit((d) => ({ ...d, announcements: (d.announcements ?? []).map((a) => (a.id === id ? { ...a, pinned: !a.pinned } : a)) }));
+    },
+    addScheduleItem(campId, s) {
+      const item: ScheduleItem = { ...s, id: uid('sch'), campId };
+      commit((d) => ({ ...d, schedule: [...(d.schedule ?? []), item] }));
+    },
+    removeScheduleItem(id) {
+      commit((d) => ({ ...d, schedule: (d.schedule ?? []).filter((s) => s.id !== id) }));
     },
     reset() {
       void clearDB();

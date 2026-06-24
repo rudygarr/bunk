@@ -1,9 +1,9 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, Health, Gender, Announcement,
+  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem,
 } from './types';
 
-export const SEED_VERSION = 4;
+export const SEED_VERSION = 5;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -168,9 +168,38 @@ const announcements: Announcement[] = [
   { id: 'ann-4', campId: 'camp-ww', body: 'Eli — your mom dropped your inhaler at the front office. Grab it from Nurse Karen when you arrive.', audienceKind: 'person', audienceId: 'att-1', author: 'Karen Phillips', createdAt: '2026-09-22T09:30:00Z' },
 ];
 
+// A 3-day Warrior Week schedule (Wed–Fri). Mostly camp-wide, with one
+// cabin-scoped activity rotation to show audience-aware scheduling.
+const D1 = '2026-09-23', D2 = '2026-09-24', D3 = '2026-09-25';
+let scn = 0;
+const sch = (day: string, start: string, end: string, title: string, location?: string, audienceKind: ScheduleItem['audienceKind'] = 'everyone', audienceId?: string): ScheduleItem =>
+  ({ id: `sch-${++scn}`, campId: 'camp-ww', day, start, end, title, location, audienceKind, audienceId });
+const schedule: ScheduleItem[] = [
+  sch(D1, '08:00', '09:30', 'Buses depart & travel', 'Gym lot'),
+  sch(D1, '10:00', '11:00', 'Arrival & cabin check-in', 'Main lodge'),
+  sch(D1, '12:00', '13:00', 'Lunch', 'Dining hall'),
+  sch(D1, '13:30', '15:30', 'Cabin activity — high ropes', 'Ropes course', 'cabin', 'cabin-1'),
+  sch(D1, '13:30', '15:30', 'Cabin activity — lake canoes', 'Waterfront', 'cabin', 'cabin-2'),
+  sch(D1, '18:00', '19:00', 'Dinner', 'Dining hall'),
+  sch(D1, '20:00', '21:30', 'Opening session & worship', 'Pavilion'),
+  sch(D1, '22:30', '', 'Lights out'),
+  sch(D2, '07:30', '08:30', 'Breakfast', 'Dining hall'),
+  sch(D2, '09:00', '10:00', 'Morning session', 'Pavilion'),
+  sch(D2, '10:30', '12:00', 'Free time — lake & games', 'Waterfront'),
+  sch(D2, '12:30', '13:30', 'Lunch', 'Dining hall'),
+  sch(D2, '14:00', '17:00', 'Team challenge & field games', 'Field'),
+  sch(D2, '18:00', '19:00', 'Dinner', 'Dining hall'),
+  sch(D2, '20:00', '22:00', 'Campfire & worship night', 'Fire ring'),
+  sch(D2, '22:30', '', 'Lights out'),
+  sch(D3, '07:30', '08:30', 'Breakfast & pack up', 'Dining hall'),
+  sch(D3, '09:00', '10:30', 'Closing session', 'Pavilion'),
+  sch(D3, '11:00', '12:00', 'Clean cabins & load buses', 'Cabins'),
+  sch(D3, '14:00', '16:30', 'Buses return home', 'Gym lot'),
+];
+
 export function buildSeed(): Database {
   return {
-    users, people, camps, announcements: [...announcements],
+    users, people, camps, announcements: [...announcements], schedule: [...schedule],
     attendees: [...attendees], buses: [...buses], cabins: [...cabins], cabinRooms: [...cabinRooms],
     roles: [...roles], shifts: [...shifts], duties: [...duties],
     seedVersion: SEED_VERSION,

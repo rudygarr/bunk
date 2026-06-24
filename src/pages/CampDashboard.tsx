@@ -9,9 +9,10 @@ import CabinPanel from '../components/CabinPanel';
 import RolePanel from '../components/RolePanel';
 import AttendancePanel from '../components/AttendancePanel';
 import AnnouncePanel from '../components/AnnouncePanel';
+import SchedulePanel from '../components/SchedulePanel';
 import PrintPackets from '../components/PrintPackets';
 
-type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'roles' | 'attendance' | 'announce';
+type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'roles' | 'attendance' | 'announce' | 'schedule';
 const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: 'overview', label: 'Overview', icon: 'ti-layout-dashboard' },
   { key: 'roster', label: 'Roster', icon: 'ti-users' },
@@ -19,6 +20,7 @@ const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: 'buses', label: 'Buses', icon: 'ti-bus' },
   { key: 'cabins', label: 'Cabins', icon: 'ti-home' },
   { key: 'roles', label: 'Roles', icon: 'ti-clipboard-check' },
+  { key: 'schedule', label: 'Schedule', icon: 'ti-calendar-event' },
   { key: 'announce', label: 'Announce', icon: 'ti-speakerphone' },
 ];
 
@@ -65,6 +67,7 @@ export default function CampDashboard() {
         {tab === 'roles' && <RolePanel camp={camp} />}
         {tab === 'attendance' && <AttendancePanel camp={camp} />}
         {tab === 'announce' && <AnnouncePanel camp={camp} />}
+        {tab === 'schedule' && <SchedulePanel camp={camp} />}
       </div>
     </>
   );
