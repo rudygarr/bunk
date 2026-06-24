@@ -217,3 +217,26 @@
 .am-assign .ti { color: var(--pine); margin-right: 6px; }
 .am-section { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 12px; }
 .am-section .ti { color: var(--bad); }
+
+/* ===== attendance ===== */
+.att-stages { display: flex; gap: 6px; background: var(--surface-2); padding: 4px; border-radius: var(--r-md); margin-bottom: 14px; overflow-x: auto; }
+.att-stage { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; border: none; background: none; padding: 9px 10px; border-radius: var(--r-sm); font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; }
+.att-stage.on { background: var(--surface); color: var(--pine); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.att-summary { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: var(--r-md); margin-bottom: 16px; border: 1px solid var(--border-2); }
+.att-summary.has-missing { background: var(--warn-tint); border-color: color-mix(in srgb, var(--warn) 30%, transparent); }
+.att-summary.clear { background: var(--ok-tint); border-color: color-mix(in srgb, var(--ok) 30%, transparent); }
+.att-count { font-size: 14px; color: var(--text-2); }
+.att-count strong { font-size: 18px; color: var(--text-1); }
+.att-missing { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--warn); }
+.att-allclear { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--ok); }
+.att-group { margin-bottom: 16px; }
+.att-group-h { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.att-group-name { font-size: 14px; font-weight: 600; flex: 1; }
+.att-all { font-size: 12px; font-weight: 600; color: var(--pine); background: var(--pine-tint); border: none; border-radius: 999px; padding: 4px 11px; cursor: pointer; }
+.att-rows { display: flex; flex-direction: column; gap: 6px; }
+.att-row { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: var(--r-sm); border: 1px solid var(--border-2); background: var(--surface); cursor: pointer; text-align: left; }
+.att-row.on { background: var(--ok-tint); border-color: color-mix(in srgb, var(--ok) 30%, transparent); }
+.att-check { width: 24px; height: 24px; border-radius: 999px; display: grid; place-items: center; border: 1.5px solid var(--border); color: var(--text-3); flex-shrink: 0; }
+.att-check.on { background: var(--ok); border-color: var(--ok); color: #fff; }
+.att-name { flex: 1; font-size: 14.5px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.att-role { font-size: 11px; color: var(--text-3); }

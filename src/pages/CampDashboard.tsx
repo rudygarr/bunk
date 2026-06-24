@@ -2,16 +2,18 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { fmtRange } from '../lib/format';
-import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps, flaggedCount } from '../lib/camps';
+import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps, flaggedCount, checkedCount } from '../lib/camps';
 import RosterPanel from '../components/RosterPanel';
 import BusPanel from '../components/BusPanel';
 import CabinPanel from '../components/CabinPanel';
 import RolePanel from '../components/RolePanel';
+import AttendancePanel from '../components/AttendancePanel';
 
-type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'roles';
+type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'roles' | 'attendance';
 const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: 'overview', label: 'Overview', icon: 'ti-layout-dashboard' },
   { key: 'roster', label: 'Roster', icon: 'ti-users' },
+  { key: 'attendance', label: 'Attendance', icon: 'ti-checkbox' },
   { key: 'buses', label: 'Buses', icon: 'ti-bus' },
   { key: 'cabins', label: 'Cabins', icon: 'ti-home' },
   { key: 'roles', label: 'Roles', icon: 'ti-clipboard-check' },
@@ -55,6 +57,7 @@ export default function CampDashboard() {
         {tab === 'buses' && <BusPanel camp={camp} />}
         {tab === 'cabins' && <CabinPanel camp={camp} />}
         {tab === 'roles' && <RolePanel camp={camp} />}
+        {tab === 'attendance' && <AttendancePanel camp={camp} />}
       </div>
     </>
   );
@@ -101,6 +104,11 @@ function Overview({ camp, go }: { camp: import('../lib/types').Camp; go: (t: Tab
           <div className="stat-top"><span>Medical flags</span><i className="ti ti-medical-cross" /></div>
           <div className="stat-num">{flags}</div>
           <div className="stat-sub">{flags === 0 ? 'none recorded' : 'allergies / meds to know'}</div>
+        </button>
+        <button className="stat" onClick={() => go('attendance')}>
+          <div className="stat-top"><span>On site now</span><i className="ti ti-map-pin-check" /></div>
+          <div className="stat-num">{checkedCount(db, camp.id, 'onsite')}<span className="stat-of">/{att.length}</span></div>
+          <div className="stat-sub">day-of roll call</div>
         </button>
       </div>
 
