@@ -338,3 +338,48 @@
 .c-rsvp-btn.tentative.on { background: var(--warn); border-color: var(--warn); color: #fff; }
 .c-rsvp-btn.declined.on { background: var(--bad); border-color: var(--bad); color: #fff; }
 .linklike { background: none; border: none; color: var(--pine); cursor: pointer; text-decoration: underline; font-size: inherit; }
+
+/* ===== announcements (organizer) ===== */
+.ann-compose { background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--r-lg); padding: 14px; margin-bottom: 16px; }
+.ann-aud { margin-top: 8px; }
+.ann-list { display: flex; flex-direction: column; gap: 10px; }
+.ann { display: flex; gap: 10px; background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--r-md); padding: 13px 14px; }
+.ann.pinned { border-color: var(--amber); background: var(--amber-tint); }
+.ann-main { flex: 1; min-width: 0; }
+.ann-top { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.ann-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-2); }
+.ann-tag.everyone { background: var(--pine-tint); color: var(--pine); }
+.ann-tag.bus { background: var(--info-tint); color: var(--info); }
+.ann-tag.cabin { background: var(--warn-tint); color: var(--warn); }
+.ann-tag.person { background: var(--amber-tint); color: var(--amber); }
+.ann-pin { font-size: 11px; color: var(--amber); display: inline-flex; align-items: center; gap: 3px; }
+.ann-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+.ann-body { font-size: 13.5px; color: var(--text-2); line-height: 1.45; white-space: pre-wrap; }
+.ann-by { font-size: 12px; color: var(--text-3); margin-top: 6px; }
+.ann-actions { display: flex; flex-direction: column; gap: 6px; }
+.ann-actions button { width: 30px; height: 30px; border: 1px solid var(--border-2); background: var(--surface-2); border-radius: 8px; color: var(--text-3); cursor: pointer; }
+.ann-actions button:hover { color: var(--text-1); }
+
+/* ===== announcements (camper) ===== */
+.c-ann { background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--r-md); padding: 14px; margin-bottom: 10px; }
+.c-ann.pinned { border-color: var(--amber); }
+.c-ann-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.c-ann-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; }
+.c-ann-tag.everyone { background: var(--pine-tint); color: var(--pine); }
+.c-ann-tag.bus { background: var(--info-tint); color: var(--info); }
+.c-ann-tag.cabin { background: var(--warn-tint); color: var(--warn); }
+.c-ann-tag.person { background: var(--amber-tint); color: var(--amber); }
+.c-ann-pin { color: var(--amber); font-size: 13px; }
+.c-ann-time { margin-left: auto; font-size: 11.5px; color: var(--text-3); }
+.c-ann-title { font-weight: 600; font-size: 16px; margin-bottom: 3px; }
+.c-ann-body { font-size: 14px; color: var(--text-2); line-height: 1.5; white-space: pre-wrap; }
+.c-ann-by { font-size: 12px; color: var(--text-3); margin-top: 7px; }
+
+/* ===== camper bottom nav ===== */
+.camper-main { padding-bottom: 80px; }
+.camper-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; display: flex; background: var(--surface); border-top: 1px solid var(--border-2); padding: 6px 0 calc(6px + env(safe-area-inset-bottom)); }
+.camper-nav button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; color: var(--text-3); font-size: 11px; cursor: pointer; padding: 4px 0; }
+.camper-nav button.on { color: var(--pine); }
+.camper-nav button i { font-size: 22px; }
+.nav-ic { position: relative; }
+.nav-badge { position: absolute; top: -4px; right: -9px; background: var(--bad); color: #fff; font-size: 10px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 999px; display: grid; place-items: center; padding: 0 4px; }

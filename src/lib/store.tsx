@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -27,6 +27,9 @@ interface Ctx {
   updateAttendee: (id: string, patch: Partial<Attendee>) => void;
   applyCabinPlan: (placements: { attendeeId: string; cabinId: string; roomId?: string }[]) => void;
   applyBusPlan: (placements: { attendeeId: string; busId: string }[]) => void;
+  postAnnouncement: (campId: string, a: { title?: string; body: string; audienceKind: AudienceKind; audienceId?: string; author: string; pinned?: boolean }) => void;
+  removeAnnouncement: (id: string) => void;
+  togglePin: (id: string) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
   removeBus: (id: string) => void;
@@ -234,6 +237,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     removeDuty(id) {
       commit((d) => ({ ...d, duties: d.duties.filter((du) => du.id !== id) }));
+    },
+    postAnnouncement(campId, a) {
+      const ann: Announcement = { ...a, id: uid('ann'), campId, createdAt: now() };
+      commit((d) => ({ ...d, announcements: [...(d.announcements ?? []), ann] }));
+    },
+    removeAnnouncement(id) {
+      commit((d) => ({ ...d, announcements: (d.announcements ?? []).filter((a) => a.id !== id) }));
+    },
+    togglePin(id) {
+      commit((d) => ({ ...d, announcements: (d.announcements ?? []).map((a) => (a.id === id ? { ...a, pinned: !a.pinned } : a)) }));
     },
     reset() {
       void clearDB();

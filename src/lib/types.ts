@@ -128,11 +128,27 @@ export interface Duty {
   email?: string;
 }
 
+// An announcement the organizer posts, scoped to who should see it: the whole
+// camp, one bus, one cabin, or a single person.
+export type AudienceKind = 'everyone' | 'bus' | 'cabin' | 'person';
+export interface Announcement {
+  id: string;
+  campId: string;
+  title?: string;
+  body: string;
+  audienceKind: AudienceKind;
+  audienceId?: string; // busId | cabinId | attendeeId, per audienceKind
+  author: string;
+  pinned?: boolean;
+  createdAt: string;
+}
+
 export interface Database {
   users: User[];
   people: Person[];
   camps: Camp[];
   attendees: Attendee[];
+  announcements: Announcement[];
   buses: Bus[];
   cabins: Cabin[];
   cabinRooms: CabinRoom[];

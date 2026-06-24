@@ -1,9 +1,9 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, Health, Gender,
+  RsvpStatus, AttendeeKind, Health, Gender, Announcement,
 } from './types';
 
-export const SEED_VERSION = 3;
+export const SEED_VERSION = 4;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -159,9 +159,18 @@ const gAM = shift(guard, 'Free time — morning', '10:30', '12:00');
 shift(guard, 'Free time — afternoon', '15:00', '17:00'); // left unfilled (coverage gap)
 duty('camp-ww', guard, 'Dan Rivera', { shiftId: gAM });
 
+// Announcements scoped to everyone / a bus / a cabin / one person. Bus 1 =
+// 'bus-1', Cedar = 'cabin-2', Eli's attendee row = 'att-1'.
+const announcements: Announcement[] = [
+  { id: 'ann-1', campId: 'camp-ww', title: 'Packing list is up!', body: 'Sleeping bag, towel, water bottle, closed-toe shoes, and a light jacket — nights at the lake get cool. No electronics, please.', audienceKind: 'everyone', author: 'Rudy Garrido', pinned: true, createdAt: '2026-09-18T15:00:00Z' },
+  { id: 'ann-2', campId: 'camp-ww', body: 'Bus 1 (Gold Squad) loads at 7:45 and pulls out at 8:00 sharp from the gym lot. Don’t be late!', audienceKind: 'bus', audienceId: 'bus-1', author: 'Dan Rivera', createdAt: '2026-09-21T12:00:00Z' },
+  { id: 'ann-3', campId: 'camp-ww', body: 'Cedar Lodge crew — the AC runs cold, bring an extra blanket. Lights out is 10:30.', audienceKind: 'cabin', audienceId: 'cabin-2', author: 'Tara Hill', createdAt: '2026-09-21T18:00:00Z' },
+  { id: 'ann-4', campId: 'camp-ww', body: 'Eli — your mom dropped your inhaler at the front office. Grab it from Nurse Karen when you arrive.', audienceKind: 'person', audienceId: 'att-1', author: 'Karen Phillips', createdAt: '2026-09-22T09:30:00Z' },
+];
+
 export function buildSeed(): Database {
   return {
-    users, people, camps,
+    users, people, camps, announcements: [...announcements],
     attendees: [...attendees], buses: [...buses], cabins: [...cabins], cabinRooms: [...cabinRooms],
     roles: [...roles], shifts: [...shifts], duties: [...duties],
     seedVersion: SEED_VERSION,
