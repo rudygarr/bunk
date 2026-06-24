@@ -6,6 +6,7 @@ const TAG: Record<AudienceKind, { label: string; icon: string }> = {
   everyone: { label: 'Everyone', icon: 'ti-world' },
   bus: { label: 'Your bus', icon: 'ti-bus' },
   cabin: { label: 'Your cabin', icon: 'ti-home' },
+  team: { label: 'Your team', icon: 'ti-flag' },
   person: { label: 'Just for you', icon: 'ti-user' },
 };
 

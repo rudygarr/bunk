@@ -3,10 +3,11 @@ import { useStore } from '../lib/store';
 import { useSession } from '../lib/session';
 import { announcementsOf, audienceLabel } from '../lib/announce';
 import { busesOf, cabinsOf, attendeesOf } from '../lib/camps';
+import { teamsOf } from '../lib/teams';
 import { field } from './Modal';
 import type { Camp, AudienceKind } from '../lib/types';
 
-const AUD_ICON: Record<AudienceKind, string> = { everyone: 'ti-world', bus: 'ti-bus', cabin: 'ti-home', person: 'ti-user' };
+const AUD_ICON: Record<AudienceKind, string> = { everyone: 'ti-world', bus: 'ti-bus', cabin: 'ti-home', team: 'ti-flag', person: 'ti-user' };
 
 export default function AnnouncePanel({ camp }: { camp: Camp }) {
   const { db, postAnnouncement, removeAnnouncement, togglePin } = useStore();
@@ -18,6 +19,7 @@ export default function AnnouncePanel({ camp }: { camp: Camp }) {
 
   const buses = busesOf(db, camp.id);
   const cabins = cabinsOf(db, camp.id);
+  const teams = teamsOf(db, camp.id);
   const people = attendeesOf(db, camp.id);
   const list = announcementsOf(db, camp.id);
 
@@ -37,7 +39,7 @@ export default function AnnouncePanel({ camp }: { camp: Camp }) {
         <textarea style={{ ...field, height: 76, padding: '10px 12px', resize: 'vertical', marginTop: 8 }} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write an announcement…" />
         <div className="ann-aud">
           <div className="seg">
-            {(['everyone', 'bus', 'cabin', 'person'] as AudienceKind[]).map((k) => (
+            {(['everyone', 'bus', 'cabin', 'team', 'person'] as AudienceKind[]).map((k) => (
               <button key={k} className={kind === k ? 'on' : ''} onClick={() => { setKind(k); setAudId(''); }}>
                 <i className={'ti ' + AUD_ICON[k]} /> {k === 'everyone' ? 'Everyone' : k[0].toUpperCase() + k.slice(1)}
               </button>
@@ -45,9 +47,10 @@ export default function AnnouncePanel({ camp }: { camp: Camp }) {
           </div>
           {kind !== 'everyone' && (
             <select style={{ ...field, appearance: 'auto', marginTop: 8 }} value={audId} onChange={(e) => setAudId(e.target.value)}>
-              <option value="">{kind === 'bus' ? 'Pick a bus…' : kind === 'cabin' ? 'Pick a cabin…' : 'Pick a person…'}</option>
+              <option value="">{kind === 'bus' ? 'Pick a bus…' : kind === 'cabin' ? 'Pick a cabin…' : kind === 'team' ? 'Pick a team…' : 'Pick a person…'}</option>
               {kind === 'bus' && buses.map((b) => <option key={b.id} value={b.id}>{b.name}{b.label ? ` · ${b.label}` : ''}</option>)}
               {kind === 'cabin' && cabins.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              {kind === 'team' && teams.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
               {kind === 'person' && people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           )}

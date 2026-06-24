@@ -54,6 +54,7 @@ export interface Attendee {
   cabinId?: string;
   cabinRoomId?: string;
   cabinLeader?: boolean;
+  teamId?: string; // competitive team (Warrior Week-style games)
   // Inputs the auto-fill algorithm sorts on (all optional).
   grade?: number; // school grade / age band
   gender?: Gender; // for gender-specific cabins
@@ -78,6 +79,15 @@ export interface Health {
 
 // Stages of the day-of roll call.
 export type CheckStage = 'depart' | 'onsite' | 'return';
+
+// A competitive team that earns points across the week (optional per camp).
+export interface Team {
+  id: string;
+  campId: string;
+  name: string;
+  color: string;
+  points: number;
+}
 
 export interface Bus {
   id: string;
@@ -130,7 +140,7 @@ export interface Duty {
 
 // An announcement the organizer posts, scoped to who should see it: the whole
 // camp, one bus, one cabin, or a single person.
-export type AudienceKind = 'everyone' | 'bus' | 'cabin' | 'person';
+export type AudienceKind = 'everyone' | 'bus' | 'cabin' | 'team' | 'person';
 export interface Announcement {
   id: string;
   campId: string;
@@ -174,6 +184,7 @@ export interface Database {
   people: Person[];
   camps: Camp[];
   attendees: Attendee[];
+  teams: Team[];
   announcements: Announcement[];
   schedule: ScheduleItem[];
   photos: Photo[];

@@ -7,6 +7,7 @@ export function inAudience(me: Attendee, kind: AudienceKind, audienceId?: string
     case 'everyone': return true;
     case 'bus': return !!me.busId && me.busId === audienceId;
     case 'cabin': return !!me.cabinId && me.cabinId === audienceId;
+    case 'team': return !!me.teamId && me.teamId === audienceId;
     case 'person': return audienceId === me.id;
   }
 }
@@ -34,6 +35,7 @@ export function audienceLabel(db: Database, a: { audienceKind: AudienceKind; aud
     case 'everyone': return 'Everyone';
     case 'bus': return db.buses.find((b) => b.id === a.audienceId)?.name ?? 'A bus';
     case 'cabin': return db.cabins.find((c) => c.id === a.audienceId)?.name ?? 'A cabin';
+    case 'team': return db.teams.find((t) => t.id === a.audienceId)?.name ?? 'A team';
     case 'person': return db.attendees.find((x) => x.id === a.audienceId)?.name ?? 'One person';
   }
 }

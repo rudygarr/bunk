@@ -1,9 +1,9 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo,
+  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team,
 } from './types';
 
-export const SEED_VERSION = 6;
+export const SEED_VERSION = 7;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -78,12 +78,12 @@ const shift = (roleId: string, name: string, start?: string, end?: string) => {
 const duty = (campId: string, roleId: string, name: string, o: { email?: string; shiftId?: string } = {}) => {
   duties.push({ id: `duty-${++dn}`, campId, roleId, shiftId: o.shiftId, personId: o.email ? undefined : pid(name), name, email: o.email });
 };
-type AO = { email?: string; status?: RsvpStatus; role?: string; busId?: string; cabinId?: string; cabinRoomId?: string; cabinLeader?: boolean; health?: Health; grade?: number; gender?: Gender; friends?: string };
+type AO = { email?: string; status?: RsvpStatus; role?: string; busId?: string; cabinId?: string; cabinRoomId?: string; cabinLeader?: boolean; health?: Health; grade?: number; gender?: Gender; friends?: string; teamId?: string };
 const att = (campId: string, kind: AttendeeKind, name: string, o: AO = {}) => {
   attendees.push({
     id: `att-${++an}`, campId, kind, name,
     personId: o.email ? undefined : pid(name), email: o.email, role: o.role,
-    busId: o.busId, cabinId: o.cabinId, cabinRoomId: o.cabinRoomId, cabinLeader: o.cabinLeader,
+    busId: o.busId, cabinId: o.cabinId, cabinRoomId: o.cabinRoomId, cabinLeader: o.cabinLeader, teamId: o.teamId,
     health: o.health, grade: o.grade, gender: o.gender, friends: o.friends,
     status: o.status ?? 'accepted', invitedAt: '2026-09-01T12:00:00Z',
     respondedAt: (o.status ?? 'accepted') === 'invited' ? undefined : '2026-09-02T12:00:00Z',
@@ -102,28 +102,37 @@ const maple = cabin('camp-ww', 'Maple Hall', 'staff', 10);
 const willow = cabin('camp-ww', 'Willow Cabin', 'parent', 6);
 const birch = cabin('camp-ww', 'Birch Cottage', 'guest', 4);
 
+// Competitive teams — students compete in games all week.
+const teams: Team[] = [
+  { id: 'team-1', campId: 'camp-ww', name: 'Crimson', color: '#c0392b', points: 240 },
+  { id: 'team-2', campId: 'camp-ww', name: 'Cobalt', color: '#2563a8', points: 315 },
+  { id: 'team-3', campId: 'camp-ww', name: 'Emerald', color: '#1f8a4c', points: 185 },
+  { id: 'team-4', campId: 'camp-ww', name: 'Gold', color: '#d99a1c', points: 280 },
+];
+const [T1, T2, T3, T4] = ['team-1', 'team-2', 'team-3', 'team-4'];
+
 // campers already housed (boys in Pine, girls in Cedar)
-att('camp-ww', 'camper', 'Eli Robinson', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', grade: 10, gender: 'male', health: { allergies: 'Peanuts (EpiPen in his bag)', emergencyName: 'Donna Robinson', emergencyPhone: '(305) 555-0142' } });
-att('camp-ww', 'camper', 'Noah Park', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', grade: 10, gender: 'male', health: { meds: 'Inhaler — albuterol, as needed', dietary: 'Vegetarian', emergencyName: 'Grace Park', emergencyPhone: '(305) 555-0177' } });
-att('camp-ww', 'camper', 'Caleb Nguyen', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', grade: 10, gender: 'male', email: 'caleb@demo.camp' });
-att('camp-ww', 'camper', 'Sofia Marin', { busId: wBus2, cabinId: cedar, role: 'Camper', grade: 11, gender: 'female' });
-att('camp-ww', 'camper', 'Maria Soto', { busId: wBus2, cabinId: cedar, role: 'Camper', grade: 11, gender: 'female', email: 'maria@demo.camp', health: { allergies: 'Bee stings', emergencyName: 'Rosa Soto', emergencyPhone: '(305) 555-0188' } });
-att('camp-ww', 'camper', 'Ava Whitfield', { busId: wBus2, cabinId: cedar, role: 'Camper', grade: 11, gender: 'female', email: 'ava@demo.camp', health: { dietary: 'Gluten-free', emergencyName: 'Mark Whitfield', emergencyPhone: '(786) 555-0119' } });
+att('camp-ww', 'camper', 'Eli Robinson', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', grade: 10, gender: 'male', teamId: T1, health: { allergies: 'Peanuts (EpiPen in his bag)', emergencyName: 'Donna Robinson', emergencyPhone: '(305) 555-0142' } });
+att('camp-ww', 'camper', 'Noah Park', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', grade: 10, gender: 'male', teamId: T2, health: { meds: 'Inhaler — albuterol, as needed', dietary: 'Vegetarian', emergencyName: 'Grace Park', emergencyPhone: '(305) 555-0177' } });
+att('camp-ww', 'camper', 'Caleb Nguyen', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', grade: 10, gender: 'male', teamId: T3, email: 'caleb@demo.camp' });
+att('camp-ww', 'camper', 'Sofia Marin', { busId: wBus2, cabinId: cedar, role: 'Camper', grade: 11, gender: 'female', teamId: T4 });
+att('camp-ww', 'camper', 'Maria Soto', { busId: wBus2, cabinId: cedar, role: 'Camper', grade: 11, gender: 'female', teamId: T1, email: 'maria@demo.camp', health: { allergies: 'Bee stings', emergencyName: 'Rosa Soto', emergencyPhone: '(305) 555-0188' } });
+att('camp-ww', 'camper', 'Ava Whitfield', { busId: wBus2, cabinId: cedar, role: 'Camper', grade: 11, gender: 'female', teamId: T2, email: 'ava@demo.camp', health: { dietary: 'Gluten-free', emergencyName: 'Mark Whitfield', emergencyPhone: '(786) 555-0119' } });
 // cabin leaders
 att('camp-ww', 'staff', 'Dan Rivera', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, cabinLeader: true, role: 'Cabin Leader', gender: 'male' });
 att('camp-ww', 'staff', 'Alan Pierce', { busId: wBus1, cabinId: pine, cabinRoomId: pineB, cabinLeader: true, role: 'Cabin Leader', gender: 'male' });
 att('camp-ww', 'staff', 'Tara Hill', { busId: wBus2, cabinId: cedar, cabinLeader: true, role: 'Cabin Leader', gender: 'female' });
 // NOT yet housed — newly registered campers for the smart auto-fill demo.
 // Boys (→ Pine), with a friend request pair and mixed grades.
-att('camp-ww', 'camper', 'Jake Miller', { busId: wBus1, role: 'Camper', grade: 10, gender: 'male', friends: 'Tyler Brooks' });
-att('camp-ww', 'camper', 'Tyler Brooks', { role: 'Camper', grade: 10, gender: 'male', friends: 'Jake Miller' });
-att('camp-ww', 'camper', 'Sam Cohen', { role: 'Camper', grade: 9, gender: 'male' });
-att('camp-ww', 'camper', 'Marcus Lee', { role: 'Camper', grade: 11, gender: 'male', email: 'marcus@demo.camp' });
+att('camp-ww', 'camper', 'Jake Miller', { busId: wBus1, role: 'Camper', grade: 10, gender: 'male', teamId: T3, friends: 'Tyler Brooks' });
+att('camp-ww', 'camper', 'Tyler Brooks', { role: 'Camper', grade: 10, gender: 'male', teamId: T4, friends: 'Jake Miller' });
+att('camp-ww', 'camper', 'Sam Cohen', { role: 'Camper', grade: 9, gender: 'male', teamId: T1 });
+att('camp-ww', 'camper', 'Marcus Lee', { role: 'Camper', grade: 11, gender: 'male', teamId: T2, email: 'marcus@demo.camp' });
 // Girls (→ Cedar), with a friend request pair.
-att('camp-ww', 'camper', 'Emma Davis', { busId: wBus2, role: 'Camper', grade: 10, gender: 'female', friends: 'Lily Chen' });
-att('camp-ww', 'camper', 'Lily Chen', { role: 'Camper', grade: 10, gender: 'female', friends: 'Emma Davis' });
-att('camp-ww', 'camper', 'Grace Kim', { role: 'Camper', grade: 9, gender: 'female' });
-att('camp-ww', 'camper', 'Hannah Ruiz', { role: 'Camper', grade: 11, gender: 'female', email: 'hannah@demo.camp' });
+att('camp-ww', 'camper', 'Emma Davis', { busId: wBus2, role: 'Camper', grade: 10, gender: 'female', teamId: T3, friends: 'Lily Chen' });
+att('camp-ww', 'camper', 'Lily Chen', { role: 'Camper', grade: 10, gender: 'female', teamId: T4, friends: 'Emma Davis' });
+att('camp-ww', 'camper', 'Grace Kim', { role: 'Camper', grade: 9, gender: 'female', teamId: T1 });
+att('camp-ww', 'camper', 'Hannah Ruiz', { role: 'Camper', grade: 11, gender: 'female', teamId: T2, email: 'hannah@demo.camp' });
 // staff, parent, guest
 att('camp-ww', 'staff', 'Rudy Garrido', { cabinId: maple, role: 'Director' });
 att('camp-ww', 'staff', 'Karen Phillips', { cabinId: maple, role: 'Nurse' });
@@ -209,7 +218,7 @@ const photos: Photo[] = [
 
 export function buildSeed(): Database {
   return {
-    users, people, camps, announcements: [...announcements], schedule: [...schedule], photos: [...photos],
+    users, people, camps, teams: [...teams], announcements: [...announcements], schedule: [...schedule], photos: [...photos],
     attendees: [...attendees], buses: [...buses], cabins: [...cabins], cabinRooms: [...cabinRooms],
     roles: [...roles], shifts: [...shifts], duties: [...duties],
     seedVersion: SEED_VERSION,

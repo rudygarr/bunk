@@ -3,6 +3,7 @@ import { fmtRange } from '../lib/format';
 import { initials } from '../lib/format';
 import { campById, busOf, busLabel, cabinOf, roomOf, cabinLeaders } from '../lib/camps';
 import { cabinmates } from '../lib/camper';
+import { teamOf, standings, ordinal } from '../lib/teams';
 import type { Attendee, RsvpStatus } from '../lib/types';
 
 export default function CamperHome({ me }: { me: Attendee }) {
@@ -13,6 +14,9 @@ export default function CamperHome({ me }: { me: Attendee }) {
   const room = roomOf(db, me);
   const mates = cabinmates(db, me).filter((a) => !a.cabinLeader);
   const leaders = cabin ? cabinLeaders(db, cabin.id) : [];
+  const myTeam = teamOf(db, me);
+  const ranked = standings(db, me.campId);
+  const myPlace = myTeam ? ranked.findIndex((t) => t.id === myTeam.id) + 1 : 0;
 
   return (
     <>
@@ -36,6 +40,28 @@ export default function CamperHome({ me }: { me: Attendee }) {
           ))}
         </div>
       </div>
+
+      {/* Team + standings */}
+      {myTeam && (
+        <div className="c-card" style={{ ['--tc' as string]: myTeam.color }}>
+          <div className="c-card-h"><i className="ti ti-flag" /> Your team</div>
+          <div className="c-team-hero">
+            <span className="c-team-dot" />
+            <span className="c-team-name">{myTeam.name}</span>
+            <span className="c-team-place">{ordinal(myPlace)} of {ranked.length}</span>
+          </div>
+          <div className="c-standings">
+            {ranked.map((t, i) => (
+              <div key={t.id} className={'c-stand-row' + (t.id === myTeam.id ? ' me' : '')}>
+                <span className="c-stand-rank">{i + 1}</span>
+                <span className="c-stand-dot" style={{ background: t.color }} />
+                <span className="c-stand-name">{t.name}</span>
+                <span className="c-stand-pts">{t.points}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Bus */}
       <div className="c-card">

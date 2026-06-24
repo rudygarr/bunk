@@ -3,7 +3,7 @@ import { scheduleForCamper, byDay, fmtClock } from '../lib/schedule';
 import { fmtDateLong } from '../lib/format';
 import type { Attendee, AudienceKind } from '../lib/types';
 
-const TAG: Record<AudienceKind, string> = { everyone: '', bus: 'Your bus', cabin: 'Your cabin', person: 'Just for you' };
+const TAG: Record<AudienceKind, string> = { everyone: '', bus: 'Your bus', cabin: 'Your cabin', team: 'Your team', person: 'Just for you' };
 
 export default function CamperSchedule({ me }: { me: Attendee }) {
   const { db } = useStore();

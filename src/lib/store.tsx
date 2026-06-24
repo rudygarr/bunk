@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -34,6 +34,11 @@ interface Ctx {
   removeScheduleItem: (id: string) => void;
   addPhoto: (campId: string, p: { authorId?: string; authorName: string; dataUrl: string; caption?: string }) => void;
   removePhoto: (id: string) => void;
+  addTeam: (campId: string, t: { name: string; color: string }) => void;
+  removeTeam: (id: string) => void;
+  assignTeam: (attendeeId: string, teamId: string | undefined) => void;
+  adjustPoints: (teamId: string, delta: number) => void;
+  autoBalanceTeams: (campId: string) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
   removeBus: (id: string) => void;
@@ -265,6 +270,37 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     removePhoto(id) {
       commit((d) => ({ ...d, photos: (d.photos ?? []).filter((p) => p.id !== id) }));
+    },
+    addTeam(campId, t) {
+      const team: Team = { id: uid('team'), campId, name: t.name, color: t.color, points: 0 };
+      commit((d) => ({ ...d, teams: [...(d.teams ?? []), team] }));
+    },
+    removeTeam(id) {
+      commit((d) => ({
+        ...d,
+        teams: (d.teams ?? []).filter((t) => t.id !== id),
+        attendees: d.attendees.map((a) => (a.teamId === id ? { ...a, teamId: undefined } : a)),
+      }));
+    },
+    assignTeam(attendeeId, teamId) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, teamId } : a)) }));
+    },
+    adjustPoints(teamId, delta) {
+      commit((d) => ({ ...d, teams: (d.teams ?? []).map((t) => (t.id === teamId ? { ...t, points: Math.max(0, t.points + delta) } : t)) }));
+    },
+    // Spread campers evenly across the teams (round-robin, grade-interleaved so
+    // teams are balanced in size and age). Reassigns everyone for a clean split.
+    autoBalanceTeams(campId) {
+      commit((d) => {
+        const teams = (d.teams ?? []).filter((t) => t.campId === campId);
+        if (teams.length === 0) return d;
+        const campers = d.attendees
+          .filter((a) => a.campId === campId && a.kind === 'camper')
+          .sort((a, b) => (a.grade ?? 0) - (b.grade ?? 0) || a.name.localeCompare(b.name));
+        const map = new Map<string, string>();
+        campers.forEach((c, i) => map.set(c.id, teams[i % teams.length].id));
+        return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, teamId: map.get(a.id) } : a)) };
+      });
     },
     reset() {
       void clearDB();

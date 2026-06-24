@@ -11,15 +11,17 @@ import AttendancePanel from '../components/AttendancePanel';
 import AnnouncePanel from '../components/AnnouncePanel';
 import SchedulePanel from '../components/SchedulePanel';
 import PhotosPanel from '../components/PhotosPanel';
+import TeamsPanel from '../components/TeamsPanel';
 import PrintPackets from '../components/PrintPackets';
 
-type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'roles' | 'attendance' | 'announce' | 'schedule' | 'photos';
+type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'roles' | 'attendance' | 'announce' | 'schedule' | 'photos' | 'teams';
 const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: 'overview', label: 'Overview', icon: 'ti-layout-dashboard' },
   { key: 'roster', label: 'Roster', icon: 'ti-users' },
   { key: 'attendance', label: 'Attendance', icon: 'ti-checkbox' },
   { key: 'buses', label: 'Buses', icon: 'ti-bus' },
   { key: 'cabins', label: 'Cabins', icon: 'ti-home' },
+  { key: 'teams', label: 'Teams', icon: 'ti-flag' },
   { key: 'roles', label: 'Roles', icon: 'ti-clipboard-check' },
   { key: 'schedule', label: 'Schedule', icon: 'ti-calendar-event' },
   { key: 'announce', label: 'Announce', icon: 'ti-speakerphone' },
@@ -71,6 +73,7 @@ export default function CampDashboard() {
         {tab === 'announce' && <AnnouncePanel camp={camp} />}
         {tab === 'schedule' && <SchedulePanel camp={camp} />}
         {tab === 'photos' && <PhotosPanel camp={camp} />}
+        {tab === 'teams' && <TeamsPanel camp={camp} />}
       </div>
     </>
   );
