@@ -1,9 +1,9 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem,
+  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo,
 } from './types';
 
-export const SEED_VERSION = 5;
+export const SEED_VERSION = 6;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -197,9 +197,19 @@ const schedule: ScheduleItem[] = [
   sch(D3, '14:00', '16:30', 'Buses return home', 'Gym lot'),
 ];
 
+// Seed feed photos as gradient placeholders (no binary assets in the repo); real
+// posts are downscaled camera photos.
+const grad = (c1: string, c2: string, emoji: string) =>
+  'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="800" height="600" fill="url(#g)"/><text x="400" y="340" font-size="160" text-anchor="middle">${emoji}</text></svg>`);
+const photos: Photo[] = [
+  { id: 'ph-1', campId: 'camp-ww', authorId: 'att-1', authorName: 'Eli Robinson', dataUrl: grad('#1f6f5c', '#3a9b81', '🏕️'), caption: 'Cabin Pine, checking in!', createdAt: '2026-09-23T11:30:00Z' },
+  { id: 'ph-2', campId: 'camp-ww', authorId: 'att-4', authorName: 'Sofia Marin', dataUrl: grad('#2563a8', '#5aa2e8', '🛶'), caption: 'Canoes on the lake 💦', createdAt: '2026-09-23T15:10:00Z' },
+  { id: 'ph-3', campId: 'camp-ww', authorName: 'Rudy Garrido', dataUrl: grad('#e08a3c', '#c0392b', '🔥'), caption: 'Campfire night — what a worship set.', createdAt: '2026-09-24T21:15:00Z' },
+];
+
 export function buildSeed(): Database {
   return {
-    users, people, camps, announcements: [...announcements], schedule: [...schedule],
+    users, people, camps, announcements: [...announcements], schedule: [...schedule], photos: [...photos],
     attendees: [...attendees], buses: [...buses], cabins: [...cabins], cabinRooms: [...cabinRooms],
     roles: [...roles], shifts: [...shifts], duties: [...duties],
     seedVersion: SEED_VERSION,

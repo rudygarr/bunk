@@ -157,6 +157,18 @@ export interface ScheduleItem {
   audienceId?: string;
 }
 
+// A photo posted to the camp feed (camper, staff, or organizer). Image is a
+// downscaled data URL in the demo; a real build uploads to object storage.
+export interface Photo {
+  id: string;
+  campId: string;
+  authorId?: string; // attendee id, or undefined for the organizer
+  authorName: string;
+  dataUrl: string;
+  caption?: string;
+  createdAt: string;
+}
+
 export interface Database {
   users: User[];
   people: Person[];
@@ -164,6 +176,7 @@ export interface Database {
   attendees: Attendee[];
   announcements: Announcement[];
   schedule: ScheduleItem[];
+  photos: Photo[];
   buses: Bus[];
   cabins: Cabin[];
   cabinRooms: CabinRoom[];

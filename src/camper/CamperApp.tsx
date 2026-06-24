@@ -6,8 +6,9 @@ import Logo from '../components/Logo';
 import CamperHome from './CamperHome';
 import CamperAlerts from './CamperAlerts';
 import CamperSchedule from './CamperSchedule';
+import CamperPhotos from './CamperPhotos';
 
-type Tab = 'home' | 'schedule' | 'alerts';
+type Tab = 'home' | 'schedule' | 'photos' | 'alerts';
 
 // The camper-facing side of Bunk. A signed-in camper sees only their own camp.
 export default function CamperApp() {
@@ -35,11 +36,13 @@ export default function CamperApp() {
       <main className="camper-main">
         {tab === 'home' && <CamperHome me={me} />}
         {tab === 'schedule' && <CamperSchedule me={me} />}
+        {tab === 'photos' && <CamperPhotos me={me} />}
         {tab === 'alerts' && <CamperAlerts me={me} />}
       </main>
       <nav className="camper-nav">
         <button className={tab === 'home' ? 'on' : ''} onClick={() => setTab('home')}><i className="ti ti-home" /><span>Home</span></button>
         <button className={tab === 'schedule' ? 'on' : ''} onClick={() => setTab('schedule')}><i className="ti ti-calendar-event" /><span>Schedule</span></button>
+        <button className={tab === 'photos' ? 'on' : ''} onClick={() => setTab('photos')}><i className="ti ti-photo" /><span>Photos</span></button>
         <button className={tab === 'alerts' ? 'on' : ''} onClick={() => setTab('alerts')}>
           <span className="nav-ic"><i className="ti ti-bell" />{alerts > 0 && <span className="nav-badge">{alerts}</span>}</span><span>Alerts</span>
         </button>

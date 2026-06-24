@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -32,6 +32,8 @@ interface Ctx {
   togglePin: (id: string) => void;
   addScheduleItem: (campId: string, s: Omit<ScheduleItem, 'id' | 'campId'>) => void;
   removeScheduleItem: (id: string) => void;
+  addPhoto: (campId: string, p: { authorId?: string; authorName: string; dataUrl: string; caption?: string }) => void;
+  removePhoto: (id: string) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
   removeBus: (id: string) => void;
@@ -256,6 +258,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     removeScheduleItem(id) {
       commit((d) => ({ ...d, schedule: (d.schedule ?? []).filter((s) => s.id !== id) }));
+    },
+    addPhoto(campId, p) {
+      const photo: Photo = { ...p, id: uid('ph'), campId, createdAt: now() };
+      commit((d) => ({ ...d, photos: [...(d.photos ?? []), photo] }));
+    },
+    removePhoto(id) {
+      commit((d) => ({ ...d, photos: (d.photos ?? []).filter((p) => p.id !== id) }));
     },
     reset() {
       void clearDB();
