@@ -651,3 +651,10 @@
 .pub-foot { text-align: center; font-size: 12px; color: var(--text-3); margin-top: 10px; }
 
 .set-divider { height: 1px; background: var(--border-2); margin: 18px 0 14px; }
+
+/* ===== reset demo ===== */
+.demo-reset { margin-top: 30px; text-align: center; font-size: 13px; color: var(--text-3); }
+.demo-reset-link { background: none; border: none; color: var(--text-3); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; }
+.demo-reset-link:hover { color: var(--text-2); }
+.demo-reset-yes { background: var(--bad); color: #fff; border: none; border-radius: var(--r-sm); padding: 4px 11px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.demo-reset-no { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 4px 11px; cursor: pointer; font-size: 13px; color: var(--text-2); }

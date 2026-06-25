@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { fmtRange, daysUntil } from '../lib/format';
@@ -5,7 +6,8 @@ import { attendeesOf, rsvp, coverageGaps } from '../lib/camps';
 
 export default function Camps() {
   const nav = useNavigate();
-  const { db } = useStore();
+  const { db, reset } = useStore();
+  const [confirmReset, setConfirmReset] = useState(false);
   const camps = [...db.camps].sort((a, b) => a.startDate.localeCompare(b.startDate));
 
   return (
@@ -45,6 +47,17 @@ export default function Camps() {
             </button>
           );
         })}
+      </div>
+
+      <div className="demo-reset">
+        {confirmReset ? (
+          <span>Reset all demo data to the original sample camps?{' '}
+            <button className="demo-reset-yes" onClick={() => reset()}>Yes, reset</button>{' '}
+            <button className="demo-reset-no" onClick={() => setConfirmReset(false)}>Cancel</button>
+          </span>
+        ) : (
+          <button className="demo-reset-link" onClick={() => setConfirmReset(true)}><i className="ti ti-refresh" /> Reset demo data</button>
+        )}
       </div>
     </>
   );
