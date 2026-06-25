@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react';
 import { useStore } from '../lib/store';
 import { photosOf, downscaleImage } from '../lib/photos';
+import { campById } from '../lib/camps';
 import { initials } from '../lib/format';
 import type { Attendee } from '../lib/types';
 
 export default function CamperPhotos({ me }: { me: Attendee }) {
   const { db, addPhoto, removePhoto } = useStore();
+  const camp = campById(db, me.campId);
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
@@ -36,6 +38,12 @@ export default function CamperPhotos({ me }: { me: Attendee }) {
         </button>
         <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPick} />
       </div>
+
+      {camp?.photoAlbumUrl && (
+        <a className="album-open c-album" href={camp.photoAlbumUrl} target="_blank" rel="noopener noreferrer">
+          <i className="ti ti-external-link" /> Open the camp’s shared album
+        </a>
+      )}
 
       {pending && (
         <div className="c-photo-compose">
