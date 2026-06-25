@@ -8,7 +8,7 @@ import { fmtDateLong } from '../lib/format';
 import { field } from './Modal';
 import type { Camp, AudienceKind } from '../lib/types';
 
-const AUD_ICON: Record<AudienceKind, string> = { everyone: 'ti-world', bus: 'ti-bus', cabin: 'ti-home', team: 'ti-flag', person: 'ti-user' };
+const AUD_ICON: Record<AudienceKind, string> = { everyone: 'ti-world', bus: 'ti-bus', cabin: 'ti-home', team: 'ti-flag', smallGroup: 'ti-users-group', volunteers: 'ti-clipboard-check', person: 'ti-user', custom: 'ti-list-check' };
 
 export default function SchedulePanel({ camp }: { camp: Camp }) {
   const { db, addScheduleItem, removeScheduleItem } = useStore();

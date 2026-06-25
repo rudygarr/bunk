@@ -1,14 +1,18 @@
 import type { Database, Announcement, Attendee, AudienceKind } from './types';
 
 // Shared audience test — does a camper fall inside everyone / a bus / a cabin /
-// a person? Used by both announcements and the schedule.
-export function inAudience(me: Attendee, kind: AudienceKind, audienceId?: string): boolean {
+// a small group / volunteers / a person / a custom list? Used by announcements
+// and the schedule.
+export function inAudience(me: Attendee, kind: AudienceKind, audienceId?: string, audienceIds?: string[]): boolean {
   switch (kind) {
     case 'everyone': return true;
     case 'bus': return !!me.busId && me.busId === audienceId;
     case 'cabin': return !!me.cabinId && me.cabinId === audienceId;
     case 'team': return !!me.teamId && me.teamId === audienceId;
+    case 'smallGroup': return !!me.smallGroupId && me.smallGroupId === audienceId;
+    case 'volunteers': return me.kind === 'staff' || me.kind === 'parent';
     case 'person': return audienceId === me.id;
+    case 'custom': return !!audienceIds && audienceIds.includes(me.id);
   }
 }
 
@@ -21,7 +25,7 @@ export function announcementsOf(db: Database, campId: string): Announcement[] {
 
 // Does this announcement reach a given camper?
 export function reaches(ann: Announcement, me: Attendee): boolean {
-  return inAudience(me, ann.audienceKind, ann.audienceId);
+  return inAudience(me, ann.audienceKind, ann.audienceId, ann.audienceIds);
 }
 
 // The announcements one camper sees, newest first (pinned on top).
@@ -30,12 +34,15 @@ export function announcementsForCamper(db: Database, me: Attendee): Announcement
 }
 
 // Human label for who an announcement/schedule item targets (organizer view).
-export function audienceLabel(db: Database, a: { audienceKind: AudienceKind; audienceId?: string }): string {
+export function audienceLabel(db: Database, a: { audienceKind: AudienceKind; audienceId?: string; audienceIds?: string[] }): string {
   switch (a.audienceKind) {
     case 'everyone': return 'Everyone';
     case 'bus': return db.buses.find((b) => b.id === a.audienceId)?.name ?? 'A bus';
     case 'cabin': return db.cabins.find((c) => c.id === a.audienceId)?.name ?? 'A cabin';
     case 'team': return db.teams.find((t) => t.id === a.audienceId)?.name ?? 'A team';
+    case 'smallGroup': return db.smallGroups.find((g) => g.id === a.audienceId)?.name ?? 'A small group';
+    case 'volunteers': return 'Volunteers & staff';
     case 'person': return db.attendees.find((x) => x.id === a.audienceId)?.name ?? 'One person';
+    case 'custom': return `${a.audienceIds?.length ?? 0} people`;
   }
 }

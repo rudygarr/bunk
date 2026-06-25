@@ -593,3 +593,13 @@
 .c-tl-meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12.5px; color: var(--text-3); margin-top: 3px; }
 .c-tl-meta .ti { font-size: 13px; }
 .c-tl-tag { color: var(--pine); font-weight: 600; }
+
+/* ===== announcements: custom recipients ===== */
+.seg-wrap { flex-wrap: wrap; }
+.ann-custom { margin-top: 8px; }
+.ann-custom-h { font-size: 12px; color: var(--text-3); margin-bottom: 6px; }
+.ann-custom-list { display: flex; flex-wrap: wrap; gap: 6px; max-height: 168px; overflow-y: auto; }
+.ann-pick { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 999px; padding: 2px 8px 2px 2px; cursor: pointer; }
+.ann-pick.on { background: var(--pine-tint); border-color: color-mix(in srgb, var(--pine) 35%, transparent); color: var(--pine); }
+.ann-pick .ti { font-size: 13px; }
+.ann-tag.smallGroup, .ann-tag.volunteers, .ann-tag.custom { color: var(--pine); }

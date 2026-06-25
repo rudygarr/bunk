@@ -4,7 +4,7 @@ import { scheduleForCamper, daysOf, nowNext, todayKey, fmtClock } from '../lib/s
 import { fmtDate } from '../lib/format';
 import type { Attendee, AudienceKind } from '../lib/types';
 
-const TAG: Record<AudienceKind, string> = { everyone: '', bus: 'Your bus', cabin: 'Your cabin', team: 'Your team', person: 'Just for you' };
+const TAG: Record<AudienceKind, string> = { everyone: '', bus: 'Your bus', cabin: 'Your cabin', team: 'Your team', smallGroup: 'Your group', volunteers: 'Volunteers', person: 'Just for you', custom: 'For you' };
 
 export default function CamperSchedule({ me }: { me: Attendee }) {
   const { db } = useStore();

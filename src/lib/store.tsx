@@ -29,7 +29,7 @@ interface Ctx {
   updateAttendee: (id: string, patch: Partial<Attendee>) => void;
   applyCabinPlan: (placements: { attendeeId: string; cabinId: string; roomId?: string }[]) => void;
   applyBusPlan: (placements: { attendeeId: string; busId: string }[]) => void;
-  postAnnouncement: (campId: string, a: { title?: string; body: string; audienceKind: AudienceKind; audienceId?: string; author: string; pinned?: boolean }) => void;
+  postAnnouncement: (campId: string, a: { title?: string; body: string; audienceKind: AudienceKind; audienceId?: string; audienceIds?: string[]; author: string; pinned?: boolean }) => void;
   removeAnnouncement: (id: string) => void;
   togglePin: (id: string) => void;
   addScheduleItem: (campId: string, s: Omit<ScheduleItem, 'id' | 'campId'>) => void;

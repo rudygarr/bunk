@@ -7,7 +7,10 @@ const TAG: Record<AudienceKind, { label: string; icon: string }> = {
   bus: { label: 'Your bus', icon: 'ti-bus' },
   cabin: { label: 'Your cabin', icon: 'ti-home' },
   team: { label: 'Your team', icon: 'ti-flag' },
+  smallGroup: { label: 'Your group', icon: 'ti-users-group' },
+  volunteers: { label: 'Volunteers', icon: 'ti-clipboard-check' },
   person: { label: 'Just for you', icon: 'ti-user' },
+  custom: { label: 'For you', icon: 'ti-user-check' },
 };
 
 function ago(iso: string): string {

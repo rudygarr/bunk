@@ -174,14 +174,15 @@ export interface Duty {
 
 // An announcement the organizer posts, scoped to who should see it: the whole
 // camp, one bus, one cabin, or a single person.
-export type AudienceKind = 'everyone' | 'bus' | 'cabin' | 'team' | 'person';
+export type AudienceKind = 'everyone' | 'bus' | 'cabin' | 'team' | 'smallGroup' | 'volunteers' | 'person' | 'custom';
 export interface Announcement {
   id: string;
   campId: string;
   title?: string;
   body: string;
   audienceKind: AudienceKind;
-  audienceId?: string; // busId | cabinId | attendeeId, per audienceKind
+  audienceId?: string; // busId | cabinId | teamId | smallGroupId | attendeeId, per kind
+  audienceIds?: string[]; // hand-picked recipients when audienceKind === 'custom'
   author: string;
   pinned?: boolean;
   createdAt: string;
