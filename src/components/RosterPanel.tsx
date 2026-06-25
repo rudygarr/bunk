@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
 import { initials } from '../lib/format';
-import { attendeesOf, rsvp, isFlagged, busOf, cabinOf, roomOf, smallGroupOf } from '../lib/camps';
+import { attendeesOf, rsvp, isFlagged, busOf, cabinOf, roomOf, smallGroupOf, busesOf, cabinsOf, smallGroupsOf } from '../lib/camps';
+import { teamsOf } from '../lib/teams';
 import type { Camp, Attendee, RsvpStatus, AttendeeKind } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
 import AttendeeModal from './AttendeeModal';
@@ -21,10 +22,12 @@ const KINDS: { key: AttendeeKind; label: string }[] = [
 ];
 
 export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initialFilter?: 'flagged' }) {
-  const { db, respond, removeAttendee } = useStore();
+  const { db, respond, removeAttendee, assignBus, assignCabin, assignTeam, assignSmallGroup } = useStore();
   const [showInvite, setShowInvite] = useState(false);
   const [showKitchen, setShowKitchen] = useState(false);
   const [open, setOpen] = useState<Attendee | null>(null);
+  const [selecting, setSelecting] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<AttendeeKind | 'all' | 'flagged'>(initialFilter ?? 'all');
   const [q, setQ] = useState('');
   const list = attendeesOf(db, camp.id)
@@ -53,6 +56,13 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
     URL.revokeObjectURL(url);
   }
 
+  const toggleSel = (id: string) => setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  function bulkApply(fn: (id: string) => void) {
+    selected.forEach(fn);
+    setSelected(new Set());
+    setSelecting(false);
+  }
+
   return (
     <div>
       <div className="panel-head">
@@ -77,6 +87,7 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name…" />
           {q && <button onClick={() => setQ('')}><i className="ti ti-x" /></button>}
         </div>
+        <button className={'btn-soft sm' + (selecting ? ' on' : '')} onClick={() => { setSelecting((s) => !s); setSelected(new Set()); }} title="Select multiple"><i className="ti ti-checkbox" /> Select</button>
         <button className="btn-soft sm" onClick={() => setShowKitchen(true)} title="Dietary & allergy report"><i className="ti ti-tools-kitchen-2" /> Kitchen</button>
         <button className="btn-soft sm" onClick={exportCsv} title="Download roster as CSV"><i className="ti ti-download" /> Export</button>
       </div>
@@ -84,26 +95,60 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
       <div className="rows">
         {list.length === 0 && <div className="empty">No one here yet.</div>}
         {list.map((a) => (
-          <div key={a.id} className="row">
-            <button className="row-open" onClick={() => setOpen(a)}>
+          <div key={a.id} className={'row' + (selecting && selected.has(a.id) ? ' selected' : '')}>
+            <button className="row-open" onClick={() => (selecting ? toggleSel(a.id) : setOpen(a))}>
+            {selecting && <span className="row-check"><i className={'ti ' + (selected.has(a.id) ? 'ti-square-check-filled' : 'ti-square')} /></span>}
             <span className="avatar sm">{initials(a.name)}</span>
             <span className="row-main">
               <span className="row-title">{a.name}{isFlagged(a) && <i className="ti ti-medical-cross med-flag" title="Medical flag" />}{a.role && <span className="tagchip">{a.role}</span>}</span>
               <span className="row-sub">{a.personId ? 'Has an account' : a.email ?? 'No email'}</span>
             </span>
             </button>
-            <span className="seg-status">
+            {!selecting && <span className="seg-status">
               {(['accepted', 'tentative', 'declined'] as RsvpStatus[]).map((s) => (
                 <button key={s} className={'mini-rsvp ' + s + (a.status === s ? ' on' : '')} title={STATUS[s].label} onClick={() => respond(a.id, s)}>
                   <i className={'ti ' + (s === 'accepted' ? 'ti-check' : s === 'declined' ? 'ti-x' : 'ti-help')} />
                 </button>
               ))}
-            </span>
-            <button className="mini" title="Copy invite link" onClick={() => copyLink(a)}><i className="ti ti-link" /></button>
-            <button className="mini" title="Remove" onClick={() => removeAttendee(a.id)}><i className="ti ti-trash" /></button>
+            </span>}
+            {!selecting && <button className="mini" title="Copy invite link" onClick={() => copyLink(a)}><i className="ti ti-link" /></button>}
+            {!selecting && <button className="mini" title="Remove" onClick={() => removeAttendee(a.id)}><i className="ti ti-trash" /></button>}
           </div>
         ))}
       </div>
+
+      {selecting && selected.size > 0 && (
+        <div className="bulk-bar">
+          <span className="bulk-n">{selected.size} selected</span>
+          <div className="bulk-actions">
+            {busesOf(db, camp.id).length > 0 && (
+              <select className="bulk-sel" defaultValue="" onChange={(e) => { const v = e.target.value; if (v) bulkApply((id) => assignBus(id, v)); }}>
+                <option value="">→ Bus…</option>
+                {busesOf(db, camp.id).map((b) => <option key={b.id} value={b.id}>{b.name}{b.label ? ` · ${b.label}` : ''}</option>)}
+              </select>
+            )}
+            {cabinsOf(db, camp.id).length > 0 && (
+              <select className="bulk-sel" defaultValue="" onChange={(e) => { const v = e.target.value; if (v) bulkApply((id) => assignCabin(id, v, undefined)); }}>
+                <option value="">→ Cabin…</option>
+                {cabinsOf(db, camp.id).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            )}
+            {teamsOf(db, camp.id).length > 0 && (
+              <select className="bulk-sel" defaultValue="" onChange={(e) => { const v = e.target.value; if (v) bulkApply((id) => assignTeam(id, v)); }}>
+                <option value="">→ Team…</option>
+                {teamsOf(db, camp.id).map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+              </select>
+            )}
+            {smallGroupsOf(db, camp.id).length > 0 && (
+              <select className="bulk-sel" defaultValue="" onChange={(e) => { const v = e.target.value; if (v) bulkApply((id) => assignSmallGroup(id, v)); }}>
+                <option value="">→ Group…</option>
+                {smallGroupsOf(db, camp.id).map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+              </select>
+            )}
+          </div>
+          <button className="bulk-done" onClick={() => { setSelected(new Set()); setSelecting(false); }}>Done</button>
+        </div>
+      )}
 
       {showInvite && <InviteModal camp={camp} onClose={() => setShowInvite(false)} />}
       {showKitchen && <KitchenReport camp={camp} onClose={() => setShowKitchen(false)} />}
