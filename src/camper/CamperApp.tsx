@@ -17,6 +17,12 @@ export default function CamperApp() {
   const { db } = useStore();
   const { camperId, signOut } = useSession();
   const [tab, setTab] = useState<Tab>('home');
+  // Which announcement ids this camper has already seen (id-based so it's robust
+  // to the demo's mixed real/seed dates). Persisted per camper.
+  const seenKey = `camphq-seen-${camperId}`;
+  const [seen, setSeen] = useState<Set<string>>(() => {
+    try { return new Set<string>(JSON.parse(localStorage.getItem(seenKey) || '[]')); } catch { return new Set(); }
+  });
   const me = db.attendees.find((a) => a.id === camperId);
 
   if (!me) {
@@ -27,7 +33,19 @@ export default function CamperApp() {
     );
   }
 
-  const alerts = announcementsForCamper(db, me).length;
+  const myAnns = announcementsForCamper(db, me);
+  const unread = myAnns.filter((a) => !seen.has(a.id)).length;
+
+  // Opening Alerts marks everything currently visible as seen.
+  function go(t: Tab) {
+    if (t === 'alerts' && unread > 0) {
+      const ids = new Set(seen);
+      myAnns.forEach((a) => ids.add(a.id));
+      setSeen(ids);
+      try { localStorage.setItem(seenKey, JSON.stringify([...ids])); } catch { /* ignore */ }
+    }
+    setTab(t);
+  }
 
   return (
     <div className="camper">
@@ -43,12 +61,12 @@ export default function CamperApp() {
         {tab === 'alerts' && <CamperAlerts me={me} />}
       </main>
       <nav className="camper-nav">
-        <button className={tab === 'home' ? 'on' : ''} onClick={() => setTab('home')}><i className="ti ti-home" /><span>Home</span></button>
-        <button className={tab === 'schedule' ? 'on' : ''} onClick={() => setTab('schedule')}><i className="ti ti-calendar-event" /><span>Schedule</span></button>
-        <button className={tab === 'info' ? 'on' : ''} onClick={() => setTab('info')}><i className="ti ti-map-2" /><span>Info</span></button>
-        <button className={tab === 'photos' ? 'on' : ''} onClick={() => setTab('photos')}><i className="ti ti-photo" /><span>Photos</span></button>
-        <button className={tab === 'alerts' ? 'on' : ''} onClick={() => setTab('alerts')}>
-          <span className="nav-ic"><i className="ti ti-bell" />{alerts > 0 && <span className="nav-badge">{alerts}</span>}</span><span>Alerts</span>
+        <button className={tab === 'home' ? 'on' : ''} onClick={() => go('home')}><i className="ti ti-home" /><span>Home</span></button>
+        <button className={tab === 'schedule' ? 'on' : ''} onClick={() => go('schedule')}><i className="ti ti-calendar-event" /><span>Schedule</span></button>
+        <button className={tab === 'info' ? 'on' : ''} onClick={() => go('info')}><i className="ti ti-map-2" /><span>Info</span></button>
+        <button className={tab === 'photos' ? 'on' : ''} onClick={() => go('photos')}><i className="ti ti-photo" /><span>Photos</span></button>
+        <button className={tab === 'alerts' ? 'on' : ''} onClick={() => go('alerts')}>
+          <span className="nav-ic"><i className="ti ti-bell" />{unread > 0 && <span className="nav-badge">{unread}</span>}</span><span>Alerts</span>
         </button>
       </nav>
     </div>
