@@ -3,7 +3,7 @@ import type {
   RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc,
 } from './types';
 
-export const SEED_VERSION = 13;
+export const SEED_VERSION = 14;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -256,6 +256,22 @@ camps[0].photoAlbumUrl = 'https://photos.app.goo.gl/example-warrior-week';
 camps[0].logoUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><circle cx="60" cy="60" r="58" fill="#1f6f5c"/><path d="M60 22 L92 36 V62 C92 84 78 96 60 102 C42 96 28 84 28 62 V36 Z" fill="#fff"/><path d="M60 32 L82 42 V62 C82 78 72 88 60 93 C48 88 38 78 38 62 V42 Z" fill="#1f6f5c"/><path d="M60 46 L70 64 H50 Z" fill="#e08a3c"/></svg>`,
 );
+// ---- Roll call demo ----
+camps[0].captainsChatUrl = 'https://chat.whatsapp.com/example-warrior-captains';
+const capId = (name: string) => attendees.find((a) => a.campId === 'camp-ww' && a.name === name)?.id;
+const b1 = buses.find((b) => b.id === wBus1)!;
+const b2 = buses.find((b) => b.id === wBus2)!;
+b1.captainIds = [capId('Dan Rivera')].filter(Boolean) as string[];
+b1.groupName = 'Juniors & Sophomores';
+b1.trackingUrl = 'https://www.life360.com/example-bus-1';
+b2.captainIds = [capId('Tara Hill')].filter(Boolean) as string[];
+b2.groupName = 'Juniors & Sophomores';
+// Mid-stop state: Bus 1 has one rider not back on yet (orange); Bus 2 all aboard (green).
+attendees.forEach((a) => {
+  if (a.busId === wBus1) a.onBoard = a.name !== 'Eli Robinson';
+  if (a.busId === wBus2) a.onBoard = true;
+});
+
 const docs: CampDoc[] = [
   { id: 'doc-1', campId: 'camp-ww', title: 'Parent consent form', url: 'https://example.com/warrior-week-consent.pdf', external: true, fileType: 'pdf', audience: 'everyone', category: 'Forms' },
   { id: 'doc-2', campId: 'camp-ww', title: 'Packing list (printable)', url: 'https://example.com/warrior-week-packing.pdf', external: true, fileType: 'pdf', audience: 'everyone', category: 'For parents' },

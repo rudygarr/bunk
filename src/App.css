@@ -737,3 +737,58 @@
 .c-camp-logo { display: block; width: 72px; height: 72px; border-radius: 16px; object-fit: cover; margin: 0 auto 14px; border: 1px solid var(--border-2); }
 .camper-camp-logo { height: 30px; width: auto; border-radius: 7px; }
 .viewer-logo { display: block; width: 72px; height: 72px; border-radius: 16px; object-fit: cover; margin: 16px 0 4px; }
+
+/* ===== roll call ===== */
+.rc-group { margin-bottom: 18px; }
+.rc-group-h { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--text-3); margin: 6px 0 8px; }
+.rc-fleet { display: flex; flex-direction: column; gap: 8px; }
+.rc-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); cursor: pointer; }
+.rc-card.ready { border-color: color-mix(in srgb, var(--ok) 45%, transparent); background: var(--ok-tint); }
+.rc-card.warn { border-color: color-mix(in srgb, var(--warn) 50%, transparent); background: var(--warn-tint); }
+.rc-card.bad { border-color: color-mix(in srgb, var(--bad) 50%, transparent); background: var(--bad-tint); }
+.rc-card-main { flex: 1; min-width: 0; }
+.rc-card-name { display: block; font-weight: 600; font-size: 15px; }
+.rc-card-sub { display: block; font-size: 12.5px; color: var(--text-2); }
+.rc-card > .ti-chevron-right { color: var(--text-3); }
+.rc-busicon { position: relative; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--surface-2); color: var(--text-2); font-size: 19px; flex-shrink: 0; }
+.rc-busicon.lg { width: 44px; height: 44px; font-size: 24px; }
+.rc-card.ready .rc-busicon, .rc-bus-head.ready .rc-busicon { background: var(--ok); color: #fff; }
+.rc-card.warn .rc-busicon, .rc-bus-head.warn .rc-busicon { background: var(--warn); color: #fff; }
+.rc-card.bad .rc-busicon, .rc-bus-head.bad .rc-busicon { background: var(--bad); color: #fff; }
+.rc-busbadge { position: absolute; top: -6px; right: -6px; min-width: 19px; height: 19px; padding: 0 4px; border-radius: 999px; background: var(--bad); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; border: 2px solid var(--surface); }
+.rc-card.warn .rc-busbadge, .rc-bus-head.warn .rc-busbadge { background: var(--warn); }
+.rc-buscheck { position: absolute; top: -6px; right: -6px; width: 19px; height: 19px; border-radius: 999px; background: var(--ok); color: #fff; font-size: 12px; display: grid; place-items: center; border: 2px solid var(--surface); }
+/* detail */
+.rc-bus-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: var(--r-md); background: var(--surface-2); margin-bottom: 12px; }
+.rc-bus-id { display: flex; align-items: center; gap: 11px; }
+.rc-bus-name { font-weight: 700; font-size: 16px; }
+.rc-bus-sub { font-size: 12.5px; color: var(--text-3); }
+.rc-status { font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 999px; }
+.rc-status.idle { background: var(--surface); color: var(--text-3); }
+.rc-status.ready { background: var(--ok); color: #fff; }
+.rc-status.warn { background: var(--warn); color: #fff; }
+.rc-status.bad { background: var(--bad); color: #fff; }
+.rc-actions { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.rc-empty { display: inline-flex; align-items: center; gap: 6px; background: var(--bad); color: #fff; border: none; border-radius: var(--r-md); padding: 10px 15px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.rc-all { display: inline-flex; align-items: center; gap: 6px; background: var(--ok); color: #fff; border: none; border-radius: var(--r-md); padding: 10px 15px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.rc-track { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2); color: var(--text-1); border: 1px solid var(--border); border-radius: var(--r-md); padding: 10px 14px; font-size: 14px; text-decoration: none; }
+.rc-riders { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.rc-rider { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--border-2); border-radius: var(--r-md); background: var(--surface); cursor: pointer; text-align: left; }
+.rc-rider.on { background: var(--ok-tint); border-color: color-mix(in srgb, var(--ok) 30%, transparent); }
+.rc-rider.miss { background: var(--bad-tint); border-color: color-mix(in srgb, var(--bad) 35%, transparent); }
+.rc-rider-name { flex: 1; font-size: 14px; font-weight: 500; }
+.rc-rider > .ti { font-size: 20px; color: var(--border); }
+.rc-rider.on > .ti { color: var(--ok); }
+.rc-rider.miss > .ti { color: var(--bad); }
+.rc-msg { background: var(--surface-2); border-radius: var(--r-md); padding: 12px; }
+.rc-msg-h { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.rc-msg-h .ti { color: var(--amber); }
+.rc-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.rc-presets button { font-size: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 5px 11px; cursor: pointer; color: var(--text-2); }
+.rc-msg-row { display: flex; gap: 8px; }
+.rc-setup { margin-top: 14px; }
+.rc-setup-toggle { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; color: var(--text-2); font-size: 13.5px; cursor: pointer; padding: 4px 0; }
+.rc-cap-list, .rc-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.rc-cap { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.rc-cap.on { background: var(--amber-tint); border-color: color-mix(in srgb, var(--amber) 40%, transparent); color: var(--warn); }
+.rc-chat { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-2); }

@@ -55,7 +55,13 @@ interface Ctx {
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
   removeBus: (id: string) => void;
+  updateBus: (id: string, patch: Partial<Bus>) => void;
   assignBus: (attendeeId: string, busId: string | undefined) => void;
+  toggleCaptain: (busId: string, attendeeId: string) => void;
+  // Roll call
+  emptyBus: (busId: string) => void;
+  setOnBoard: (attendeeId: string, on: boolean) => void;
+  markAllAboard: (busId: string) => void;
   // cabins
   addCabin: (campId: string, cabin: { name: string; kind: CabinKind; beds?: number }) => void;
   removeCabin: (id: string) => void;
@@ -194,8 +200,33 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         attendees: d.attendees.map((a) => (a.busId === id ? { ...a, busId: undefined } : a)),
       }));
     },
+    updateBus(id, patch) {
+      commit((d) => ({ ...d, buses: d.buses.map((b) => (b.id === id ? { ...b, ...patch } : b)) }));
+    },
     assignBus(attendeeId, busId) {
       commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, busId } : a)) }));
+    },
+    toggleCaptain(busId, attendeeId) {
+      commit((d) => ({
+        ...d,
+        buses: d.buses.map((b) => {
+          if (b.id !== busId) return b;
+          const set = new Set(b.captainIds ?? []);
+          set.has(attendeeId) ? set.delete(attendeeId) : set.add(attendeeId);
+          return { ...b, captainIds: [...set] };
+        }),
+      }));
+    },
+    // Roll call: 'Empty bus' marks every rider off (so a captain re-counts after
+    // a stop); tapping a rider toggles them back on.
+    emptyBus(busId) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.busId === busId ? { ...a, onBoard: false } : a)) }));
+    },
+    setOnBoard(attendeeId, on) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, onBoard: on } : a)) }));
+    },
+    markAllAboard(busId) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.busId === busId ? { ...a, onBoard: true } : a)) }));
     },
     addCabin(campId, cabin) {
       const c: Cabin = { id: uid('cabin'), campId, name: cabin.name, kind: cabin.kind, beds: cabin.beds };

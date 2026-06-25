@@ -45,6 +45,7 @@ export interface Camp {
   contact?: string; // who to reach with questions
   kickoff?: string; // ISO datetime of the first departure — drives the countdown
   kickoffLabel?: string; // what happens at kickoff, e.g. "Seniors & Student Leadership depart"
+  captainsChatUrl?: string; // link-out to the bus captains' group chat (WhatsApp/iMessage)
   // Enabled modules. Undefined = legacy camp with everything on; an array means
   // only those features show (set in the setup wizard, editable in settings).
   features?: FeatureKey[];
@@ -129,6 +130,10 @@ export interface Attendee {
   health?: Health;
   // Day-of accountability — stamped when checked in at each stage (see lib/camps).
   checkIn?: Partial<Record<CheckStage, boolean>>;
+  // Roll-call state during the ride: true once a captain has counted them on
+  // board. 'Empty bus' clears it for everyone on the bus; undefined = not yet
+  // counted this round. (See lib/rollcall.)
+  onBoard?: boolean;
 }
 
 // Safety info the nurse and cabin leaders need at a glance. All optional; an
@@ -162,6 +167,9 @@ export interface Bus {
   capacity?: number;
   charterOrg?: string; // these are rental buses
   departInfo?: string;
+  captainIds?: string[]; // attendees who run roll call for this bus (1–5)
+  groupName?: string; // departure wave / band, e.g. "Seniors (Day 1)", "Staff"
+  trackingUrl?: string; // link-out to live location (Life360 etc.)
 }
 
 export interface Cabin {
