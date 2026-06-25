@@ -47,6 +47,11 @@ export interface Camp {
   // only those features show (set in the setup wizard, editable in settings).
   features?: FeatureKey[];
   photoAlbumUrl?: string; // link-out to an external shared album (iCloud/Google)
+  // Publish lifecycle (the per-camp pay-to-publish model). A camp is built free
+  // as a draft; publishing starts a 60-day live window.
+  published?: boolean;
+  publishedAt?: string; // ISO — start of the 60-day window
+  tier?: string; // billing tier id locked at publish
 }
 
 // A small group (discipleship/activity group) — a grouping alongside bus, cabin,

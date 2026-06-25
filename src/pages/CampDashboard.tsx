@@ -16,6 +16,8 @@ import SmallGroupPanel from '../components/SmallGroupPanel';
 import InfoPanel from '../components/InfoPanel';
 import PrintPackets from '../components/PrintPackets';
 import CampSettings from '../components/CampSettings';
+import PublishModal from '../components/PublishModal';
+import { daysLeft, isArchived, tierById } from '../lib/billing';
 import type { FeatureKey } from '../lib/types';
 
 type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'smallGroups' | 'roles' | 'attendance' | 'announce' | 'schedule' | 'photos' | 'teams' | 'info';
@@ -42,6 +44,7 @@ export default function CampDashboard() {
   const [tab, setTab] = useState<Tab>('overview');
   const [rosterFilter, setRosterFilter] = useState<'flagged' | undefined>(undefined);
   const [showSettings, setShowSettings] = useState(false);
+  const [showPublish, setShowPublish] = useState(false);
   const [copied, setCopied] = useState(false);
   const camp = campById(db, id ?? '');
   if (!camp) return <div className="empty" style={{ marginTop: 40 }}>Camp not found.</div>;
@@ -73,6 +76,15 @@ export default function CampDashboard() {
           <span><i className="ti ti-map-pin" /> {camp.location}</span>
         </div>
         {camp.blurb && <div className="camp-hero-blurb">{camp.blurb}</div>}
+        <div className="camp-status">
+          {!camp.published ? (
+            <button className="golive-btn" onClick={() => setShowPublish(true)}><i className="ti ti-rocket" /> Go live</button>
+          ) : isArchived(camp) ? (
+            <span className="status-pill archived"><i className="ti ti-archive" /> Archived · {tierById(camp.tier)?.label}</span>
+          ) : (
+            <span className="status-pill live"><span className="live-dot" /> Live · {daysLeft(camp.publishedAt)} days left · {tierById(camp.tier)?.label}</span>
+          )}
+        </div>
       </div>
 
       <div className="tabs">
@@ -99,6 +111,7 @@ export default function CampDashboard() {
       </div>
 
       {showSettings && <CampSettings camp={camp} onClose={() => setShowSettings(false)} />}
+      {showPublish && <PublishModal camp={camp} onClose={() => setShowPublish(false)} />}
     </>
   );
 }

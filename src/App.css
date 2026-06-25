@@ -627,3 +627,25 @@
 .viewer-pack-h { font-size: 12.5px; font-weight: 700; color: var(--text-2); margin-bottom: 3px; }
 .viewer-pack ul { margin: 0; padding-left: 20px; font-size: 13.5px; color: var(--text-2); }
 .viewer-foot { margin-top: 30px; text-align: center; font-size: 13px; color: var(--text-3); background: var(--pine-tint); border-radius: var(--r-md); padding: 14px; }
+
+/* ===== publish / billing ===== */
+.camp-status { margin-top: 12px; }
+.golive-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--amber); color: #fff; border: none; padding: 8px 16px; border-radius: var(--r-md); font-size: 14px; font-weight: 600; cursor: pointer; }
+.status-pill { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; padding: 6px 13px; border-radius: 999px; }
+.status-pill.live { background: var(--ok-tint); color: var(--ok); }
+.status-pill.archived { background: var(--surface-2); color: var(--text-3); }
+.live-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); }
+.card-pill { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; }
+.card-pill.live { background: var(--ok-tint); color: var(--ok); }
+.card-pill.live .live-dot { width: 6px; height: 6px; box-shadow: none; }
+.card-pill.draft { background: var(--surface-2); color: var(--text-3); }
+.pub-intro { font-size: 14px; line-height: 1.5; color: var(--text-2); }
+.pub-count { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-2); background: var(--surface-2); border-radius: var(--r-sm); padding: 8px 12px; margin: 14px 0; }
+.pub-tiers { display: flex; flex-direction: column; gap: 8px; }
+.pub-tier { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); cursor: pointer; }
+.pub-tier.on { border-color: var(--pine); background: var(--pine-tint); }
+.pub-tier-name { font-weight: 600; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
+.pub-tier-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--pine); background: color-mix(in srgb, var(--pine) 14%, transparent); padding: 1px 7px; border-radius: 999px; }
+.pub-tier-range { display: block; font-size: 12.5px; color: var(--text-3); margin-top: 2px; }
+.pub-tier-price { font-size: 19px; font-weight: 700; }
+.pub-foot { text-align: center; font-size: 12px; color: var(--text-3); margin-top: 10px; }

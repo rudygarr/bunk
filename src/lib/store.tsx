@@ -40,6 +40,7 @@ interface Ctx {
   removeTeam: (id: string) => void;
   assignTeam: (attendeeId: string, teamId: string | undefined) => void;
   adjustPoints: (teamId: string, delta: number) => void;
+  publishCamp: (id: string, tier: string) => void;
   addSmallGroup: (campId: string, g: { name: string; color: string; leaderName?: string }) => void;
   removeSmallGroup: (id: string) => void;
   updateSmallGroup: (id: string, patch: { name?: string; color?: string; leaderName?: string }) => void;
@@ -315,6 +316,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         campers.forEach((c, i) => map.set(c.id, teams[i % teams.length].id));
         return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, teamId: map.get(a.id) } : a)) };
       });
+    },
+    publishCamp(id, tier) {
+      commit((d) => ({ ...d, camps: d.camps.map((c) => (c.id === id ? { ...c, published: true, publishedAt: c.publishedAt ?? now(), tier } : c)) }));
     },
     addSmallGroup(campId, g) {
       const group: SmallGroup = { id: uid('grp'), campId, name: g.name, color: g.color, leaderName: g.leaderName };

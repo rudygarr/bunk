@@ -30,6 +30,7 @@ export default function Camps() {
               <div className="camp-card-body">
                 <div className="camp-card-top">
                   <span className="camp-card-name">{c.name}</span>
+                  {c.published ? <span className="card-pill live"><span className="live-dot" /> Live</span> : <span className="card-pill draft">Draft</span>}
                   {dleft > 0 && <span className="camp-card-cd">{dleft}d out</span>}
                 </div>
                 <div className="camp-card-meta"><i className="ti ti-calendar" /> {fmtRange(c.startDate, c.endDate)}</div>
