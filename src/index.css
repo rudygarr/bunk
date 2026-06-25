@@ -29,9 +29,21 @@
 
   --bg: #f6f8f6;
 
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  /* Type — matches the Steward app: native SF Pro for UI/headings, Montserrat
+     only for the wordmark. */
+  --font-display: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+  --font-brand: 'Montserrat', -apple-system, 'SF Pro Display', system-ui, sans-serif;
+
+  font-family: -apple-system, 'SF Pro Text', system-ui, BlinkMacSystemFont, sans-serif;
   color: var(--text-1);
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.022em;
+  font-weight: 600;
+  margin: 0;
 }
 
 @media (prefers-color-scheme: dark) {
