@@ -18,10 +18,11 @@ export default function Join() {
   const [contact, setContact] = useState('');
   const [grade, setGrade] = useState('');
   const [gender, setGender] = useState<Gender | ''>('');
+  const [friends, setFriends] = useState('');
 
   function submit() {
     if (!name.trim() || !camp) return;
-    invite(camp.id, { name: name.trim(), email: contact.trim() || undefined, kind: 'camper', role: 'Camper', status: 'accepted', grade: grade ? Number(grade) : undefined, gender: gender || undefined });
+    invite(camp.id, { name: name.trim(), email: contact.trim() || undefined, kind: 'camper', role: 'Camper', status: 'accepted', grade: grade ? Number(grade) : undefined, gender: gender || undefined, friends: friends.trim() || undefined });
     setDone(true);
   }
 
@@ -53,6 +54,9 @@ export default function Join() {
                   </select>
                 </label>
               </div>
+              <label className="flabel">Who do you want to bunk with? <span style={{ color: 'var(--text-3)', fontWeight: 400 }}>(optional)</span>
+                <input style={field} value={friends} onChange={(e) => setFriends(e.target.value)} placeholder="Friend name(s), comma-separated" />
+              </label>
               <button style={{ ...primaryBtn, marginTop: 6, opacity: name.trim() ? 1 : 0.5 }} disabled={!name.trim()} onClick={submit}>Sign me up</button>
             </div>
             <div className="rsvp-foot">No account needed — this just adds you to the camp roster.</div>
