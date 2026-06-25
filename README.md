@@ -1,6 +1,6 @@
-# 🏕️ Bunk — camp management, all in one place
+# 🏕️ CampHQ — camp management, all in one place
 
-A demo of **Bunk**, a mobile-first app for running overnight camps: rosters, buses,
+A demo of **CampHQ**, a mobile-first app for running overnight camps: rosters, buses,
 cabins, teams, crew roles, schedules, announcements, photos, and a camper-facing
 app — without stitching together three separate tools.
 

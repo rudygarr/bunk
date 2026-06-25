@@ -4,6 +4,7 @@ import { useStore } from '../lib/store';
 import { findCamperByContact } from '../lib/camper';
 import { campById } from '../lib/camps';
 import Logo from '../components/Logo';
+import Wordmark from '../components/Wordmark';
 import Countdown from '../components/Countdown';
 import { field } from '../components/Modal';
 import { fmtDate } from '../lib/format';
@@ -30,7 +31,7 @@ export default function Login() {
     <div className="login">
       <div className="login-card">
         <div className="login-mark"><Logo size={56} /></div>
-        <h1 className="login-title">Bunk</h1>
+        <h1 className="login-title"><Wordmark /></h1>
         <p className="login-tag">Run your camp — rosters, buses, cabins, and crew, all in one place.</p>
 
         {next && (

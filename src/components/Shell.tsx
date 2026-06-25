@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSession } from '../lib/session';
 import { initials } from '../lib/format';
 import Logo from './Logo';
+import Wordmark from './Wordmark';
 
 export default function Shell({ children }: { children: ReactNode }) {
   const nav = useNavigate();
@@ -12,7 +13,7 @@ export default function Shell({ children }: { children: ReactNode }) {
       <header className="topbar">
         <button className="brand" onClick={() => nav('/')}>
           <Logo />
-          <span className="brand-name">Bunk</span>
+          <span className="brand-name"><Wordmark /></span>
         </button>
         <div className="userchip" title={user.title}>
           <span className="avatar">{initials(user.name)}</span>

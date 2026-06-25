@@ -3,6 +3,7 @@ import { useStore } from '../lib/store';
 import { useSession } from '../lib/session';
 import { announcementsForCamper } from '../lib/announce';
 import Logo from '../components/Logo';
+import Wordmark from '../components/Wordmark';
 import CamperHome from './CamperHome';
 import CamperAlerts from './CamperAlerts';
 import CamperSchedule from './CamperSchedule';
@@ -11,7 +12,7 @@ import CamperInfo from './CamperInfo';
 
 type Tab = 'home' | 'schedule' | 'info' | 'photos' | 'alerts';
 
-// The camper-facing side of Bunk. A signed-in camper sees only their own camp.
+// The camper-facing side of CampHQ. A signed-in camper sees only their own camp.
 export default function CamperApp() {
   const { db } = useStore();
   const { camperId, signOut } = useSession();
@@ -31,7 +32,7 @@ export default function CamperApp() {
   return (
     <div className="camper">
       <header className="camper-top">
-        <div className="brand"><Logo size={24} /> <span className="brand-name">Bunk</span></div>
+        <div className="brand"><Logo size={24} /> <span className="brand-name"><Wordmark /></span></div>
         <button className="camper-out" onClick={signOut} title="Sign out"><i className="ti ti-logout" /></button>
       </header>
       <main className="camper-main">

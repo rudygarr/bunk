@@ -1,6 +1,6 @@
 {
-  "name": "Bunk — camp management",
-  "short_name": "Bunk",
+  "name": "CampHQ — camp management",
+  "short_name": "CampHQ",
   "description": "Run your camp — rosters, buses, cabins, teams, and a camper app, all in one place.",
   "start_url": "./",
   "scope": "./",

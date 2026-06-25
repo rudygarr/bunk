@@ -1,4 +1,4 @@
-// Bunk's data model. The top-level entity is a Camp; everything else hangs off
+// CampHQ's data model. The top-level entity is a Camp; everything else hangs off
 // it. This is a standalone product, so the camp — not a school "event" — is the
 // thing you open.
 

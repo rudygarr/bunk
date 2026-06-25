@@ -4,6 +4,7 @@ import { useStore } from '../lib/store';
 import { fmtRange } from '../lib/format';
 import { busOf, busLabel, cabinOf, roomOf, campById } from '../lib/camps';
 import Logo from '../components/Logo';
+import Wordmark from '../components/Wordmark';
 import type { RsvpStatus } from '../lib/types';
 
 // The public invite link — what a guest with no account opens from email.
@@ -19,7 +20,7 @@ export default function Rsvp() {
   return (
     <div className="rsvp-page">
       <div className="rsvp-card">
-        <div className="rsvp-brand"><Logo /> Bunk</div>
+        <div className="rsvp-brand"><Logo /> <Wordmark /></div>
         {!a || !camp ? (
           <div className="rsvp-gone">This invitation link is no longer valid.</div>
         ) : (

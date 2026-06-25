@@ -4,6 +4,7 @@ import { useStore } from '../lib/store';
 import { fmtRange } from '../lib/format';
 import { campById } from '../lib/camps';
 import Logo from '../components/Logo';
+import Wordmark from '../components/Wordmark';
 import { field, primaryBtn } from '../components/Modal';
 import type { Gender } from '../lib/types';
 
@@ -27,7 +28,7 @@ export default function Join() {
   return (
     <div className="rsvp-page">
       <div className="rsvp-card">
-        <div className="rsvp-brand"><Logo /> Bunk</div>
+        <div className="rsvp-brand"><Logo /> <Wordmark /></div>
         {!camp ? (
           <div className="rsvp-gone">This sign-up link is no longer valid.</div>
         ) : done ? (

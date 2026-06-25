@@ -1,4 +1,4 @@
-/* ===== Bunk ===== */
+/* ===== CampHQ ===== */
 .boot { display: grid; place-items: center; height: 100vh; color: var(--text-3); }
 
 /* avatars / chips shared */
@@ -511,3 +511,5 @@
 .cd-sep { font-size: 22px; font-weight: 700; color: color-mix(in srgb, var(--pine) 45%, transparent); align-self: flex-start; margin-top: 6px; }
 .cd-live { text-align: center; font-weight: 600; color: var(--pine); display: flex; align-items: center; justify-content: center; gap: 7px; padding: 6px; }
 .login-cd-when { text-align: center; font-size: 11.5px; color: var(--text-3); margin-top: 11px; }
+
+.wm-hq { color: var(--amber); }

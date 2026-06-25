@@ -1,4 +1,4 @@
-// Bunk mark — a simple tent/cabin in the brand pine. Inline SVG so it themes
+// CampHQ mark — a simple tent/cabin in the brand pine. Inline SVG so it themes
 // with CSS and ships in the bundle (no asset round-trip).
 export default function Logo({ size = 26 }: { size?: number }) {
   return (
