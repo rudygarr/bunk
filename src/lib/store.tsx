@@ -42,6 +42,9 @@ interface Ctx {
   adjustPoints: (teamId: string, delta: number) => void;
   publishCamp: (id: string, tier: string) => void;
   duplicateCamp: (id: string) => string;
+  addMapPin: (campId: string, x: number, y: number, label: string) => void;
+  updateMapPin: (campId: string, pinId: string, label: string) => void;
+  removeMapPin: (campId: string, pinId: string) => void;
   addSmallGroup: (campId: string, g: { name: string; color: string; leaderName?: string }) => void;
   removeSmallGroup: (id: string) => void;
   updateSmallGroup: (id: string, patch: { name?: string; color?: string; leaderName?: string }) => void;
@@ -346,6 +349,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         };
       });
       return newId;
+    },
+    addMapPin(campId, x, y, label) {
+      commit((d) => ({ ...d, camps: d.camps.map((c) => (c.id === campId ? { ...c, mapPins: [...(c.mapPins ?? []), { id: uid('pin'), x, y, label }] } : c)) }));
+    },
+    updateMapPin(campId, pinId, label) {
+      commit((d) => ({ ...d, camps: d.camps.map((c) => (c.id === campId ? { ...c, mapPins: (c.mapPins ?? []).map((p) => (p.id === pinId ? { ...p, label } : p)) } : c)) }));
+    },
+    removeMapPin(campId, pinId) {
+      commit((d) => ({ ...d, camps: d.camps.map((c) => (c.id === campId ? { ...c, mapPins: (c.mapPins ?? []).filter((p) => p.id !== pinId) } : c)) }));
     },
     publishCamp(id, tier) {
       commit((d) => ({ ...d, camps: d.camps.map((c) => (c.id === id ? { ...c, published: true, publishedAt: c.publishedAt ?? now(), tier } : c)) }));

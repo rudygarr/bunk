@@ -3,6 +3,7 @@ import { useStore } from '../lib/store';
 import { packingByCategory } from '../lib/packing';
 import { downscaleImage } from '../lib/photos';
 import { field } from './Modal';
+import CampMap from './CampMap';
 import type { Camp } from '../lib/types';
 
 export default function InfoPanel({ camp }: { camp: Camp }) {
@@ -40,8 +41,8 @@ export default function InfoPanel({ camp }: { camp: Camp }) {
         <div className="info-block-h">Camp map</div>
         {liveCamp.mapUrl ? (
           <div className="info-map">
-            <img src={liveCamp.mapUrl} alt="Camp map" />
-            <div className="info-map-actions">
+            <CampMap camp={camp} editable />
+            <div className="info-map-actions" style={{ marginTop: 8 }}>
               <button className="btn-soft sm" onClick={() => fileRef.current?.click()}><i className="ti ti-replace" /> Replace</button>
               <button className="btn-soft sm" onClick={() => updateCamp(camp.id, { mapUrl: undefined })}><i className="ti ti-trash" /> Remove</button>
             </div>

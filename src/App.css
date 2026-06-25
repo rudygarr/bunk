@@ -658,3 +658,16 @@
 .demo-reset-link:hover { color: var(--text-2); }
 .demo-reset-yes { background: var(--bad); color: #fff; border: none; border-radius: var(--r-sm); padding: 4px 11px; cursor: pointer; font-size: 13px; font-weight: 600; }
 .demo-reset-no { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 4px 11px; cursor: pointer; font-size: 13px; color: var(--text-2); }
+
+/* ===== camp map pins ===== */
+.cmap-img { position: relative; line-height: 0; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--border-2); }
+.cmap-img img { width: 100%; display: block; }
+.cmap-img.placing { cursor: crosshair; outline: 2px dashed var(--pine); outline-offset: -2px; }
+.cmap-pin { position: absolute; transform: translate(-50%, -50%); width: 22px; height: 22px; border-radius: 999px; background: var(--pine); color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.btn-soft.sm.on { background: var(--pine-tint); color: var(--pine); border-color: color-mix(in srgb, var(--pine) 35%, transparent); }
+.cmap-legend { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.cmap-leg-row { display: flex; align-items: center; gap: 8px; }
+.cmap-leg-n { width: 20px; height: 20px; border-radius: 999px; background: var(--pine); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0; }
+.cmap-leg-label { font-size: 13.5px; }
+.cmap-leg-input { flex: 1; border: 1px solid var(--border-2); background: var(--surface-2); border-radius: var(--r-sm); padding: 5px 9px; font-size: 13.5px; color: var(--text-1); font-family: inherit; }
+.cmap-leg-x { border: none; background: none; color: var(--text-3); cursor: pointer; }

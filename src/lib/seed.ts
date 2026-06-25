@@ -3,7 +3,7 @@ import type {
   RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup,
 } from './types';
 
-export const SEED_VERSION = 11;
+export const SEED_VERSION = 12;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -252,6 +252,12 @@ camps[0].mapUrl = campMap;
 camps[0].departInfo = 'Check-in at the Student Activities Center (SAC). Buses depart by grade — see the schedule for your group’s time.';
 camps[0].contact = 'Rudy Garrido · Director of Student Life';
 camps[0].photoAlbumUrl = 'https://photos.app.goo.gl/example-warrior-week';
+camps[0].mapPins = [
+  { id: 'pin-1', x: 30, y: 40, label: 'Dining hall' },
+  { id: 'pin-2', x: 62, y: 28, label: 'Cabins' },
+  { id: 'pin-3', x: 48, y: 70, label: 'Waterfront' },
+  { id: 'pin-4', x: 75, y: 58, label: 'Worship pavilion' },
+];
 
 export function buildSeed(): Database {
   return {

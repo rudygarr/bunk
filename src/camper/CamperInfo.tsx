@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useStore } from '../lib/store';
 import { campById } from '../lib/camps';
 import { packingByCategory } from '../lib/packing';
+import CampMap from '../components/CampMap';
 import { fmtRange } from '../lib/format';
 import type { Attendee } from '../lib/types';
 
@@ -33,10 +34,8 @@ export default function CamperInfo({ me }: { me: Attendee }) {
       {camp.mapUrl && (
         <div className="c-card">
           <div className="c-card-h"><i className="ti ti-map-2" /> Camp map</div>
-          <button className="c-map-btn" onClick={() => setZoom(true)}>
-            <img src={camp.mapUrl} alt="Camp map" />
-            <span className="c-map-zoom"><i className="ti ti-zoom-in" /> Tap to enlarge</span>
-          </button>
+          <CampMap camp={camp} />
+          <button className="btn-soft sm" style={{ marginTop: 8 }} onClick={() => setZoom(true)}><i className="ti ti-zoom-in" /> Enlarge</button>
         </div>
       )}
 

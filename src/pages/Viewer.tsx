@@ -8,6 +8,7 @@ import { packingByCategory } from '../lib/packing';
 import { fmtRange, fmtDate } from '../lib/format';
 import Logo from '../components/Logo';
 import Wordmark from '../components/Wordmark';
+import CampMap from '../components/CampMap';
 
 // The public, no-account camp view reached by a code/link. PII-free by design:
 // only camp-wide info shows — schedule, map, packing, all-camp announcements,
@@ -82,7 +83,7 @@ export default function Viewer() {
       {camp.mapUrl && (
         <section className="viewer-sec">
           <h2><i className="ti ti-map-2" /> Camp map</h2>
-          <img className="viewer-map" src={camp.mapUrl} alt="Camp map" />
+          <CampMap camp={camp} />
         </section>
       )}
 

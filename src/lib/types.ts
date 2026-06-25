@@ -39,6 +39,7 @@ export interface Camp {
   blurb?: string;
   accent?: string; // a brand color per camp
   mapUrl?: string; // camp map image (data URL in the demo)
+  mapPins?: MapPin[]; // labeled markers placed on the map
   departInfo?: string; // staggered departure / check-in details
   contact?: string; // who to reach with questions
   kickoff?: string; // ISO datetime of the first departure — drives the countdown
@@ -52,6 +53,15 @@ export interface Camp {
   published?: boolean;
   publishedAt?: string; // ISO — start of the 60-day window
   tier?: string; // billing tier id locked at publish
+}
+
+// A labeled marker on the camp map. x/y are percentages (0–100) of the image,
+// so they stay correct at any display size.
+export interface MapPin {
+  id: string;
+  x: number;
+  y: number;
+  label: string;
 }
 
 // A small group (discipleship/activity group) — a grouping alongside bus, cabin,
