@@ -30,6 +30,7 @@ export default function Join() {
     <div className="rsvp-page">
       <div className="rsvp-card">
         <div className="rsvp-brand"><Logo /> <Wordmark /></div>
+        {camp?.logoUrl && <img className="rsvp-logo" src={camp.logoUrl} alt={`${camp.name} logo`} />}
         {!camp ? (
           <div className="rsvp-gone">This sign-up link is no longer valid.</div>
         ) : done ? (

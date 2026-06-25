@@ -21,6 +21,7 @@ export default function Rsvp() {
     <div className="rsvp-page">
       <div className="rsvp-card">
         <div className="rsvp-brand"><Logo /> <Wordmark /></div>
+        {camp?.logoUrl && <img className="rsvp-logo" src={camp.logoUrl} alt={`${camp.name} logo`} />}
         {!a || !camp ? (
           <div className="rsvp-gone">This invitation link is no longer valid.</div>
         ) : (

@@ -792,3 +792,6 @@
 .rc-cap { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
 .rc-cap.on { background: var(--amber-tint); border-color: color-mix(in srgb, var(--amber) 40%, transparent); color: var(--warn); }
 .rc-chat { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-2); }
+
+/* camp logo on public pages */
+.rsvp-logo { display: block; max-width: 120px; max-height: 72px; margin: 4px auto 14px; object-fit: contain; }
