@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
 import { initials } from '../lib/format';
-import { attendeesOf, rsvp, isFlagged } from '../lib/camps';
+import { attendeesOf, rsvp, isFlagged, busOf, cabinOf, roomOf, smallGroupOf } from '../lib/camps';
 import type { Camp, Attendee, RsvpStatus, AttendeeKind } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
 import AttendeeModal from './AttendeeModal';
@@ -24,12 +24,31 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
   const [showInvite, setShowInvite] = useState(false);
   const [open, setOpen] = useState<Attendee | null>(null);
   const [filter, setFilter] = useState<AttendeeKind | 'all' | 'flagged'>(initialFilter ?? 'all');
-  const list = attendeesOf(db, camp.id).filter((a) => filter === 'all' ? true : filter === 'flagged' ? isFlagged(a) : a.kind === filter);
+  const [q, setQ] = useState('');
+  const list = attendeesOf(db, camp.id)
+    .filter((a) => filter === 'all' ? true : filter === 'flagged' ? isFlagged(a) : a.kind === filter)
+    .filter((a) => q.trim() === '' || a.name.toLowerCase().includes(q.toLowerCase()));
   const r = rsvp(db, camp.id);
 
   function copyLink(a: Attendee) {
     const url = `${location.origin}${location.pathname}#/rsvp/${a.id}`;
     navigator.clipboard?.writeText(url).catch(() => {});
+  }
+
+  function exportCsv() {
+    const esc = (v: unknown) => { const s = (v ?? '').toString(); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+    const headers = ['Name', 'Email', 'Type', 'Role', 'Grade', 'Gender', 'Bus', 'Cabin', 'Room', 'Team', 'Small group', 'RSVP', 'Allergies', 'Meds', 'Dietary', 'Emergency contact', 'Emergency phone'];
+    const rows = attendeesOf(db, camp.id).map((a) => [
+      a.name, a.email, a.kind, a.role, a.grade, a.gender,
+      busOf(db, a)?.name, cabinOf(db, a)?.name, roomOf(db, a)?.name,
+      db.teams.find((t) => t.id === a.teamId)?.name, smallGroupOf(db, a)?.name, a.status,
+      a.health?.allergies, a.health?.meds, a.health?.dietary, a.health?.emergencyName, a.health?.emergencyPhone,
+    ].map(esc).join(','));
+    const csv = [headers.join(','), ...rows].join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    const link = document.createElement('a');
+    link.href = url; link.download = `${camp.name.replace(/\s+/g, '-')}-roster.csv`; link.click();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -48,6 +67,15 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
         <button className={filter === 'all' ? 'on' : ''} onClick={() => setFilter('all')}>All</button>
         {KINDS.map((k) => <button key={k.key} className={filter === k.key ? 'on' : ''} onClick={() => setFilter(k.key)}>{k.label}</button>)}
         <button className={'flag' + (filter === 'flagged' ? ' on' : '')} onClick={() => setFilter('flagged')}><i className="ti ti-medical-cross" /> Medical</button>
+      </div>
+
+      <div className="roster-tools">
+        <div className="roster-search">
+          <i className="ti ti-search" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name…" />
+          {q && <button onClick={() => setQ('')}><i className="ti ti-x" /></button>}
+        </div>
+        <button className="btn-soft sm" onClick={exportCsv} title="Download roster as CSV"><i className="ti ti-download" /> Export</button>
       </div>
 
       <div className="rows">

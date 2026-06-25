@@ -687,3 +687,10 @@
 .setup-step > .ti:first-child { font-size: 18px; color: var(--border); }
 .setup-step.done > .ti:first-child { color: var(--ok); }
 .setup-go { margin-left: auto; color: var(--text-3); font-size: 15px; }
+
+/* ===== roster tools ===== */
+.roster-tools { display: flex; gap: 8px; margin: 10px 0 6px; }
+.roster-search { flex: 1; display: flex; align-items: center; gap: 7px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: var(--r-md); padding: 0 11px; }
+.roster-search .ti { color: var(--text-3); font-size: 16px; }
+.roster-search input { flex: 1; border: none; background: none; padding: 9px 0; font-size: 14px; color: var(--text-1); font-family: inherit; outline: none; }
+.roster-search button { border: none; background: none; color: var(--text-3); cursor: pointer; padding: 0; display: grid; place-items: center; }
