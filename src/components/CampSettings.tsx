@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { FEATURES, DEFAULT_FEATURES } from '../lib/camps';
 import Modal from './Modal';
@@ -6,7 +7,8 @@ import type { Camp, FeatureKey } from '../lib/types';
 
 // Add or remove features after setup. Mirrors the wizard's feature step.
 export default function CampSettings({ camp, onClose }: { camp: Camp; onClose: () => void }) {
-  const { updateCamp } = useStore();
+  const { updateCamp, duplicateCamp } = useStore();
+  const nav = useNavigate();
   const [features, setFeatures] = useState<FeatureKey[]>(camp.features ?? FEATURES.map((f) => f.key));
   const toggle = (k: FeatureKey) => setFeatures((f) => (f.includes(k) ? f.filter((x) => x !== k) : [...f, k]));
 
@@ -32,6 +34,12 @@ export default function CampSettings({ camp, onClose }: { camp: Camp; onClose: (
       </div>
       <button className="login-btn" style={{ marginTop: 14 }} onClick={save}><i className="ti ti-check" /> Save</button>
       <button className="login-back" onClick={() => setFeatures(DEFAULT_FEATURES)} style={{ marginTop: 8 }}>Reset to defaults</button>
+
+      <div className="set-divider" />
+      <button className="btn-soft" style={{ width: '100%', justifyContent: 'center' }} onClick={() => { const newId = duplicateCamp(camp.id); onClose(); nav('/camp/' + newId); }}>
+        <i className="ti ti-copy" /> Duplicate for next year
+      </button>
+      <div className="pub-foot" style={{ marginTop: 6 }}>Copies buses, cabins, teams, groups, roles &amp; packing — not the roster.</div>
     </Modal>
   );
 }

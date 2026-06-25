@@ -41,6 +41,7 @@ interface Ctx {
   assignTeam: (attendeeId: string, teamId: string | undefined) => void;
   adjustPoints: (teamId: string, delta: number) => void;
   publishCamp: (id: string, tier: string) => void;
+  duplicateCamp: (id: string) => string;
   addSmallGroup: (campId: string, g: { name: string; color: string; leaderName?: string }) => void;
   removeSmallGroup: (id: string) => void;
   updateSmallGroup: (id: string, patch: { name?: string; color?: string; leaderName?: string }) => void;
@@ -316,6 +317,35 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         campers.forEach((c, i) => map.set(c.id, teams[i % teams.length].id));
         return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, teamId: map.get(a.id) } : a)) };
       });
+    },
+    // Clone a camp's reusable structure for next year — buses, cabins+rooms,
+    // teams (points reset), small groups, roles+shifts, packing, map, links —
+    // but NOT the roster, schedule dates, announcements, or publish state.
+    duplicateCamp(id) {
+      let newId = '';
+      commit((d) => {
+        const src = d.camps.find((c) => c.id === id);
+        if (!src) return d;
+        newId = uid('camp');
+        const camp: Camp = { ...src, id: newId, name: `${src.name} (copy)`, published: false, publishedAt: undefined, tier: undefined };
+        const newBuses = d.buses.filter((b) => b.campId === id).map((b) => ({ ...b, id: uid('bus'), campId: newId }));
+        const cabinMap = new Map<string, string>();
+        const newCabins = d.cabins.filter((c) => c.campId === id).map((c) => { const nid = uid('cabin'); cabinMap.set(c.id, nid); return { ...c, id: nid, campId: newId }; });
+        const newRooms = d.cabinRooms.filter((r) => cabinMap.has(r.cabinId)).map((r) => ({ ...r, id: uid('room'), cabinId: cabinMap.get(r.cabinId)! }));
+        const newTeams = d.teams.filter((t) => t.campId === id).map((t) => ({ ...t, id: uid('team'), campId: newId, points: 0 }));
+        const newGroups = d.smallGroups.filter((g) => g.campId === id).map((g) => ({ ...g, id: uid('grp'), campId: newId }));
+        const roleMap = new Map<string, string>();
+        const newRoles = d.roles.filter((r) => r.campId === id).map((r) => { const nid = uid('role'); roleMap.set(r.id, nid); return { ...r, id: nid, campId: newId }; });
+        const newShifts = d.shifts.filter((s) => roleMap.has(s.roleId)).map((s) => ({ ...s, id: uid('shift'), roleId: roleMap.get(s.roleId)! }));
+        const newPacking = d.packing.filter((p) => p.campId === id).map((p) => ({ ...p, id: uid('pk'), campId: newId }));
+        return {
+          ...d, camps: [...d.camps, camp],
+          buses: [...d.buses, ...newBuses], cabins: [...d.cabins, ...newCabins], cabinRooms: [...d.cabinRooms, ...newRooms],
+          teams: [...d.teams, ...newTeams], smallGroups: [...d.smallGroups, ...newGroups],
+          roles: [...d.roles, ...newRoles], shifts: [...d.shifts, ...newShifts], packing: [...d.packing, ...newPacking],
+        };
+      });
+      return newId;
     },
     publishCamp(id, tier) {
       commit((d) => ({ ...d, camps: d.camps.map((c) => (c.id === id ? { ...c, published: true, publishedAt: c.publishedAt ?? now(), tier } : c)) }));
