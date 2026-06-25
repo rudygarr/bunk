@@ -671,3 +671,19 @@
 .cmap-leg-label { font-size: 13.5px; }
 .cmap-leg-input { flex: 1; border: 1px solid var(--border-2); background: var(--surface-2); border-radius: var(--r-sm); padding: 5px 9px; font-size: 13.5px; color: var(--text-1); font-family: inherit; }
 .cmap-leg-x { border: none; background: none; color: var(--text-3); cursor: pointer; }
+
+/* ===== setup progress checklist ===== */
+.setup { background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--r-lg); padding: 16px; margin-bottom: 16px; }
+.setup-head { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14.5px; }
+.setup-head .ti { color: var(--amber); margin-right: 6px; }
+.setup-count { font-size: 12px; font-weight: 700; color: var(--pine); background: var(--pine-tint); padding: 2px 9px; border-radius: 999px; }
+.setup-bar { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin: 10px 0 12px; }
+.setup-bar span { display: block; height: 100%; background: var(--pine); border-radius: 999px; transition: width .3s; }
+.setup-steps { display: flex; flex-direction: column; gap: 2px; }
+.setup-step { display: flex; align-items: center; gap: 9px; padding: 7px 6px; border: none; background: none; cursor: pointer; text-align: left; font-size: 13.5px; color: var(--text-1); border-radius: var(--r-sm); }
+.setup-step:hover { background: var(--surface-2); }
+.setup-step.done { color: var(--text-3); }
+.setup-step.done span { text-decoration: line-through; }
+.setup-step > .ti:first-child { font-size: 18px; color: var(--border); }
+.setup-step.done > .ti:first-child { color: var(--ok); }
+.setup-go { margin-left: auto; color: var(--text-3); font-size: 15px; }

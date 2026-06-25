@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { fmtRange } from '../lib/format';
-import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps, flaggedCount, checkedCount, hasFeature } from '../lib/camps';
+import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps, flaggedCount, checkedCount, hasFeature, setupSteps } from '../lib/camps';
 import RosterPanel from '../components/RosterPanel';
 import BusPanel from '../components/BusPanel';
 import CabinPanel from '../components/CabinPanel';
@@ -96,7 +96,7 @@ export default function CampDashboard() {
       </div>
 
       <div className="tab-body">
-        {activeTab === 'overview' && <Overview camp={camp} go={go} />}
+        {activeTab === 'overview' && <Overview camp={camp} go={go} openPublish={() => setShowPublish(true)} />}
         {activeTab === 'roster' && <RosterPanel camp={camp} initialFilter={rosterFilter} />}
         {activeTab === 'buses' && <BusPanel camp={camp} />}
         {activeTab === 'cabins' && <CabinPanel camp={camp} />}
@@ -116,8 +116,10 @@ export default function CampDashboard() {
   );
 }
 
-function Overview({ camp, go }: { camp: import('../lib/types').Camp; go: (t: Tab, filter?: 'flagged') => void }) {
+function Overview({ camp, go, openPublish }: { camp: import('../lib/types').Camp; go: (t: Tab, filter?: 'flagged') => void; openPublish: () => void }) {
   const { db } = useStore();
+  const steps = setupSteps(db, camp);
+  const doneCount = steps.filter((s) => s.done).length;
   const r = rsvp(db, camp.id);
   const att = attendeesOf(db, camp.id);
   const buses = busesOf(db, camp.id);
@@ -132,6 +134,25 @@ function Overview({ camp, go }: { camp: import('../lib/types').Camp; go: (t: Tab
 
   return (
     <div className="ov">
+      {doneCount < steps.length && (
+        <div className="setup">
+          <div className="setup-head">
+            <span><i className="ti ti-rocket" /> Setup progress</span>
+            <span className="setup-count">{doneCount}/{steps.length}</span>
+          </div>
+          <div className="setup-bar"><span style={{ width: `${(doneCount / steps.length) * 100}%` }} /></div>
+          <div className="setup-steps">
+            {steps.map((s) => (
+              <button key={s.key} className={'setup-step' + (s.done ? ' done' : '')} onClick={() => (s.publish ? openPublish() : go(s.tab as Tab))}>
+                <i className={'ti ' + (s.done ? 'ti-circle-check-filled' : 'ti-circle')} />
+                <span>{s.label}</span>
+                {!s.done && <i className="ti ti-chevron-right setup-go" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="ov-grid">
         <button className="stat" onClick={() => go('roster')}>
           <div className="stat-top"><span>Attendees</span><i className="ti ti-users" /></div>

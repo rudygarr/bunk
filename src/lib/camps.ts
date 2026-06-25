@@ -148,6 +148,28 @@ export function campById(db: Database, id: string): Camp | undefined {
   return db.camps.find((c) => c.id === id);
 }
 
+// ---- Setup progress ----
+// A data-derived onboarding checklist, gated to the camp's enabled features.
+// `publish` steps trigger the publish flow rather than a tab.
+export interface SetupStep { key: string; label: string; done: boolean; tab?: string; publish?: boolean }
+export function setupSteps(db: Database, camp: Camp): SetupStep[] {
+  const att = attendeesOf(db, camp.id);
+  const housed = att.some((a) => a.kind === 'camper' && a.cabinId);
+  const all: (SetupStep & { feature?: FeatureKey })[] = [
+    { key: 'people', label: 'Invite or import people', done: att.length > 0, tab: 'roster' },
+    { key: 'buses', label: 'Charter your buses', done: busesOf(db, camp.id).length > 0, tab: 'buses', feature: 'buses' },
+    { key: 'cabins', label: 'Set up cabins', done: cabinsOf(db, camp.id).length > 0, tab: 'cabins', feature: 'cabins' },
+    { key: 'housed', label: 'Assign campers to cabins', done: housed, tab: 'cabins', feature: 'cabins' },
+    { key: 'groups', label: 'Create small groups', done: smallGroupsOf(db, camp.id).length > 0, tab: 'smallGroups', feature: 'smallGroups' },
+    { key: 'teams', label: 'Create teams', done: db.teams.some((t) => t.campId === camp.id), tab: 'teams', feature: 'teams' },
+    { key: 'roles', label: 'Assign crew roles', done: rolesOf(db, camp.id).length > 0, tab: 'roles', feature: 'roles' },
+    { key: 'schedule', label: 'Build the daily schedule', done: (db.schedule ?? []).some((s) => s.campId === camp.id), tab: 'schedule', feature: 'schedule' },
+    { key: 'map', label: 'Add the camp map', done: !!camp.mapUrl, tab: 'info', feature: 'info' },
+    { key: 'publish', label: 'Publish & go live', done: !!camp.published, publish: true },
+  ];
+  return all.filter((s) => !s.feature || hasFeature(camp, s.feature));
+}
+
 // ---- Small groups ----
 export function smallGroupsOf(db: Database, campId: string): SmallGroup[] {
   return db.smallGroups.filter((g) => g.campId === campId);
