@@ -7,6 +7,12 @@ export type AttendeeKind = 'camper' | 'staff' | 'parent' | 'guest';
 export type CabinKind = 'student' | 'staff' | 'parent' | 'guest';
 export type Gender = 'male' | 'female' | 'other';
 
+// Modular features an organizer turns on per camp (in the setup wizard, and
+// editable later). Roster + Overview are always on, so they aren't listed here.
+export type FeatureKey =
+  | 'buses' | 'cabins' | 'smallGroups' | 'teams' | 'roles'
+  | 'schedule' | 'announce' | 'photos' | 'info' | 'attendance';
+
 // A known person in the directory you can invite from (vs. an ad-hoc email).
 export interface Person {
   id: string;
@@ -37,6 +43,20 @@ export interface Camp {
   contact?: string; // who to reach with questions
   kickoff?: string; // ISO datetime of the first departure — drives the countdown
   kickoffLabel?: string; // what happens at kickoff, e.g. "Seniors & Student Leadership depart"
+  // Enabled modules. Undefined = legacy camp with everything on; an array means
+  // only those features show (set in the setup wizard, editable in settings).
+  features?: FeatureKey[];
+  photoAlbumUrl?: string; // link-out to an external shared album (iCloud/Google)
+}
+
+// A small group (discipleship/activity group) — a grouping alongside bus, cabin,
+// and team. Campers belong to one; a leader runs it.
+export interface SmallGroup {
+  id: string;
+  campId: string;
+  name: string;
+  color: string;
+  leaderName?: string;
 }
 
 // One line on a camp's packing checklist, grouped by category.
@@ -68,6 +88,7 @@ export interface Attendee {
   cabinRoomId?: string;
   cabinLeader?: boolean;
   teamId?: string; // competitive team (Warrior Week-style games)
+  smallGroupId?: string; // discipleship / activity small group
   // Inputs the auto-fill algorithm sorts on (all optional).
   grade?: number; // school grade / age band
   gender?: Gender; // for gender-specific cabins
@@ -198,6 +219,7 @@ export interface Database {
   camps: Camp[];
   attendees: Attendee[];
   teams: Team[];
+  smallGroups: SmallGroup[];
   announcements: Announcement[];
   schedule: ScheduleItem[];
   photos: Photo[];

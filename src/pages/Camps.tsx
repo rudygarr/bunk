@@ -1,14 +1,11 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { fmtRange, daysUntil } from '../lib/format';
 import { attendeesOf, rsvp, coverageGaps } from '../lib/camps';
-import Modal, { field, primaryBtn } from '../components/Modal';
 
 export default function Camps() {
   const nav = useNavigate();
   const { db } = useStore();
-  const [showNew, setShowNew] = useState(false);
   const camps = [...db.camps].sort((a, b) => a.startDate.localeCompare(b.startDate));
 
   return (
@@ -18,7 +15,7 @@ export default function Camps() {
           <h1 className="page-h">Your camps</h1>
           <div className="page-sub">Everything for each camp — who's coming, which bus, which cabin, and who's on duty.</div>
         </div>
-        <button className="btn-primary" onClick={() => setShowNew(true)}><i className="ti ti-plus" /> New camp</button>
+        <button className="btn-primary" onClick={() => nav('/new')}><i className="ti ti-plus" /> New camp</button>
       </div>
 
       <div className="camp-grid">
@@ -48,32 +45,6 @@ export default function Camps() {
           );
         })}
       </div>
-
-      {showNew && <NewCampModal onClose={() => setShowNew(false)} onCreate={(id) => { setShowNew(false); nav('/camp/' + id); }} />}
     </>
-  );
-}
-
-function NewCampModal({ onClose, onCreate }: { onClose: () => void; onCreate: (id: string) => void }) {
-  const { addCamp } = useStore();
-  const [name, setName] = useState('');
-  const [location, setLocation] = useState('');
-  const [start, setStart] = useState('');
-  const [end, setEnd] = useState('');
-  function save() {
-    if (!name.trim()) return;
-    const c = addCamp({ name: name.trim(), location: location.trim(), startDate: start || '2026-06-01', endDate: end || start || '2026-06-01', organizer: 'You', accent: '#1f6f5c' });
-    onCreate(c.id);
-  }
-  return (
-    <Modal title="New camp" onClose={onClose}>
-      <label className="flabel">Camp name<input style={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="Summer Adventure Camp" autoFocus /></label>
-      <label className="flabel">Location<input style={field} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Pine Valley Retreat" /></label>
-      <div style={{ display: 'flex', gap: 10 }}>
-        <label className="flabel" style={{ flex: 1 }}>Start<input type="date" style={{ ...field, appearance: 'auto' }} value={start} onChange={(e) => setStart(e.target.value)} /></label>
-        <label className="flabel" style={{ flex: 1 }}>End<input type="date" style={{ ...field, appearance: 'auto' }} value={end} onChange={(e) => setEnd(e.target.value)} /></label>
-      </div>
-      <button style={{ ...primaryBtn, marginTop: 14, opacity: name.trim() ? 1 : 0.5 }} disabled={!name.trim()} onClick={save}>Create camp</button>
-    </Modal>
   );
 }

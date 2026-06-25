@@ -1,4 +1,26 @@
-import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty, CheckStage } from './types';
+import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty, CheckStage, FeatureKey, SmallGroup } from './types';
+
+// ---- Features ----
+// Every toggleable module, in the order they appear in the wizard and dashboard.
+// `core` features default on for a new camp; the rest are opt-in.
+export const FEATURES: { key: FeatureKey; label: string; icon: string; desc: string; core?: boolean }[] = [
+  { key: 'buses', label: 'Buses', icon: 'ti-bus', desc: 'Charter buses with rosters & departure times', core: true },
+  { key: 'cabins', label: 'Cabins', icon: 'ti-home', desc: 'Lodging with beds, rooms & cabin leaders', core: true },
+  { key: 'smallGroups', label: 'Small groups', icon: 'ti-users-group', desc: 'Discipleship / activity groups with leaders' },
+  { key: 'teams', label: 'Teams', icon: 'ti-flag', desc: 'Competitive teams with a points standings board' },
+  { key: 'roles', label: 'Crew roles', icon: 'ti-clipboard-check', desc: 'Assign adults to jobs & shifts (nurse, kitchen…)' },
+  { key: 'schedule', label: 'Daily schedule', icon: 'ti-calendar-event', desc: 'The day-by-day calendar everyone follows', core: true },
+  { key: 'announce', label: 'Announcements', icon: 'ti-speakerphone', desc: 'Post updates to the whole camp or a group', core: true },
+  { key: 'attendance', label: 'Attendance', icon: 'ti-checkbox', desc: 'Day-of roll call & boarding check-in' },
+  { key: 'photos', label: 'Photos', icon: 'ti-photo', desc: 'A shared photo feed (or link an external album)' },
+  { key: 'info', label: 'Camp info & map', icon: 'ti-map-2', desc: 'Map, packing list & key facts', core: true },
+];
+
+// Is a feature on for this camp? Undefined features = legacy camp, all on.
+export function hasFeature(camp: Camp, key: FeatureKey): boolean {
+  return camp.features ? camp.features.includes(key) : true;
+}
+export const DEFAULT_FEATURES: FeatureKey[] = FEATURES.filter((f) => f.core).map((f) => f.key);
 
 // ---- Health / safety ----
 // "Flagged" = has allergies or meds the team should know about.
@@ -124,4 +146,15 @@ export function coverageGaps(db: Database, campId: string): number {
 
 export function campById(db: Database, id: string): Camp | undefined {
   return db.camps.find((c) => c.id === id);
+}
+
+// ---- Small groups ----
+export function smallGroupsOf(db: Database, campId: string): SmallGroup[] {
+  return db.smallGroups.filter((g) => g.campId === campId);
+}
+export function smallGroupRoster(db: Database, groupId: string): Attendee[] {
+  return db.attendees.filter((a) => a.smallGroupId === groupId);
+}
+export function smallGroupOf(db: Database, a: Attendee): SmallGroup | undefined {
+  return a.smallGroupId ? db.smallGroups.find((g) => g.id === a.smallGroupId) : undefined;
 }

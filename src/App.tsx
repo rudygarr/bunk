@@ -5,6 +5,7 @@ import Shell from './components/Shell';
 import Login from './pages/Login';
 import Camps from './pages/Camps';
 import CampDashboard from './pages/CampDashboard';
+import SetupWizard from './pages/SetupWizard';
 import Rsvp from './pages/Rsvp';
 import Join from './pages/Join';
 import CamperApp from './camper/CamperApp';
@@ -32,6 +33,7 @@ function Gate() {
       <Shell>
         <Routes>
           <Route path="/" element={<Camps />} />
+          <Route path="/new" element={<SetupWizard />} />
           <Route path="/camp/:id" element={<CampDashboard />} />
         </Routes>
       </Shell>

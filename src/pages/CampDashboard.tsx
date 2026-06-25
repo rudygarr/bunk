@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { fmtRange } from '../lib/format';
-import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps, flaggedCount, checkedCount } from '../lib/camps';
+import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps, flaggedCount, checkedCount, hasFeature } from '../lib/camps';
 import RosterPanel from '../components/RosterPanel';
 import BusPanel from '../components/BusPanel';
 import CabinPanel from '../components/CabinPanel';
@@ -12,22 +12,27 @@ import AnnouncePanel from '../components/AnnouncePanel';
 import SchedulePanel from '../components/SchedulePanel';
 import PhotosPanel from '../components/PhotosPanel';
 import TeamsPanel from '../components/TeamsPanel';
+import SmallGroupPanel from '../components/SmallGroupPanel';
 import InfoPanel from '../components/InfoPanel';
 import PrintPackets from '../components/PrintPackets';
+import CampSettings from '../components/CampSettings';
+import type { FeatureKey } from '../lib/types';
 
-type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'roles' | 'attendance' | 'announce' | 'schedule' | 'photos' | 'teams' | 'info';
-const TABS: { key: Tab; label: string; icon: string }[] = [
-  { key: 'overview', label: 'Overview', icon: 'ti-layout-dashboard' },
-  { key: 'roster', label: 'Roster', icon: 'ti-users' },
-  { key: 'attendance', label: 'Attendance', icon: 'ti-checkbox' },
-  { key: 'buses', label: 'Buses', icon: 'ti-bus' },
-  { key: 'cabins', label: 'Cabins', icon: 'ti-home' },
-  { key: 'teams', label: 'Teams', icon: 'ti-flag' },
-  { key: 'roles', label: 'Roles', icon: 'ti-clipboard-check' },
-  { key: 'schedule', label: 'Schedule', icon: 'ti-calendar-event' },
-  { key: 'announce', label: 'Announce', icon: 'ti-speakerphone' },
-  { key: 'photos', label: 'Photos', icon: 'ti-photo' },
-  { key: 'info', label: 'Info', icon: 'ti-map-2' },
+type Tab = 'overview' | 'roster' | 'buses' | 'cabins' | 'smallGroups' | 'roles' | 'attendance' | 'announce' | 'schedule' | 'photos' | 'teams' | 'info';
+// Each tab maps to a feature flag (or null when it's always shown).
+const TABS: { key: Tab; label: string; icon: string; feature: FeatureKey | null }[] = [
+  { key: 'overview', label: 'Overview', icon: 'ti-layout-dashboard', feature: null },
+  { key: 'roster', label: 'Roster', icon: 'ti-users', feature: null },
+  { key: 'attendance', label: 'Attendance', icon: 'ti-checkbox', feature: 'attendance' },
+  { key: 'buses', label: 'Buses', icon: 'ti-bus', feature: 'buses' },
+  { key: 'cabins', label: 'Cabins', icon: 'ti-home', feature: 'cabins' },
+  { key: 'smallGroups', label: 'Groups', icon: 'ti-users-group', feature: 'smallGroups' },
+  { key: 'teams', label: 'Teams', icon: 'ti-flag', feature: 'teams' },
+  { key: 'roles', label: 'Roles', icon: 'ti-clipboard-check', feature: 'roles' },
+  { key: 'schedule', label: 'Schedule', icon: 'ti-calendar-event', feature: 'schedule' },
+  { key: 'announce', label: 'Announce', icon: 'ti-speakerphone', feature: 'announce' },
+  { key: 'photos', label: 'Photos', icon: 'ti-photo', feature: 'photos' },
+  { key: 'info', label: 'Info', icon: 'ti-map-2', feature: 'info' },
 ];
 
 export default function CampDashboard() {
@@ -36,8 +41,13 @@ export default function CampDashboard() {
   const { db } = useStore();
   const [tab, setTab] = useState<Tab>('overview');
   const [rosterFilter, setRosterFilter] = useState<'flagged' | undefined>(undefined);
+  const [showSettings, setShowSettings] = useState(false);
   const camp = campById(db, id ?? '');
   if (!camp) return <div className="empty" style={{ marginTop: 40 }}>Camp not found.</div>;
+
+  const tabs = TABS.filter((t) => t.feature === null || hasFeature(camp, t.feature));
+  // If the active tab's feature was just turned off, fall back to overview.
+  const activeTab: Tab = tabs.some((t) => t.key === tab) ? tab : 'overview';
 
   // Navigate to a tab, optionally pre-filtering the roster (e.g. medical flags).
   const go = (t: Tab, filter?: 'flagged') => { setRosterFilter(filter); setTab(t); };
@@ -48,7 +58,10 @@ export default function CampDashboard() {
       <div className="camp-hero" style={{ ['--accent' as string]: camp.accent ?? 'var(--pine)' }}>
         <div className="camp-hero-row">
           <h1 className="camp-hero-name">{camp.name}</h1>
-          <PrintPackets camp={camp} />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="iconbtn" title="Camp features" onClick={() => setShowSettings(true)}><i className="ti ti-settings" /></button>
+            <PrintPackets camp={camp} />
+          </div>
         </div>
         <div className="camp-hero-meta">
           <span><i className="ti ti-calendar" /> {fmtRange(camp.startDate, camp.endDate)}</span>
@@ -58,26 +71,29 @@ export default function CampDashboard() {
       </div>
 
       <div className="tabs">
-        {TABS.map((t) => (
-          <button key={t.key} className={'tab' + (tab === t.key ? ' on' : '')} onClick={() => go(t.key)}>
+        {tabs.map((t) => (
+          <button key={t.key} className={'tab' + (activeTab === t.key ? ' on' : '')} onClick={() => go(t.key)}>
             <i className={'ti ' + t.icon} /> {t.label}
           </button>
         ))}
       </div>
 
       <div className="tab-body">
-        {tab === 'overview' && <Overview camp={camp} go={go} />}
-        {tab === 'roster' && <RosterPanel camp={camp} initialFilter={rosterFilter} />}
-        {tab === 'buses' && <BusPanel camp={camp} />}
-        {tab === 'cabins' && <CabinPanel camp={camp} />}
-        {tab === 'roles' && <RolePanel camp={camp} />}
-        {tab === 'attendance' && <AttendancePanel camp={camp} />}
-        {tab === 'announce' && <AnnouncePanel camp={camp} />}
-        {tab === 'schedule' && <SchedulePanel camp={camp} />}
-        {tab === 'photos' && <PhotosPanel camp={camp} />}
-        {tab === 'teams' && <TeamsPanel camp={camp} />}
-        {tab === 'info' && <InfoPanel camp={camp} />}
+        {activeTab === 'overview' && <Overview camp={camp} go={go} />}
+        {activeTab === 'roster' && <RosterPanel camp={camp} initialFilter={rosterFilter} />}
+        {activeTab === 'buses' && <BusPanel camp={camp} />}
+        {activeTab === 'cabins' && <CabinPanel camp={camp} />}
+        {activeTab === 'roles' && <RolePanel camp={camp} />}
+        {activeTab === 'attendance' && <AttendancePanel camp={camp} />}
+        {activeTab === 'announce' && <AnnouncePanel camp={camp} />}
+        {activeTab === 'schedule' && <SchedulePanel camp={camp} />}
+        {activeTab === 'photos' && <PhotosPanel camp={camp} />}
+        {activeTab === 'teams' && <TeamsPanel camp={camp} />}
+        {activeTab === 'smallGroups' && <SmallGroupPanel camp={camp} />}
+        {activeTab === 'info' && <InfoPanel camp={camp} />}
       </div>
+
+      {showSettings && <CampSettings camp={camp} onClose={() => setShowSettings(false)} />}
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem, SmallGroup,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -40,6 +40,10 @@ interface Ctx {
   removeTeam: (id: string) => void;
   assignTeam: (attendeeId: string, teamId: string | undefined) => void;
   adjustPoints: (teamId: string, delta: number) => void;
+  addSmallGroup: (campId: string, g: { name: string; color: string; leaderName?: string }) => void;
+  removeSmallGroup: (id: string) => void;
+  updateSmallGroup: (id: string, patch: { name?: string; color?: string; leaderName?: string }) => void;
+  assignSmallGroup: (attendeeId: string, groupId: string | undefined) => void;
   autoBalanceTeams: (campId: string) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
@@ -112,6 +116,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         cabins: d.cabins.filter((c) => c.campId !== id),
         roles: d.roles.filter((r) => r.campId !== id),
         duties: d.duties.filter((du) => du.campId !== id),
+        smallGroups: d.smallGroups.filter((g) => g.campId !== id),
       }));
     },
     invite(campId, who) {
@@ -310,6 +315,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         campers.forEach((c, i) => map.set(c.id, teams[i % teams.length].id));
         return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, teamId: map.get(a.id) } : a)) };
       });
+    },
+    addSmallGroup(campId, g) {
+      const group: SmallGroup = { id: uid('grp'), campId, name: g.name, color: g.color, leaderName: g.leaderName };
+      commit((d) => ({ ...d, smallGroups: [...d.smallGroups, group] }));
+    },
+    removeSmallGroup(id) {
+      commit((d) => ({
+        ...d,
+        smallGroups: d.smallGroups.filter((g) => g.id !== id),
+        attendees: d.attendees.map((a) => (a.smallGroupId === id ? { ...a, smallGroupId: undefined } : a)),
+      }));
+    },
+    updateSmallGroup(id, patch) {
+      commit((d) => ({ ...d, smallGroups: d.smallGroups.map((g) => (g.id === id ? { ...g, ...patch } : g)) }));
+    },
+    assignSmallGroup(attendeeId, groupId) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, smallGroupId: groupId } : a)) }));
     },
     reset() {
       void clearDB();
