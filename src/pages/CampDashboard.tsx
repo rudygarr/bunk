@@ -42,6 +42,7 @@ export default function CampDashboard() {
   const [tab, setTab] = useState<Tab>('overview');
   const [rosterFilter, setRosterFilter] = useState<'flagged' | undefined>(undefined);
   const [showSettings, setShowSettings] = useState(false);
+  const [copied, setCopied] = useState(false);
   const camp = campById(db, id ?? '');
   if (!camp) return <div className="empty" style={{ marginTop: 40 }}>Camp not found.</div>;
 
@@ -59,6 +60,10 @@ export default function CampDashboard() {
         <div className="camp-hero-row">
           <h1 className="camp-hero-name">{camp.name}</h1>
           <div style={{ display: 'flex', gap: 8 }}>
+            <button className="iconbtn" title={copied ? 'Link copied!' : 'Share public view'} onClick={() => {
+              const url = `${location.origin}${location.pathname}#/view/${camp.id}`;
+              navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {});
+            }}><i className={'ti ' + (copied ? 'ti-check' : 'ti-share')} /></button>
             <button className="iconbtn" title="Camp features" onClick={() => setShowSettings(true)}><i className="ti ti-settings" /></button>
             <PrintPackets camp={camp} />
           </div>

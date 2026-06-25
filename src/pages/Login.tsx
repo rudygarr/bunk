@@ -25,7 +25,7 @@ function soonestCamp(camps: Camp[]): Camp | null {
 export default function Login() {
   const { signInOrganizer } = useSession();
   const { db } = useStore();
-  const [mode, setMode] = useState<'organizer' | 'camper'>('organizer');
+  const [mode, setMode] = useState<'organizer' | 'camper' | 'viewer'>('organizer');
   const next = soonestCamp(db.camps);
   return (
     <div className="login">
@@ -47,6 +47,7 @@ export default function Login() {
         <div className="seg login-seg">
           <button className={mode === 'organizer' ? 'on' : ''} onClick={() => setMode('organizer')}>Run a camp</button>
           <button className={mode === 'camper' ? 'on' : ''} onClick={() => setMode('camper')}>I'm a camper</button>
+          <button className={mode === 'viewer' ? 'on' : ''} onClick={() => setMode('viewer')}>View only</button>
         </div>
 
         {mode === 'organizer' ? (
@@ -54,11 +55,33 @@ export default function Login() {
             <button className="login-btn" onClick={signInOrganizer}><i className="ti ti-arrow-right" /> Enter the demo</button>
             <div className="login-foot">A demo — organizer sign-in is simulated.</div>
           </>
-        ) : (
+        ) : mode === 'camper' ? (
           <CamperLogin />
+        ) : (
+          <ViewerEntry />
         )}
       </div>
     </div>
+  );
+}
+
+// No-account public view: type a camp code (its id in the demo) and open the
+// read-only viewer. Navigating sets the hash; the gate's hashchange listener
+// renders the public Viewer route.
+function ViewerEntry() {
+  const { db } = useStore();
+  const [code, setCode] = useState('');
+  function open() {
+    const id = code.trim();
+    if (!id) return;
+    window.location.hash = '#/view/' + id;
+  }
+  return (
+    <>
+      <input style={{ ...field, marginBottom: 10 }} value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter your camp code" onKeyDown={(e) => e.key === 'Enter' && open()} autoFocus />
+      <button className="login-btn" onClick={open}><i className="ti ti-eye" /> View camp</button>
+      <div className="login-foot">No account needed. Demo codes: {db.camps.map((c) => <strong key={c.id} style={{ marginRight: 6 }}>{c.id}</strong>)}</div>
+    </>
   );
 }
 

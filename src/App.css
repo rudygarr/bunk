@@ -603,3 +603,27 @@
 .ann-pick.on { background: var(--pine-tint); border-color: color-mix(in srgb, var(--pine) 35%, transparent); color: var(--pine); }
 .ann-pick .ti { font-size: 13px; }
 .ann-tag.smallGroup, .ann-tag.volunteers, .ann-tag.custom { color: var(--pine); }
+
+/* ===== public viewer ===== */
+.viewer { max-width: 620px; margin: 0 auto; padding: 18px 16px 40px; }
+.viewer-top { display: flex; align-items: center; gap: 8px; font-family: var(--font-brand); font-weight: 600; font-size: 18px; }
+.viewer-badge { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text-3); background: var(--surface-2); border: 1px solid var(--border-2); padding: 3px 9px; border-radius: 999px; }
+.viewer-hero { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 20px 0 8px; }
+.viewer-sec { margin-top: 24px; }
+.viewer-sec h2 { font-size: 15px; display: flex; align-items: center; gap: 7px; margin-bottom: 10px; color: var(--text-2); }
+.viewer-sec h2 .ti { color: var(--pine); }
+.viewer-ann { background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--r-md); padding: 11px 13px; font-size: 13.5px; margin-bottom: 8px; }
+.viewer-ann .ti { color: var(--amber); margin-right: 5px; }
+.viewer-day { margin-bottom: 12px; }
+.viewer-day-h { font-size: 12.5px; font-weight: 700; color: var(--pine); margin-bottom: 5px; }
+.viewer-row { display: flex; gap: 12px; font-size: 13.5px; padding: 4px 0; border-bottom: 1px solid var(--border-2); }
+.viewer-time { width: 72px; flex-shrink: 0; color: var(--text-3); font-weight: 600; }
+.viewer-team { display: flex; align-items: center; gap: 9px; padding: 8px 12px; border: 1px solid var(--border-2); border-left: 3px solid var(--tc); border-radius: var(--r-md); margin-bottom: 6px; }
+.viewer-rank { font-weight: 700; color: var(--text-3); width: 16px; }
+.viewer-team-name { flex: 1; font-weight: 600; }
+.viewer-pts { font-weight: 700; }
+.viewer-map { width: 100%; border-radius: var(--r-md); border: 1px solid var(--border-2); }
+.viewer-pack { margin-bottom: 10px; }
+.viewer-pack-h { font-size: 12.5px; font-weight: 700; color: var(--text-2); margin-bottom: 3px; }
+.viewer-pack ul { margin: 0; padding-left: 20px; font-size: 13.5px; color: var(--text-2); }
+.viewer-foot { margin-top: 30px; text-align: center; font-size: 13px; color: var(--text-3); background: var(--pine-tint); border-radius: var(--r-md); padding: 14px; }
