@@ -9,6 +9,8 @@ import { fmtRange, fmtDate } from '../lib/format';
 import Logo from '../components/Logo';
 import Wordmark from '../components/Wordmark';
 import CampMap from '../components/CampMap';
+import CampFiles from '../components/CampFiles';
+import { docsOf } from '../lib/camps';
 
 // The public, no-account camp view reached by a code/link. PII-free by design:
 // only camp-wide info shows — schedule, map, packing, all-camp announcements,
@@ -36,6 +38,8 @@ export default function Viewer() {
   return (
     <div className="viewer">
       <div className="viewer-top"><Logo /> <Wordmark /><span className="viewer-badge">Public view</span></div>
+
+      {camp.logoUrl && <img className="viewer-logo" src={camp.logoUrl} alt={camp.name} />}
 
       <div className="viewer-hero" style={{ ['--accent' as string]: camp.accent ?? 'var(--pine)' }}>
         <h1 className="camp-hero-name">{camp.name}</h1>
@@ -96,6 +100,13 @@ export default function Viewer() {
               <ul>{g.items.map((it) => <li key={it.id}>{it.text}</li>)}</ul>
             </div>
           ))}
+        </section>
+      )}
+
+      {docsOf(db, camp.id).some((d) => d.audience === 'everyone') && (
+        <section className="viewer-sec">
+          <h2><i className="ti ti-files" /> Forms &amp; resources</h2>
+          <CampFiles camp={camp} mode="public" />
         </section>
       )}
 

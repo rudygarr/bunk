@@ -38,6 +38,7 @@ export interface Camp {
   organizer: string;
   blurb?: string;
   accent?: string; // a brand color per camp
+  logoUrl?: string; // the camp's own logo (shown on camper app, viewer, RSVP/join)
   mapUrl?: string; // camp map image (data URL in the demo)
   mapPins?: MapPin[]; // labeled markers placed on the map
   departInfo?: string; // staggered departure / check-in details
@@ -53,6 +54,21 @@ export interface Camp {
   published?: boolean;
   publishedAt?: string; // ISO — start of the 60-day window
   tier?: string; // billing tier id locked at publish
+}
+
+// An uploaded or linked document in the camp's files library — designed
+// schedule PDF, official map, packing list, consent forms, parent letter, etc.
+// Tagged with who it's for, which decides where it shows.
+export type DocAudience = 'everyone' | 'campers' | 'staff';
+export interface CampDoc {
+  id: string;
+  campId: string;
+  title: string;
+  url: string; // data URL (uploaded) or external link
+  external: boolean; // true = link out (not hosted)
+  fileType: 'pdf' | 'image' | 'doc' | 'link';
+  audience: DocAudience;
+  category?: string;
 }
 
 // A labeled marker on the camp map. x/y are percentages (0–100) of the image,
@@ -236,6 +252,7 @@ export interface Database {
   attendees: Attendee[];
   teams: Team[];
   smallGroups: SmallGroup[];
+  docs: CampDoc[];
   announcements: Announcement[];
   schedule: ScheduleItem[];
   photos: Photo[];

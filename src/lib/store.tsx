@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem, SmallGroup,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -42,6 +42,8 @@ interface Ctx {
   adjustPoints: (teamId: string, delta: number) => void;
   publishCamp: (id: string, tier: string) => void;
   duplicateCamp: (id: string) => string;
+  addDoc: (campId: string, doc: Omit<CampDoc, 'id' | 'campId'>) => void;
+  removeDoc: (id: string) => void;
   addMapPin: (campId: string, x: number, y: number, label: string) => void;
   updateMapPin: (campId: string, pinId: string, label: string) => void;
   removeMapPin: (campId: string, pinId: string) => void;
@@ -122,6 +124,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         roles: d.roles.filter((r) => r.campId !== id),
         duties: d.duties.filter((du) => du.campId !== id),
         smallGroups: d.smallGroups.filter((g) => g.campId !== id),
+        docs: d.docs.filter((x) => x.campId !== id),
       }));
     },
     invite(campId, who) {
@@ -341,14 +344,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const newRoles = d.roles.filter((r) => r.campId === id).map((r) => { const nid = uid('role'); roleMap.set(r.id, nid); return { ...r, id: nid, campId: newId }; });
         const newShifts = d.shifts.filter((s) => roleMap.has(s.roleId)).map((s) => ({ ...s, id: uid('shift'), roleId: roleMap.get(s.roleId)! }));
         const newPacking = d.packing.filter((p) => p.campId === id).map((p) => ({ ...p, id: uid('pk'), campId: newId }));
+        const newDocs = d.docs.filter((x) => x.campId === id).map((x) => ({ ...x, id: uid('doc'), campId: newId }));
         return {
           ...d, camps: [...d.camps, camp],
           buses: [...d.buses, ...newBuses], cabins: [...d.cabins, ...newCabins], cabinRooms: [...d.cabinRooms, ...newRooms],
           teams: [...d.teams, ...newTeams], smallGroups: [...d.smallGroups, ...newGroups],
-          roles: [...d.roles, ...newRoles], shifts: [...d.shifts, ...newShifts], packing: [...d.packing, ...newPacking],
+          roles: [...d.roles, ...newRoles], shifts: [...d.shifts, ...newShifts], packing: [...d.packing, ...newPacking], docs: [...d.docs, ...newDocs],
         };
       });
       return newId;
+    },
+    addDoc(campId, doc) {
+      commit((d) => ({ ...d, docs: [...d.docs, { ...doc, id: uid('doc'), campId }] }));
+    },
+    removeDoc(id) {
+      commit((d) => ({ ...d, docs: d.docs.filter((x) => x.id !== id) }));
     },
     addMapPin(campId, x, y, label) {
       commit((d) => ({ ...d, camps: d.camps.map((c) => (c.id === campId ? { ...c, mapPins: [...(c.mapPins ?? []), { id: uid('pin'), x, y, label }] } : c)) }));

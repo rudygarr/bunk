@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
-import { campById } from '../lib/camps';
+import { campById, docsOf } from '../lib/camps';
 import { packingByCategory } from '../lib/packing';
 import CampMap from '../components/CampMap';
+import CampFiles from '../components/CampFiles';
 import { fmtRange } from '../lib/format';
 import type { Attendee } from '../lib/types';
 
@@ -17,9 +18,20 @@ export default function CamperInfo({ me }: { me: Attendee }) {
   const total = groups.reduce((n, g) => n + g.items.length, 0);
 
   if (!camp) return null;
+  const myDocs = docsOf(db, camp.id).filter((d) => d.audience === 'everyone' || (me.kind === 'camper' ? d.audience === 'campers' : d.audience === 'staff'));
   return (
     <>
       <div className="c-hello" style={{ fontSize: 20 }}>Camp info</div>
+
+      {camp.logoUrl && <img className="c-camp-logo" src={camp.logoUrl} alt={camp.name} />}
+
+      {/* Files & forms */}
+      {myDocs.length > 0 && (
+        <div className="c-card">
+          <div className="c-card-h"><i className="ti ti-files" /> Files &amp; forms</div>
+          <CampFiles camp={camp} mode={me.kind === 'camper' ? 'camper' : 'staff'} />
+        </div>
+      )}
 
       {/* Key facts */}
       <div className="c-card">

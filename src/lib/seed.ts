@@ -1,9 +1,9 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup,
+  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc,
 } from './types';
 
-export const SEED_VERSION = 12;
+export const SEED_VERSION = 13;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -252,6 +252,16 @@ camps[0].mapUrl = campMap;
 camps[0].departInfo = 'Check-in at the Student Activities Center (SAC). Buses depart by grade — see the schedule for your group’s time.';
 camps[0].contact = 'Rudy Garrido · Director of Student Life';
 camps[0].photoAlbumUrl = 'https://photos.app.goo.gl/example-warrior-week';
+// A simple generated logo so the camper app / viewer show camp branding.
+camps[0].logoUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><circle cx="60" cy="60" r="58" fill="#1f6f5c"/><path d="M60 22 L92 36 V62 C92 84 78 96 60 102 C42 96 28 84 28 62 V36 Z" fill="#fff"/><path d="M60 32 L82 42 V62 C82 78 72 88 60 93 C48 88 38 78 38 62 V42 Z" fill="#1f6f5c"/><path d="M60 46 L70 64 H50 Z" fill="#e08a3c"/></svg>`,
+);
+const docs: CampDoc[] = [
+  { id: 'doc-1', campId: 'camp-ww', title: 'Parent consent form', url: 'https://example.com/warrior-week-consent.pdf', external: true, fileType: 'pdf', audience: 'everyone', category: 'Forms' },
+  { id: 'doc-2', campId: 'camp-ww', title: 'Packing list (printable)', url: 'https://example.com/warrior-week-packing.pdf', external: true, fileType: 'pdf', audience: 'everyone', category: 'For parents' },
+  { id: 'doc-3', campId: 'camp-ww', title: 'Daily schedule (PDF)', url: 'https://example.com/warrior-week-schedule.pdf', external: true, fileType: 'pdf', audience: 'everyone', category: 'Schedule' },
+  { id: 'doc-4', campId: 'camp-ww', title: 'Cabin leader guide', url: 'https://example.com/leader-guide.pdf', external: true, fileType: 'pdf', audience: 'staff', category: 'Staff' },
+];
 camps[0].mapPins = [
   { id: 'pin-1', x: 30, y: 40, label: 'Dining hall' },
   { id: 'pin-2', x: 62, y: 28, label: 'Cabins' },
@@ -261,7 +271,7 @@ camps[0].mapPins = [
 
 export function buildSeed(): Database {
   return {
-    users, people, camps, teams: [...teams], smallGroups: [...smallGroups], announcements: [...announcements], schedule: [...schedule], photos: [...photos], packing: [...packing],
+    users, people, camps, teams: [...teams], smallGroups: [...smallGroups], docs: [...docs], announcements: [...announcements], schedule: [...schedule], photos: [...photos], packing: [...packing],
     attendees: [...attendees], buses: [...buses], cabins: [...cabins], cabinRooms: [...cabinRooms],
     roles: [...roles], shifts: [...shifts], duties: [...duties],
     seedVersion: SEED_VERSION,

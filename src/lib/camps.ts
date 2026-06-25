@@ -148,6 +148,11 @@ export function campById(db: Database, id: string): Camp | undefined {
   return db.camps.find((c) => c.id === id);
 }
 
+// ---- Files & forms ----
+export function docsOf(db: Database, campId: string) {
+  return db.docs.filter((d) => d.campId === campId);
+}
+
 // ---- Setup progress ----
 // A data-derived onboarding checklist, gated to the camp's enabled features.
 // `publish` steps trigger the publish flow rather than a tab.

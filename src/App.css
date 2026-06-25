@@ -716,3 +716,24 @@
 .bulk-actions { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
 .bulk-sel { appearance: auto; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-1); border-radius: var(--r-sm); padding: 6px 9px; font-size: 13px; font-family: inherit; }
 .bulk-done { background: var(--pine); color: #fff; border: none; border-radius: var(--r-sm); padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+/* ===== camp logo + files ===== */
+.info-logo-row { display: flex; gap: 14px; align-items: center; }
+.info-logo { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; border: 1px solid var(--border-2); background: var(--surface-2); }
+.info-logo.placeholder { display: grid; place-items: center; color: var(--text-3); font-size: 24px; }
+.info-logo-actions { flex: 1; }
+.files-list { display: flex; flex-direction: column; gap: 6px; }
+.file-row { display: flex; align-items: center; gap: 4px; }
+.file-open { flex: 1; display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--text-1); background: var(--surface-2); border: 1px solid var(--border-2); border-radius: var(--r-md); padding: 10px 13px; }
+.file-open > .ti:first-child { font-size: 22px; color: var(--pine); }
+.file-main { flex: 1; min-width: 0; }
+.file-title { display: block; font-weight: 600; font-size: 14px; }
+.file-sub { display: block; font-size: 12px; color: var(--text-3); }
+.file-open .ti-chevron-right { color: var(--text-3); }
+.file-x { border: none; background: none; color: var(--text-3); cursor: pointer; padding: 6px; }
+.file-add { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--surface-2); border-radius: var(--r-md); }
+.file-add-row { display: flex; gap: 8px; align-items: center; }
+.file-or { font-size: 12px; color: var(--text-3); }
+.c-camp-logo { display: block; width: 72px; height: 72px; border-radius: 16px; object-fit: cover; margin: 0 auto 14px; border: 1px solid var(--border-2); }
+.camper-camp-logo { height: 30px; width: auto; border-radius: 7px; }
+.viewer-logo { display: block; width: 72px; height: 72px; border-radius: 16px; object-fit: cover; margin: 16px 0 4px; }
