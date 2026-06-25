@@ -5,6 +5,7 @@ import { attendeesOf, rsvp, isFlagged, busOf, cabinOf, roomOf, smallGroupOf } fr
 import type { Camp, Attendee, RsvpStatus, AttendeeKind } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
 import AttendeeModal from './AttendeeModal';
+import KitchenReport from './KitchenReport';
 import QrCode from './QrCode';
 import { parseCsv } from '../lib/csv';
 
@@ -22,6 +23,7 @@ const KINDS: { key: AttendeeKind; label: string }[] = [
 export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initialFilter?: 'flagged' }) {
   const { db, respond, removeAttendee } = useStore();
   const [showInvite, setShowInvite] = useState(false);
+  const [showKitchen, setShowKitchen] = useState(false);
   const [open, setOpen] = useState<Attendee | null>(null);
   const [filter, setFilter] = useState<AttendeeKind | 'all' | 'flagged'>(initialFilter ?? 'all');
   const [q, setQ] = useState('');
@@ -75,6 +77,7 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name…" />
           {q && <button onClick={() => setQ('')}><i className="ti ti-x" /></button>}
         </div>
+        <button className="btn-soft sm" onClick={() => setShowKitchen(true)} title="Dietary & allergy report"><i className="ti ti-tools-kitchen-2" /> Kitchen</button>
         <button className="btn-soft sm" onClick={exportCsv} title="Download roster as CSV"><i className="ti ti-download" /> Export</button>
       </div>
 
@@ -103,6 +106,7 @@ export default function RosterPanel({ camp, initialFilter }: { camp: Camp; initi
       </div>
 
       {showInvite && <InviteModal camp={camp} onClose={() => setShowInvite(false)} />}
+      {showKitchen && <KitchenReport camp={camp} onClose={() => setShowKitchen(false)} />}
       {open && <AttendeeModal attendee={open} onClose={() => setOpen(null)} />}
     </div>
   );
