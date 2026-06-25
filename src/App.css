@@ -258,7 +258,7 @@
   .topbar, .back, .tabs, .tab-body, .camp-hero, .modal-backdrop, .hero-print { display: none !important; }
   .printable { display: block; color: #000; }
   .printable section { display: none; }
-  .printable.show-all section, .printable.show-bus .pp-bus, .printable.show-cabin .pp-cabin, .printable.show-role .pp-role { display: block; }
+  .printable.show-all section, .printable.show-bus .pp-bus, .printable.show-cabin .pp-cabin, .printable.show-role .pp-role, .printable.show-medical .pp-medical { display: block; }
   .pp-doc-head { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 14px; }
   .pp-doc-head h1 { font-size: 22px; margin: 0; }
   .pp-doc-head div { font-size: 12px; color: #444; }

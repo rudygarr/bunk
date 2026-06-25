@@ -3,12 +3,13 @@ import { useStore } from '../lib/store';
 import {
   busesOf, busRoster, cabinsOf, roomsOf, cabinRoster, roomRoster, cabinLeaders, cabinBeds,
   rolesOf, shiftsOf, dutiesOfShift, looseDuties, shiftWindow, cabinOf, isFlagged, CABIN_KINDS,
+  attendeesOf,
 } from '../lib/camps';
 import { fmtRange } from '../lib/format';
 import type { Camp, Attendee } from '../lib/types';
 import Modal from './Modal';
 
-type Which = 'bus' | 'cabin' | 'role' | 'all';
+type Which = 'bus' | 'cabin' | 'role' | 'medical' | 'all';
 
 // Print-friendly packets the organizer hands out: bus manifests, cabin rosters,
 // and the role/shift schedule. Everything renders into a .printable region that
@@ -41,6 +42,7 @@ export default function PrintPackets({ camp }: { camp: Camp }) {
             <button className="pp-opt" onClick={() => print('bus')}><i className="ti ti-bus" /><span><strong>Bus manifests</strong>Riders per bus, with cabin + medical flags</span></button>
             <button className="pp-opt" onClick={() => print('cabin')}><i className="ti ti-home" /><span><strong>Cabin rosters</strong>Occupants per cabin/room, leaders, medical flags</span></button>
             <button className="pp-opt" onClick={() => print('role')}><i className="ti ti-clipboard-check" /><span><strong>Role schedule</strong>Roles, shifts, and who's on each</span></button>
+            <button className="pp-opt" onClick={() => print('medical')}><i className="ti ti-emergency-bed" /><span><strong>Emergency call sheet</strong>Emergency contacts + allergies/meds</span></button>
             <button className="pp-opt" onClick={() => print('all')}><i className="ti ti-files" /><span><strong>Full packet</strong>Everything above</span></button>
           </div>
         </Modal>
@@ -96,6 +98,25 @@ export default function PrintPackets({ camp }: { camp: Camp }) {
               </div>
             );
           })}
+        </section>
+
+        <section className="pp-medical">
+          <h2>Emergency &amp; medical call sheet</h2>
+          <table className="pp-table"><thead><tr><th>Name</th><th>Cabin</th><th>Emergency contact</th><th>Phone</th><th>Allergies / meds</th></tr></thead><tbody>
+            {attendeesOf(db, camp.id).filter((a) => a.kind === 'camper').map((a) => {
+              const h = a.health;
+              const flags = [h?.allergies, h?.meds].filter(Boolean).join(' · ');
+              return (
+                <tr key={a.id}>
+                  <td><b>{a.name}</b></td>
+                  <td className="pp-dim">{cabinName(a)}</td>
+                  <td>{h?.emergencyName || <span className="pp-dim">—</span>}</td>
+                  <td>{h?.emergencyPhone || <span className="pp-dim">—</span>}</td>
+                  <td>{flags ? <span className="pp-med">⚕ {flags}</span> : <span className="pp-dim">none</span>}</td>
+                </tr>
+              );
+            })}
+          </tbody></table>
         </section>
 
         <section className="pp-role">
