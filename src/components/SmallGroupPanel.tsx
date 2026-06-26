@@ -7,7 +7,7 @@ import Modal, { field, primaryBtn } from './Modal';
 import type { Camp, SmallGroup } from '../lib/types';
 
 export default function SmallGroupPanel({ camp }: { camp: Camp }) {
-  const { db, removeSmallGroup, assignSmallGroup } = useStore();
+  const { db, removeSmallGroup, assignSmallGroup, autoBalanceSmallGroups } = useStore();
   const [showAdd, setShowAdd] = useState(false);
   const [assignTo, setAssignTo] = useState<SmallGroup | null>(null);
   const groups = smallGroupsOf(db, camp.id);
@@ -17,7 +17,10 @@ export default function SmallGroupPanel({ camp }: { camp: Camp }) {
     <div className="panel">
       <div className="panel-head">
         <div className="panel-title"><i className="ti ti-users-group" /> Small groups</div>
-        <button className="btn-primary sm" onClick={() => setShowAdd(true)}><i className="ti ti-plus" /> Add group</button>
+        <div className="panel-actions">
+          {groups.length > 1 && <button className="btn-soft sm" onClick={() => autoBalanceSmallGroups(camp.id)}><i className="ti ti-wand" /> Auto-balance</button>}
+          <button className="btn-primary sm" onClick={() => setShowAdd(true)}><i className="ti ti-plus" /> Add group</button>
+        </div>
       </div>
 
       {groups.length === 0 && <div className="empty">No small groups yet. Many camps split students into discipleship or activity groups with a leader — add a few here.</div>}

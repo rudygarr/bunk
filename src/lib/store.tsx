@@ -51,6 +51,7 @@ interface Ctx {
   removeSmallGroup: (id: string) => void;
   updateSmallGroup: (id: string, patch: { name?: string; color?: string; leaderName?: string }) => void;
   assignSmallGroup: (attendeeId: string, groupId: string | undefined) => void;
+  autoBalanceSmallGroups: (campId: string) => void;
   autoBalanceTeams: (campId: string) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
@@ -419,6 +420,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     assignSmallGroup(attendeeId, groupId) {
       commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, smallGroupId: groupId } : a)) }));
+    },
+    // Spread campers evenly across small groups (round-robin, grade-interleaved
+    // for balanced size and age) — the auto-fill smarts, applied to groups.
+    autoBalanceSmallGroups(campId) {
+      commit((d) => {
+        const groups = d.smallGroups.filter((g) => g.campId === campId);
+        if (groups.length === 0) return d;
+        const campers = d.attendees
+          .filter((a) => a.campId === campId && a.kind === 'camper')
+          .sort((a, b) => (a.grade ?? 0) - (b.grade ?? 0) || a.name.localeCompare(b.name));
+        const map = new Map<string, string>();
+        campers.forEach((c, i) => map.set(c.id, groups[i % groups.length].id));
+        return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, smallGroupId: map.get(a.id) } : a)) };
+      });
     },
     reset() {
       void clearDB();
