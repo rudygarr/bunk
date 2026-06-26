@@ -8,6 +8,22 @@ Status legend: ✅ done · 🔜 next · ⏳ waiting on you · 🧱 blocked (need
 
 ---
 
+## Assets owned
+
+| Asset | Value |
+|---|---|
+| Domain | **camphq.app** (production URL → `https://camphq.app`) |
+| Code repo | `rudygarr/bunk` (GitHub) |
+| Current live demo | https://rudygarr.github.io/bunk/ (GitHub Pages) |
+| Backend | Supabase project `irzmarbzxvchsjqpkogg` |
+| Brand | name "CampHQ", pine `#1f6f5c` / amber `#e08a3c`, tent logo |
+
+> The app uses a relative base path + hash routing, so it runs unchanged at the
+> GitHub Pages path *and* at the `camphq.app` root — no build change needed when
+> we cut over to the domain.
+
+---
+
 ## A. What YOU do (in order)
 
 1. **Run the database schema.** Supabase → SQL Editor → paste `supabase/schema.sql` → Run. ⏳
@@ -17,8 +33,11 @@ Status legend: ✅ done · 🔜 next · ⏳ waiting on you · 🧱 blocked (need
 3. **Pick the launch model:** free beta first (recommended) vs paid from day one. ⏳
 4. **Choose the production host.** Recommended: **Vercel** (free) — sign in with GitHub,
    "Import" the `rudygarr/bunk` repo, deploy. (We can also stay on GitHub Pages to start.) ⏳
-5. **(Optional, recommended) Buy a domain** (~$12/yr, Cloudflare or Namecheap), e.g.
-   `camphq.app`, and point it at the host. 🧱
+5. **Domain: `camphq.app`** — ✅ purchased. Point it at the host when chosen: add
+   `camphq.app` as a custom domain in Vercel (or your host), then add the DNS
+   records it gives you at your registrar. Then add `https://camphq.app` to
+   Supabase → Authentication → URL Configuration (Site URL + Redirect URLs) so
+   real login/email links resolve to the production domain. ⏳
 6. **(When we add payments) Create a Stripe account**, then give me the **publishable**
    key and store the **secret** key where I tell you (never in the repo). 🧱
 7. **(When we add email) Pick a transactional email provider** (Resend or Postmark),
@@ -37,7 +56,7 @@ Status legend: ✅ done · 🔜 next · ⏳ waiting on you · 🧱 blocked (need
 | Stripe publishable key | payments (later) | 🧱 |
 | Stripe secret key (stored server-side, not in repo) | payments (later) | 🧱 |
 | Email provider API key | verification/invites (later) | 🧱 |
-| Domain name | branding | 🧱 |
+| Domain name | branding | ✅ `camphq.app` (registrar: [which one?]) — needs DNS pointed at host |
 | Legal placeholder values | compliance | 🧱 |
 
 ## C. Engineering steps (mine), in order
