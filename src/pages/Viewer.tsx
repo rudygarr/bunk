@@ -11,6 +11,7 @@ import Wordmark from '../components/Wordmark';
 import CampMap from '../components/CampMap';
 import CampFiles from '../components/CampFiles';
 import { docsOf } from '../lib/camps';
+import { isArchived } from '../lib/billing';
 
 // The public, no-account camp view reached by a code/link. PII-free by design:
 // only camp-wide info shows — schedule, map, packing, all-camp announcements,
@@ -53,7 +54,9 @@ export default function Viewer() {
           {camp.contact && <span><i className="ti ti-user" /> {camp.contact}</span>}
         </div>
         {camp.blurb && <div className="camp-hero-blurb">{camp.blurb}</div>}
-        <a className="viewer-cta" href={`#/join/${camp.id}`}><i className="ti ti-user-plus" /> Sign up for this camp</a>
+        {camp.published && !isArchived(camp) && (
+          <a className="viewer-cta" href={`#/join/${camp.id}`}><i className="ti ti-user-plus" /> Sign up for this camp</a>
+        )}
       </div>
 
       {camp.photoAlbumUrl && (

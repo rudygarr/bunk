@@ -3,7 +3,7 @@ import type {
   RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc,
 } from './types';
 
-export const SEED_VERSION = 14;
+export const SEED_VERSION = 15;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -251,6 +251,11 @@ const campMap = 'data:image/svg+xml,' + encodeURIComponent(
 camps[0].mapUrl = campMap;
 camps[0].departInfo = 'Check-in at the Student Activities Center (SAC). Buses depart by grade — see the schedule for your group’s time.';
 camps[0].contact = 'Rudy Garrido · Director of Student Life';
+// Flagship camp is published & live (within its 60-day window). Computed at load
+// so the demo always reads as live regardless of when it's opened.
+camps[0].published = true;
+camps[0].publishedAt = new Date(Date.now() - 6 * 86400000).toISOString();
+camps[0].tier = 'small';
 camps[0].photoAlbumUrl = 'https://photos.app.goo.gl/example-warrior-week';
 // A simple generated logo so the camper app / viewer show camp branding.
 camps[0].logoUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(
