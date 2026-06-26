@@ -52,10 +52,10 @@ function Gate() {
 
 export default function App() {
   return (
-    <StoreProvider>
-      <SessionProvider>
+    <SessionProvider>
+      <StoreProvider>
         <Gate />
-      </SessionProvider>
-    </StoreProvider>
+      </StoreProvider>
+    </SessionProvider>
   );
 }

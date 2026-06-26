@@ -5,6 +5,17 @@ import type {
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
+import { loadCloudDB, saveCloudDB } from './cloudDb';
+import { useSession } from './session';
+
+// An empty workspace for a brand-new cloud account (or a cloud load failure).
+function emptyDatabase(): Database {
+  return {
+    users: [], people: [], camps: [], attendees: [], buses: [], cabins: [], cabinRooms: [],
+    teams: [], smallGroups: [], roles: [], shifts: [], duties: [], schedule: [],
+    announcements: [], photos: [], packing: [], docs: [], seedVersion: SEED_VERSION,
+  };
+}
 
 function uid(p: string): string {
   return `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -83,26 +94,40 @@ interface Ctx {
 const C = createContext<Ctx | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
+  const { ready, isCloud, user } = useSession();
   const [db, setDb] = useState<Database | null>(null);
 
+  // Load the right workspace: a signed-in organizer's data from Supabase, or the
+  // localStorage demo. Re-runs when auth changes (sign in/out) so the store
+  // swaps backends cleanly.
   useEffect(() => {
-    loadDB().then((saved) => {
-      const fresh = !saved || saved.seedVersion !== SEED_VERSION;
-      const next = fresh ? buildSeed() : saved!;
-      setDb(next);
-      if (fresh) void saveDB(next);
-    });
-  }, []);
+    if (!ready) return;
+    let active = true;
+    setDb(null);
+    if (isCloud) {
+      loadCloudDB()
+        .then((d) => { if (active) setDb(d); })
+        .catch((e) => { console.error('Cloud load failed', e); if (active) setDb(emptyDatabase()); });
+    } else {
+      loadDB().then((saved) => {
+        const fresh = !saved || saved.seedVersion !== SEED_VERSION;
+        const next = fresh ? buildSeed() : saved!;
+        if (active) setDb(next);
+        if (fresh) void saveDB(next);
+      });
+    }
+    return () => { active = false; };
+  }, [ready, isCloud, user.id]);
 
   function commit(fn: (prev: Database) => Database) {
     setDb((prev) => {
       const next = fn(prev as Database);
-      void saveDB(next);
+      void (isCloud ? saveCloudDB(next).catch((e) => console.error('Cloud save failed', e)) : saveDB(next));
       return next;
     });
   }
 
-  if (!db) return <div className="boot">Loading…</div>;
+  if (!ready || !db) return <div className="boot">Loading…</div>;
 
   const api: Ctx = {
     db,
@@ -436,6 +461,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
     },
     reset() {
+      if (isCloud) return; // demo-only — never touch a real cloud account
       void clearDB();
       setDb(buildSeed());
     },

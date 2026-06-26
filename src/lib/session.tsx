@@ -1,43 +1,79 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { buildSeed } from './seed';
+import { currentSession, onAuthChange, signUpOrganizer, signInOrganizer as authSignIn, signOutOrganizer } from './auth';
+import { resetCloudSnapshot } from './cloudDb';
 import type { User } from './types';
+import type { User as SupaUser } from '@supabase/supabase-js';
 
-// Two ways in: organizers run camps; campers get a lightweight account to follow
-// their own camp. Fake auth for the demo — swap for real auth later without
-// touching the rest of the app.
-type Mode = 'organizer' | 'camper' | null;
+// Ways in:
+//   • Real organizer — a Supabase account (cloud-backed, multi-tenant). This is
+//     the product.
+//   • Demo organizer — the localStorage "try it" sandbox with sample camps.
+//   • Camper — lightweight per-attendee login (demo for now).
+// `isCloud` tells the store whether to read/write Supabase or localStorage.
+
+type DemoMode = 'organizer' | 'camper' | null;
 
 interface SessionCtx {
-  mode: Mode;
+  ready: boolean; // auth state resolved (avoids a demo→cloud flash on load)
+  mode: 'organizer' | 'camper' | null;
   authed: boolean;
-  user: User; // organizer identity (the seeded director)
-  camperId: string | null; // attendee id when signed in as a camper
-  signInOrganizer: () => void;
+  isCloud: boolean;
+  user: User;
+  camperId: string | null;
+  enterDemo: () => void;
+  signUp: (email: string, password: string, name?: string) => Promise<string | null>;
+  signIn: (email: string, password: string) => Promise<string | null>;
   signInCamper: (attendeeId: string) => void;
-  signOut: () => void;
+  signOut: () => Promise<void>;
 }
 
 const Ctx = createContext<SessionCtx | null>(null);
-const defaultUser = buildSeed().users[0];
+const demoUser = buildSeed().users[0];
+
+function userFromSupa(u: SupaUser): User {
+  const meta = (u.user_metadata ?? {}) as { full_name?: string };
+  const name = meta.full_name || (u.email ? u.email.split('@')[0] : 'Organizer');
+  return { id: u.id, name, email: u.email ?? '', title: 'Camp Organizer' };
+}
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<Mode>(null);
+  const [demoMode, setDemoMode] = useState<DemoMode>(null);
   const [camperId, setCamperId] = useState<string | null>(null);
-  return (
-    <Ctx.Provider
-      value={{
-        mode,
-        authed: mode !== null,
-        user: defaultUser,
-        camperId,
-        signInOrganizer: () => { setCamperId(null); setMode('organizer'); },
-        signInCamper: (id) => { setCamperId(id); setMode('camper'); },
-        signOut: () => { setCamperId(null); setMode(null); },
-      }}
-    >
-      {children}
-    </Ctx.Provider>
-  );
+  const [supaUser, setSupaUser] = useState<SupaUser | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    currentSession().then((s) => { if (active) { setSupaUser(s?.user ?? null); setReady(true); } });
+    const unsub = onAuthChange((s) => { if (active) setSupaUser(s?.user ?? null); });
+    return () => { active = false; unsub(); };
+  }, []);
+
+  const isCloud = !!supaUser;
+  const mode: 'organizer' | 'camper' | null = supaUser ? 'organizer' : demoMode;
+  const authed = isCloud || demoMode !== null;
+  const user = supaUser ? userFromSupa(supaUser) : demoUser;
+
+  const value: SessionCtx = {
+    ready, mode, authed, isCloud, user, camperId,
+    enterDemo: () => { setCamperId(null); setDemoMode('organizer'); },
+    signUp: async (email, password, name) => {
+      const { error } = await signUpOrganizer(email, password, name);
+      return error ? error.message : null;
+    },
+    signIn: async (email, password) => {
+      const { error } = await authSignIn(email, password);
+      return error ? error.message : null;
+    },
+    signInCamper: (id) => { setCamperId(id); setDemoMode('camper'); },
+    signOut: async () => {
+      if (supaUser) { await signOutOrganizer(); resetCloudSnapshot(); }
+      setCamperId(null); setDemoMode(null);
+    },
+  };
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
 export function useSession(): SessionCtx {

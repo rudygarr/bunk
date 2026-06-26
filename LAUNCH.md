@@ -65,14 +65,15 @@ Status legend: ✅ done · 🔜 next · ⏳ waiting on you · 🧱 blocked (need
 
 1. ✅ Supabase client wired (`src/lib/supabase.ts`), connection verified
 2. ✅ Normalized schema + Row-Level Security (`supabase/schema.sql`)
-3. 🔜 Real organizer **auth** (sign up / log in) — `src/lib/auth.ts` + login UI
-4. ⬜ **Data layer** — read/write the normalized tables (`src/lib/db.ts`)
-5. ⬜ **Swap persistence** — signed-in organizers use the cloud; new accounts start
-   empty; the public demo keeps using local sample data
+3. ✅ Real organizer **auth** (sign up / log in / sign out) — `src/lib/auth.ts` + login UI
+4. ✅ **Data layer** — read/write the normalized tables (`src/lib/cloudDb.ts`)
+5. ✅ **Swap persistence** — signed-in organizers use the cloud (verified: create
+   camp → reload → loads from Supabase); new accounts start empty; demo stays local
 6. ⬜ **Publish flow as free beta** — go-live without a charge (Stripe gate added later)
-7. ⬜ **Participant (camper) login** linked to the `attendees` table
+7. 🔜 **Participant (camper) login** linked to the `attendees` table (so a real
+   camp's campers/parents can sign in; public viewer reads published cloud camps)
 8. ⬜ **Stripe payments** (once keys exist)
-9. ⬜ **Production host + custom domain**
+9. ✅ **Production host + custom domain** — Vercel + https://camphq.app
 10. ⬜ **Harden + test + launch**
 
 ---

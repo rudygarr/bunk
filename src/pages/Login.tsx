@@ -23,7 +23,6 @@ function soonestCamp(camps: Camp[]): Camp | null {
 }
 
 export default function Login() {
-  const { signInOrganizer } = useSession();
   const { db } = useStore();
   const [mode, setMode] = useState<'organizer' | 'camper' | 'viewer'>('organizer');
   const next = soonestCamp(db.camps);
@@ -51,10 +50,7 @@ export default function Login() {
         </div>
 
         {mode === 'organizer' ? (
-          <>
-            <button className="login-btn" onClick={signInOrganizer}><i className="ti ti-arrow-right" /> Enter the demo</button>
-            <div className="login-foot">A demo — organizer sign-in is simulated.</div>
-          </>
+          <OrganizerAuth />
         ) : mode === 'camper' ? (
           <CamperLogin />
         ) : (
@@ -62,6 +58,42 @@ export default function Login() {
         )}
       </div>
     </div>
+  );
+}
+
+// Real organizer accounts (Supabase). Sign in or create an account; on success
+// the auth listener flips the gate into the cloud-backed app automatically.
+function OrganizerAuth() {
+  const { signIn, signUp, enterDemo } = useSession();
+  const [isNew, setIsNew] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [pw, setPw] = useState('');
+  const [err, setErr] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  async function submit() {
+    if (!email.trim() || pw.length < 6) { setErr('Enter your email and a password of at least 6 characters.'); return; }
+    setErr(''); setBusy(true);
+    const msg = isNew ? await signUp(email.trim(), pw, name.trim() || undefined) : await signIn(email.trim(), pw);
+    setBusy(false);
+    if (msg) setErr(msg); // success → onAuthChange switches the app to cloud mode
+  }
+
+  return (
+    <>
+      {isNew && <input style={{ ...field, marginBottom: 10 }} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />}
+      <input style={{ ...field, marginBottom: 10 }} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" autoFocus onKeyDown={(e) => e.key === 'Enter' && submit()} />
+      <input style={{ ...field, marginBottom: 10 }} type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder={isNew ? 'Create a password' : 'Password'} onKeyDown={(e) => e.key === 'Enter' && submit()} />
+      {err && <div className="login-err">{err}</div>}
+      <button className="login-btn" onClick={submit} disabled={busy}>
+        <i className="ti ti-arrow-right" /> {busy ? 'One sec…' : isNew ? 'Create account' : 'Sign in'}
+      </button>
+      <button className="login-back" onClick={() => { setIsNew(!isNew); setErr(''); }}>
+        {isNew ? 'Already have an account? Sign in' : 'New to CampHQ? Create an account'}
+      </button>
+      <div className="login-foot">Just exploring? <button className="login-link" onClick={enterDemo}>Try the live demo →</button></div>
+    </>
   );
 }
 
