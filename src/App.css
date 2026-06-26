@@ -801,3 +801,5 @@
 .viewer-bus-name { font-weight: 600; min-width: 120px; }
 
 .c-wave { font-size: 11px; font-weight: 600; color: var(--text-2); background: var(--surface-2); border-radius: 999px; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
+
+.viewer-cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; background: var(--pine); color: #fff; font-weight: 600; font-size: 14px; padding: 9px 16px; border-radius: var(--r-md); text-decoration: none; }
