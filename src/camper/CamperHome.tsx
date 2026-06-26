@@ -4,11 +4,22 @@ import { initials } from '../lib/format';
 import { campById, busOf, busLabel, cabinOf, roomOf, cabinLeaders } from '../lib/camps';
 import { cabinmates } from '../lib/camper';
 import { teamOf, standings, ordinal } from '../lib/teams';
+import { scheduleForCamper, daysOf, nowNext, todayKey, fmtClock } from '../lib/schedule';
 import type { Attendee, RsvpStatus } from '../lib/types';
 
 export default function CamperHome({ me }: { me: Attendee }) {
   const { db, respond } = useStore();
   const camp = campById(db, me.campId);
+  // What's happening now (or up next) on this camper's own schedule.
+  const myItems = scheduleForCamper(db, me);
+  const today = todayKey();
+  const focusDay = daysOf(myItems).includes(today) ? today : daysOf(myItems)[0];
+  const focusItems = myItems.filter((s) => s.day === focusDay);
+  const { nowId, nextId } = nowNext(focusItems, focusDay ?? '');
+  // Show whatever's live, else the next item, else the first thing on the
+  // schedule (so before the camp starts it still previews the kickoff).
+  const upNext = focusItems.find((s) => s.id === nowId) ?? focusItems.find((s) => s.id === nextId) ?? focusItems[0];
+  const upNextNow = !!nowId && upNext?.id === nowId;
   const bus = busOf(db, me);
   const cabin = cabinOf(db, me);
   const room = roomOf(db, me);
@@ -26,6 +37,16 @@ export default function CamperHome({ me }: { me: Attendee }) {
           <div className="c-camp-name">{camp.name}</div>
           <div className="c-camp-meta"><i className="ti ti-calendar" /> {fmtRange(camp.startDate, camp.endDate)}</div>
           <div className="c-camp-meta"><i className="ti ti-map-pin" /> {camp.location}</div>
+        </div>
+      )}
+
+      {/* Now / up next */}
+      {upNext && (
+        <div className={'c-card c-upnext' + (upNextNow ? ' live' : '')}>
+          <div className="c-card-h"><i className="ti ti-clock-hour-4" /> {upNextNow ? 'Happening now' : 'Up next'}</div>
+          <div className="c-upnext-time">{fmtClock(upNext.start)}{upNext.end && ` – ${fmtClock(upNext.end)}`}</div>
+          <div className="c-big">{upNext.title}</div>
+          {upNext.location && <div className="c-sub"><i className="ti ti-map-pin" /> {upNext.location}</div>}
         </div>
       )}
 
