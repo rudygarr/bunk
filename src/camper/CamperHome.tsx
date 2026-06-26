@@ -1,7 +1,7 @@
 import { useStore } from '../lib/store';
 import { fmtRange } from '../lib/format';
 import { initials } from '../lib/format';
-import { campById, busOf, busLabel, cabinOf, roomOf, cabinLeaders } from '../lib/camps';
+import { campById, busOf, busLabel, cabinOf, roomOf, cabinLeaders, smallGroupOf } from '../lib/camps';
 import { cabinmates } from '../lib/camper';
 import { teamOf, standings, ordinal } from '../lib/teams';
 import { scheduleForCamper, daysOf, nowNext, todayKey, fmtClock } from '../lib/schedule';
@@ -26,6 +26,7 @@ export default function CamperHome({ me }: { me: Attendee }) {
   const mates = cabinmates(db, me).filter((a) => !a.cabinLeader);
   const leaders = cabin ? cabinLeaders(db, cabin.id) : [];
   const myTeam = teamOf(db, me);
+  const myGroup = smallGroupOf(db, me);
   const ranked = standings(db, me.campId);
   const myPlace = myTeam ? ranked.findIndex((t) => t.id === myTeam.id) + 1 : 0;
 
@@ -81,6 +82,15 @@ export default function CamperHome({ me }: { me: Attendee }) {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Small group */}
+      {myGroup && (
+        <div className="c-card" style={{ ['--tc' as string]: myGroup.color }}>
+          <div className="c-card-h"><i className="ti ti-users-group" /> Your small group</div>
+          <div className="c-big"><span className="tm-dot" /> {myGroup.name}</div>
+          {myGroup.leaderName && <div className="c-sub">Led by {myGroup.leaderName}</div>}
         </div>
       )}
 
