@@ -56,7 +56,7 @@ Status legend: ✅ done · 🔜 next · ⏳ waiting on you · 🧱 blocked (need
 | Stripe publishable key | payments (later) | 🧱 |
 | Stripe secret key (stored server-side, not in repo) | payments (later) | 🧱 |
 | Email provider API key | verification/invites (later) | 🧱 |
-| Domain name | branding | ✅ `camphq.app` (registrar: [which one?]) — needs DNS pointed at host |
+| Domain name | branding | ✅ `camphq.app` — registrar **Namecheap** — needs DNS pointed at host (do after host is chosen) |
 | Legal placeholder values | compliance | 🧱 |
 
 ## C. Engineering steps (mine), in order
