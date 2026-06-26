@@ -50,9 +50,17 @@ export default function Viewer() {
         <div className="camp-hero-meta">
           <span><i className="ti ti-calendar" /> {fmtRange(camp.startDate, camp.endDate)}</span>
           <span><i className="ti ti-map-pin" /> {camp.location}</span>
+          {camp.contact && <span><i className="ti ti-user" /> {camp.contact}</span>}
         </div>
         {camp.blurb && <div className="camp-hero-blurb">{camp.blurb}</div>}
       </div>
+
+      {camp.photoAlbumUrl && (
+        <section className="viewer-sec">
+          <h2><i className="ti ti-photo" /> Photos</h2>
+          <a className="album-open" href={camp.photoAlbumUrl} target="_blank" rel="noopener noreferrer"><i className="ti ti-external-link" /> Open shared album</a>
+        </section>
+      )}
 
       {anns.length > 0 && (
         <section className="viewer-sec">
