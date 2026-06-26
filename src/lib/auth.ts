@@ -20,6 +20,20 @@ export async function signOutOrganizer() {
   return supabase.auth.signOut();
 }
 
+// Single sign-on with an existing account (Microsoft = 'azure', Google, Apple).
+// Supabase handles the OAuth handshake and creates/links the user; our auth
+// listener picks up the resulting session exactly like a password login.
+export type OAuthProvider = 'google' | 'azure' | 'apple';
+export async function signInWithProvider(provider: OAuthProvider) {
+  return supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: window.location.origin + window.location.pathname,
+      ...(provider === 'azure' ? { scopes: 'email openid profile' } : {}),
+    },
+  });
+}
+
 export async function currentSession(): Promise<Session | null> {
   const { data } = await supabase.auth.getSession();
   return data.session;

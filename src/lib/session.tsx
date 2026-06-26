@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { buildSeed } from './seed';
-import { currentSession, onAuthChange, signUpOrganizer, signInOrganizer as authSignIn, signOutOrganizer } from './auth';
+import { currentSession, onAuthChange, signUpOrganizer, signInOrganizer as authSignIn, signOutOrganizer, signInWithProvider, type OAuthProvider } from './auth';
 import { resetCloudSnapshot } from './cloudDb';
 import type { User } from './types';
 import type { User as SupaUser } from '@supabase/supabase-js';
@@ -24,6 +24,7 @@ interface SessionCtx {
   enterDemo: () => void;
   signUp: (email: string, password: string, name?: string) => Promise<string | null>;
   signIn: (email: string, password: string) => Promise<string | null>;
+  signInWith: (provider: OAuthProvider) => Promise<string | null>;
   signInCamper: (attendeeId: string) => void;
   signOut: () => Promise<void>;
 }
@@ -64,6 +65,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     },
     signIn: async (email, password) => {
       const { error } = await authSignIn(email, password);
+      return error ? error.message : null;
+    },
+    signInWith: async (provider) => {
+      const { error } = await signInWithProvider(provider); // redirects away on success
       return error ? error.message : null;
     },
     signInCamper: (id) => { setCamperId(id); setDemoMode('camper'); },

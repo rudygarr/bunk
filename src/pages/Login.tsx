@@ -63,8 +63,14 @@ export default function Login() {
 
 // Real organizer accounts (Supabase). Sign in or create an account; on success
 // the auth listener flips the gate into the cloud-backed app automatically.
+const SSO: { provider: 'azure' | 'google' | 'apple'; label: string; icon: string }[] = [
+  { provider: 'azure', label: 'Microsoft', icon: 'ti-brand-windows' },
+  { provider: 'google', label: 'Google', icon: 'ti-brand-google' },
+  { provider: 'apple', label: 'Apple', icon: 'ti-brand-apple' },
+];
+
 function OrganizerAuth() {
-  const { signIn, signUp, enterDemo } = useSession();
+  const { signIn, signUp, signInWith, enterDemo } = useSession();
   const [isNew, setIsNew] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -80,8 +86,22 @@ function OrganizerAuth() {
     if (msg) setErr(msg); // success → onAuthChange switches the app to cloud mode
   }
 
+  async function sso(provider: 'azure' | 'google' | 'apple') {
+    setErr('');
+    const msg = await signInWith(provider); // success redirects away
+    if (msg) setErr(msg);
+  }
+
   return (
     <>
+      <div className="sso-row">
+        {SSO.map((s) => (
+          <button key={s.provider} className="sso-btn" onClick={() => sso(s.provider)} title={`Continue with ${s.label}`}>
+            <i className={'ti ' + s.icon} /> {s.label}
+          </button>
+        ))}
+      </div>
+      <div className="sso-divider"><span>or with email</span></div>
       {isNew && <input style={{ ...field, marginBottom: 10 }} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />}
       <input style={{ ...field, marginBottom: 10 }} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" autoFocus onKeyDown={(e) => e.key === 'Enter' && submit()} />
       <input style={{ ...field, marginBottom: 10 }} type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder={isNew ? 'Create a password' : 'Password'} onKeyDown={(e) => e.key === 'Enter' && submit()} />

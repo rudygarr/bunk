@@ -815,3 +815,11 @@
 .topbar-right { display: flex; align-items: center; gap: 8px; }
 .signout-btn { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-2); cursor: pointer; }
 .signout-btn:hover { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 35%, transparent); }
+
+/* SSO sign-in */
+.sso-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.sso-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 42px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text-1); font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.sso-btn:hover { background: var(--surface-2); border-color: var(--border-2); }
+.sso-btn .ti { font-size: 17px; }
+.sso-divider { display: flex; align-items: center; gap: 10px; color: var(--text-3); font-size: 12px; margin: 0 0 14px; }
+.sso-divider::before, .sso-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
