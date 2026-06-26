@@ -68,8 +68,13 @@ export default function CamperHome({ me }: { me: Attendee }) {
         <div className="c-card-h"><i className="ti ti-bus" /> Your bus</div>
         {bus ? (
           <>
-            <div className="c-big">{busLabel(bus)}</div>
+            <div className="c-big">{busLabel(bus)}{bus.groupName && <span className="c-wave">{bus.groupName}</span>}</div>
             {bus.departInfo && <div className="c-sub">{bus.departInfo}</div>}
+            {bus.trackingUrl && (
+              <a className="album-open" style={{ marginTop: 8 }} href={bus.trackingUrl} target="_blank" rel="noopener noreferrer">
+                <i className="ti ti-map-pin" /> Live location
+              </a>
+            )}
           </>
         ) : <div className="c-sub">Not assigned yet — check back soon.</div>}
       </div>
