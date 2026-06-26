@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useStore } from '../lib/store';
-import { campById } from '../lib/camps';
+import { campById, busesOf, busLabel } from '../lib/camps';
 import { scheduleOf, daysOf, fmtClock } from '../lib/schedule';
 import { announcementsOf } from '../lib/announce';
 import { standings } from '../lib/teams';
@@ -34,6 +34,10 @@ export default function Viewer() {
   const anns = announcementsOf(db, camp.id).filter((a) => a.audienceKind === 'everyone');
   const ranked = standings(db, camp.id);
   const packing = packingByCategory(db, camp.id);
+  // Departure board — buses with a stated departure, grouped by wave. PII-free
+  // (no rosters), so parents can reach it from the public link.
+  const departBuses = busesOf(db, camp.id).filter((b) => b.departInfo || b.groupName);
+  const waves = [...new Set(departBuses.map((b) => b.groupName || ''))];
 
   return (
     <div className="viewer">
@@ -55,6 +59,20 @@ export default function Viewer() {
           <h2><i className="ti ti-speakerphone" /> Announcements</h2>
           {anns.slice(0, 5).map((a) => (
             <div key={a.id} className="viewer-ann">{a.pinned && <i className="ti ti-pin-filled" />}{a.title && <strong>{a.title} · </strong>}{a.body}</div>
+          ))}
+        </section>
+      )}
+
+      {departBuses.length > 0 && (
+        <section className="viewer-sec">
+          <h2><i className="ti ti-bus" /> Departures</h2>
+          {waves.map((w) => (
+            <div key={w} className="viewer-wave">
+              {w && <div className="viewer-day-h">{w}</div>}
+              {departBuses.filter((b) => (b.groupName || '') === w).map((b) => (
+                <div key={b.id} className="viewer-row"><span className="viewer-bus-name">{busLabel(b)}</span><span>{b.departInfo || 'Time TBA'}</span></div>
+              ))}
+            </div>
           ))}
         </section>
       )}

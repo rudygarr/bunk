@@ -795,3 +795,7 @@
 
 /* camp logo on public pages */
 .rsvp-logo { display: block; max-width: 120px; max-height: 72px; margin: 4px auto 14px; object-fit: contain; }
+
+/* viewer departures */
+.viewer-wave { margin-bottom: 10px; }
+.viewer-bus-name { font-weight: 600; min-width: 120px; }
