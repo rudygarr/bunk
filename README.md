@@ -4,7 +4,7 @@ A demo of **CampHQ**, a mobile-first app for running overnight camps: rosters, b
 cabins, teams, crew roles, schedules, announcements, photos, and a camper-facing
 app — without stitching together three separate tools.
 
-**▶️ Live demo:** https://rudygarr.github.io/bunk/
+**▶️ Live:** https://camphq.app
 
 > This is a prototype. Sign-in is simulated and all data is sample data stored in
 > your browser (localStorage) — nothing is sent anywhere. Hit it on your phone and

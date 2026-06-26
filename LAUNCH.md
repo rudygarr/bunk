@@ -14,7 +14,9 @@ Status legend: ✅ done · 🔜 next · ⏳ waiting on you · 🧱 blocked (need
 |---|---|
 | Domain | **camphq.app** (production URL → `https://camphq.app`) |
 | Code repo | `rudygarr/bunk` (GitHub) |
-| Current live demo | https://rudygarr.github.io/bunk/ (GitHub Pages) |
+| **Production (LIVE)** | **https://camphq.app** → www.camphq.app (Vercel, auto-deploys on push to main) ✅ |
+| Old demo | https://rudygarr.github.io/bunk/ (GitHub Pages) |
+| Vercel default URL | https://bunk-olive.vercel.app |
 | Backend | Supabase project `irzmarbzxvchsjqpkogg` |
 | Brand | name "CampHQ", pine `#1f6f5c` / amber `#e08a3c`, tent logo |
 
