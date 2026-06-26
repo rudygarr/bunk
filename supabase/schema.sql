@@ -15,17 +15,6 @@
 --      and assignments are never publicly readable.
 -- ============================================================================
 
--- ---------- helper functions (bypass RLS safely to avoid recursion) ----------
-create or replace function public.owns_camp(cid text)
-returns boolean language sql security definer stable as $$
-  select exists (select 1 from public.camps c where c.id = cid and c.owner_id = auth.uid());
-$$;
-
-create or replace function public.camp_is_published(cid text)
-returns boolean language sql security definer stable as $$
-  select exists (select 1 from public.camps c where c.id = cid and c.published = true);
-$$;
-
 -- ============================ TABLES ============================
 
 create table if not exists public.camps (
@@ -224,6 +213,18 @@ create index if not exists idx_announcements_camp on public.announcements(camp_i
 create index if not exists idx_photos_camp on public.photos(camp_id);
 create index if not exists idx_packing_camp on public.packing_items(camp_id);
 create index if not exists idx_docs_camp on public.docs(camp_id);
+
+-- ---------- helper functions (defined after the tables they reference;
+--            security definer lets them bypass RLS safely to avoid recursion) ----------
+create or replace function public.owns_camp(cid text)
+returns boolean language sql security definer stable as $$
+  select exists (select 1 from public.camps c where c.id = cid and c.owner_id = auth.uid());
+$$;
+
+create or replace function public.camp_is_published(cid text)
+returns boolean language sql security definer stable as $$
+  select exists (select 1 from public.camps c where c.id = cid and c.published = true);
+$$;
 
 -- ============================ ROW-LEVEL SECURITY ============================
 alter table public.camps           enable row level security;
