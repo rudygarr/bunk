@@ -865,3 +865,19 @@
 .travel-special-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 3px 0; }
 .travel-special-n { font-weight: 600; }
 .travel-special-d { color: var(--text-2); text-align: right; }
+
+/* ===== "Are you packed?" camper card ===== */
+.c-packed.done { border-color: var(--ok); }
+.c-packed-head { display: flex; align-items: center; justify-content: space-between; width: 100%; background: none; border: none; padding: 0; cursor: pointer; color: inherit; }
+.c-packed-prog { font-size: 14px; font-weight: 700; color: var(--pine); display: inline-flex; align-items: center; gap: 5px; }
+.c-packed.done .c-packed-prog { color: var(--ok); }
+.c-packed-bar { height: 7px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin-top: 10px; }
+.c-packed-bar span { display: block; height: 100%; background: var(--pine); border-radius: 999px; transition: width 0.25s; }
+.c-packed-bar span.done { background: var(--ok); }
+.c-packed-toggle { margin-top: 10px; background: none; border: none; color: var(--pine); font-weight: 600; font-size: 13.5px; cursor: pointer; padding: 0; }
+.c-packlist { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+.c-pack-cat { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-3); margin-bottom: 4px; }
+.c-pack-item { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: none; padding: 7px 2px; font-size: 14.5px; color: var(--text-1); cursor: pointer; text-align: left; }
+.c-pack-item i { font-size: 20px; color: var(--text-3); flex-shrink: 0; }
+.c-pack-item.on i { color: var(--ok); }
+.c-pack-item.on span { color: var(--text-3); text-decoration: line-through; }

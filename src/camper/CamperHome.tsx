@@ -5,6 +5,7 @@ import { campById, busOf, busLabel, cabinOf, roomOf, cabinLeaders, smallGroupOf 
 import { cabinmates } from '../lib/camper';
 import { teamOf, standings, ordinal } from '../lib/teams';
 import { scheduleForCamper, daysOf, nowNext, todayKey, fmtClock } from '../lib/schedule';
+import PackedCard from './PackedCard';
 import type { Attendee, RsvpStatus } from '../lib/types';
 
 export default function CamperHome({ me }: { me: Attendee }) {
@@ -62,6 +63,9 @@ export default function CamperHome({ me }: { me: Attendee }) {
           ))}
         </div>
       </div>
+
+      {/* Are you packed? */}
+      <PackedCard me={me} />
 
       {/* Team + standings */}
       {myTeam && (

@@ -68,6 +68,7 @@ interface Ctx {
   assignTable: (attendeeId: string, tableId: string | undefined) => void;
   setTableLeader: (attendeeId: string, leader: boolean) => void;
   autoBalanceTables: (campId: string) => void;
+  togglePacked: (attendeeId: string, itemId: string) => void;
   addContact: (campId: string, c: { name: string; role?: string; phone?: string; note?: string }) => void;
   removeContact: (id: string) => void;
   autoBalanceTeams: (campId: string) => void;
@@ -495,6 +496,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         campers.forEach((c, i) => map.set(c.id, tables[i % tables.length].id));
         return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, tableId: map.get(a.id) } : a)) };
       });
+    },
+    togglePacked(attendeeId, itemId) {
+      commit((d) => ({
+        ...d,
+        attendees: d.attendees.map((a) => {
+          if (a.id !== attendeeId) return a;
+          const have = a.packed ?? [];
+          const packed = have.includes(itemId) ? have.filter((x) => x !== itemId) : [...have, itemId];
+          return { ...a, packed };
+        }),
+      }));
     },
     addContact(campId, c) {
       const contact: Contact = { id: uid('ct'), campId, name: c.name, role: c.role, phone: c.phone, note: c.note };

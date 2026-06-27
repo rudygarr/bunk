@@ -164,6 +164,9 @@ export interface Attendee {
   // board. 'Empty bus' clears it for everyone on the bus; undefined = not yet
   // counted this round. (See lib/rollcall.)
   onBoard?: boolean;
+  // Packing checklist progress — ids of the camp's packing items this person
+  // has checked off ("Are you packed?").
+  packed?: string[];
 }
 
 // Safety info the nurse and cabin leaders need at a glance. All optional; an
