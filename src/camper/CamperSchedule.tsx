@@ -41,7 +41,8 @@ export default function CamperSchedule({ me }: { me: Attendee }) {
               <div className="c-tl-line"><span className="c-tl-dot" style={state ? undefined : { background: blockMeta(s.type).tint }} /></div>
               <div className="c-tl-card">
                 {state && <span className={'c-tl-badge ' + state}>{state === 'now' ? 'Now' : 'Up next'}</span>}
-                <div className="c-tl-title"><i className={'ti ' + blockMeta(s.type).icon} style={{ color: blockMeta(s.type).tint, marginRight: 7 }} />{s.title}</div>
+                <div className="c-tl-title"><i className={'ti ' + blockMeta(s.type).icon} style={{ color: blockMeta(s.type).tint, marginRight: 7 }} />{s.title}{s.theme && <span className="sch-theme">{s.theme}</span>}</div>
+                {s.menu && <div className="c-tl-menu"><i className="ti ti-tools-kitchen-2" /> {s.menu}</div>}
                 <div className="c-tl-meta">
                   {s.location && <span><i className="ti ti-map-pin" /> {s.location}</span>}
                   {s.audienceKind !== 'everyone' && <span className="c-tl-tag">{TAG[s.audienceKind]}</span>}

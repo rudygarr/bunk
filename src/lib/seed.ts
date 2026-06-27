@@ -4,7 +4,7 @@ import type {
 } from './types';
 import { inferBlockType } from './schedule';
 
-export const SEED_VERSION = 16;
+export const SEED_VERSION = 17;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -215,6 +215,20 @@ const schedule: ScheduleItem[] = [
   sch(D3, '11:00', '12:00', 'Clean cabins & load buses', 'Cabins'),
   sch(D3, '14:00', '16:30', 'Buses return home', 'Gym lot'),
 ];
+// Give the demo meals a menu (campers always ask) + the real Warrior Week
+// dress-up dinner themes.
+const menus: Record<string, { menu: string; theme?: string }> = {
+  '12:00': { menu: 'Build-your-own sandwich bar, chips, fruit' },
+  '18:00': { menu: 'Smash burgers, fries, watermelon', theme: 'God Bless America' },
+  '07:30': { menu: 'Pancakes, eggs, bacon, yogurt' },
+  '12:30': { menu: 'Taco bar, rice & beans, churros' },
+};
+for (const s of schedule) {
+  if (s.type === 'meal' && menus[s.start]) { s.menu = menus[s.start].menu; if (menus[s.start].theme) s.theme = menus[s.start].theme; }
+}
+// Tuesday dinner = themed (Havana Nights, per the real packing list).
+const tueDinner = schedule.find((s) => s.day === D2 && s.start === '18:00');
+if (tueDinner) { tueDinner.menu = 'Cuban-style chicken, rice, plantains, flan'; tueDinner.theme = 'Havana Nights (semi-formal)'; }
 
 // Seed feed photos as gradient placeholders (no binary assets in the repo); real
 // posts are downscaled camera photos.

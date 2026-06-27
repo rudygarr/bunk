@@ -244,6 +244,9 @@ export interface ScheduleItem {
   audienceKind: AudienceKind;
   audienceId?: string;
   type?: ScheduleBlockType; // absent = activity
+  // Meal blocks: the menu campers always ask about + an optional dress-up theme.
+  menu?: string;
+  theme?: string;
 }
 
 // A photo posted to the camp feed (camper, staff, or organizer). Image is a

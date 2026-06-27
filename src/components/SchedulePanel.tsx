@@ -22,6 +22,8 @@ export default function SchedulePanel({ camp }: { camp: Camp }) {
   const [audId, setAudId] = useState('');
   const [type, setType] = useState<ScheduleBlockType>('activity');
   const [typeTouched, setTypeTouched] = useState(false);
+  const [menu, setMenu] = useState('');
+  const [theme, setTheme] = useState('');
 
   const groups = byDay(scheduleOf(db, camp.id));
   const buses = busesOf(db, camp.id);
@@ -31,8 +33,8 @@ export default function SchedulePanel({ camp }: { camp: Camp }) {
 
   function add() {
     if (!titleV.trim() || !start || (kind !== 'everyone' && !audId)) return;
-    addScheduleItem(camp.id, { day, start, end: end || undefined, title: titleV.trim(), location: loc.trim() || undefined, audienceKind: kind, audienceId: kind === 'everyone' ? undefined : audId, type });
-    setTitleV(''); setLoc(''); setTypeTouched(false); setType('activity');
+    addScheduleItem(camp.id, { day, start, end: end || undefined, title: titleV.trim(), location: loc.trim() || undefined, audienceKind: kind, audienceId: kind === 'everyone' ? undefined : audId, type, menu: type === 'meal' && menu.trim() ? menu.trim() : undefined, theme: type === 'meal' && theme.trim() ? theme.trim() : undefined });
+    setTitleV(''); setLoc(''); setTypeTouched(false); setType('activity'); setMenu(''); setTheme('');
   }
   // Auto-suggest the block type from the title until the organizer picks one.
   function onTitle(v: string) {
@@ -62,6 +64,12 @@ export default function SchedulePanel({ camp }: { camp: Camp }) {
               </button>
             ))}
           </div>
+          {type === 'meal' && (
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <input style={{ ...field, flex: 1 }} value={menu} onChange={(e) => setMenu(e.target.value)} placeholder="Menu — what's being served?" />
+              <input style={{ ...field, flex: 1 }} value={theme} onChange={(e) => setTheme(e.target.value)} placeholder="Theme (optional) — e.g. Havana Nights" />
+            </div>
+          )}
           <input style={{ ...field, marginTop: 8 }} value={loc} onChange={(e) => setLoc(e.target.value)} placeholder="Location (optional)" />
           <div className="seg" style={{ marginTop: 8 }}>
             {(['everyone', 'bus', 'cabin', 'team', 'person'] as AudienceKind[]).map((k) => (
@@ -92,7 +100,8 @@ export default function SchedulePanel({ camp }: { camp: Camp }) {
               <div className="sch-type" style={{ color: blockMeta(s.type).tint }} title={blockMeta(s.type).label}><i className={'ti ' + blockMeta(s.type).icon} /></div>
               <div className="sch-time">{fmtClock(s.start)}{s.end ? <span className="sch-end">{fmtClock(s.end)}</span> : null}</div>
               <div className="sch-main">
-                <div className="sch-title">{s.title}</div>
+                <div className="sch-title">{s.title}{s.theme && <span className="sch-theme">{s.theme}</span>}</div>
+                {s.menu && <div className="sch-menu"><i className="ti ti-tools-kitchen-2" /> {s.menu}</div>}
                 <div className="sch-meta">
                   {s.location && <span><i className="ti ti-map-pin" /> {s.location}</span>}
                   {s.audienceKind !== 'everyone' && <span className={'ann-tag ' + s.audienceKind}><i className={'ti ' + AUD_ICON[s.audienceKind]} /> {audienceLabel(db, s)}</span>}

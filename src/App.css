@@ -830,3 +830,8 @@
 .blk-type.on { background: var(--surface); }
 .sch-item { display: flex; align-items: flex-start; gap: 10px; }
 .sch-type { flex-shrink: 0; width: 26px; height: 26px; display: grid; place-items: center; font-size: 16px; margin-top: 2px; }
+
+/* meal block detail */
+.sch-theme { display: inline-block; margin-left: 8px; font-size: 11px; font-weight: 700; color: var(--amber); background: var(--amber-tint); padding: 1px 8px; border-radius: 999px; vertical-align: middle; }
+.sch-menu, .c-tl-menu { font-size: 12.5px; color: var(--text-2); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+.sch-menu .ti, .c-tl-menu .ti { color: var(--amber); font-size: 14px; }
