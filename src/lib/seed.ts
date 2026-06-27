@@ -2,8 +2,9 @@ import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
   RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc,
 } from './types';
+import { inferBlockType } from './schedule';
 
-export const SEED_VERSION = 15;
+export const SEED_VERSION = 16;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -191,7 +192,7 @@ const announcements: Announcement[] = [
 const D1 = '2026-08-09', D2 = '2026-08-10', D3 = '2026-08-11';
 let scn = 0;
 const sch = (day: string, start: string, end: string, title: string, location?: string, audienceKind: ScheduleItem['audienceKind'] = 'everyone', audienceId?: string): ScheduleItem =>
-  ({ id: `sch-${++scn}`, campId: 'camp-ww', day, start, end, title, location, audienceKind, audienceId });
+  ({ id: `sch-${++scn}`, campId: 'camp-ww', day, start, end, title, location, audienceKind, audienceId, type: inferBlockType(title) });
 const schedule: ScheduleItem[] = [
   sch(D1, '08:00', '09:30', 'Buses depart & travel', 'Gym lot'),
   sch(D1, '10:00', '11:00', 'Arrival & cabin check-in', 'Main lodge'),

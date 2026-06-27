@@ -823,3 +823,10 @@
 .sso-btn .ti { font-size: 17px; }
 .sso-divider { display: flex; align-items: center; gap: 10px; color: var(--text-3); font-size: 12px; margin: 0 0 14px; }
 .sso-divider::before, .sso-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* schedule block types */
+.blk-types { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.blk-type { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-2); cursor: pointer; }
+.blk-type.on { background: var(--surface); }
+.sch-item { display: flex; align-items: flex-start; gap: 10px; }
+.sch-type { flex-shrink: 0; width: 26px; height: 26px; display: grid; place-items: center; font-size: 16px; margin-top: 2px; }

@@ -229,6 +229,10 @@ export interface Announcement {
 
 // One block on the camp schedule. Reuses the announcement audience scoping so a
 // session can be camp-wide or aimed at a bus/cabin/person (activity rotations).
+// The kind of block — gives "the Day" its typology (icon + grouping). Meals get
+// a full planning module behind them; the rest are lightweight typed entries.
+export type ScheduleBlockType = 'activity' | 'meal' | 'gathering' | 'travel' | 'free';
+
 export interface ScheduleItem {
   id: string;
   campId: string;
@@ -239,6 +243,7 @@ export interface ScheduleItem {
   location?: string;
   audienceKind: AudienceKind;
   audienceId?: string;
+  type?: ScheduleBlockType; // absent = activity
 }
 
 // A photo posted to the camp feed (camper, staff, or organizer). Image is a

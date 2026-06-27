@@ -156,8 +156,11 @@ create table if not exists public.schedule_items (
   title text not null,
   location text,
   audience_kind text not null default 'everyone',
-  audience_id text
+  audience_id text,
+  block_type text
 );
+-- additive (for projects created before block types existed):
+alter table public.schedule_items add column if not exists block_type text;
 
 create table if not exists public.announcements (
   id text primary key,

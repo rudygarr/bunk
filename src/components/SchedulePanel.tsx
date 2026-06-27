@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
-import { scheduleOf, byDay, fmtClock } from '../lib/schedule';
+import { scheduleOf, byDay, fmtClock, BLOCK_TYPES, blockMeta, inferBlockType } from '../lib/schedule';
 import { audienceLabel } from '../lib/announce';
 import { busesOf, cabinsOf, attendeesOf } from '../lib/camps';
 import { teamsOf } from '../lib/teams';
 import { fmtDateLong } from '../lib/format';
 import { field } from './Modal';
-import type { Camp, AudienceKind } from '../lib/types';
+import type { Camp, AudienceKind, ScheduleBlockType } from '../lib/types';
 
 const AUD_ICON: Record<AudienceKind, string> = { everyone: 'ti-world', bus: 'ti-bus', cabin: 'ti-home', team: 'ti-flag', smallGroup: 'ti-users-group', volunteers: 'ti-clipboard-check', person: 'ti-user', custom: 'ti-list-check' };
 
@@ -20,6 +20,8 @@ export default function SchedulePanel({ camp }: { camp: Camp }) {
   const [loc, setLoc] = useState('');
   const [kind, setKind] = useState<AudienceKind>('everyone');
   const [audId, setAudId] = useState('');
+  const [type, setType] = useState<ScheduleBlockType>('activity');
+  const [typeTouched, setTypeTouched] = useState(false);
 
   const groups = byDay(scheduleOf(db, camp.id));
   const buses = busesOf(db, camp.id);
@@ -29,8 +31,13 @@ export default function SchedulePanel({ camp }: { camp: Camp }) {
 
   function add() {
     if (!titleV.trim() || !start || (kind !== 'everyone' && !audId)) return;
-    addScheduleItem(camp.id, { day, start, end: end || undefined, title: titleV.trim(), location: loc.trim() || undefined, audienceKind: kind, audienceId: kind === 'everyone' ? undefined : audId });
-    setTitleV(''); setLoc('');
+    addScheduleItem(camp.id, { day, start, end: end || undefined, title: titleV.trim(), location: loc.trim() || undefined, audienceKind: kind, audienceId: kind === 'everyone' ? undefined : audId, type });
+    setTitleV(''); setLoc(''); setTypeTouched(false); setType('activity');
+  }
+  // Auto-suggest the block type from the title until the organizer picks one.
+  function onTitle(v: string) {
+    setTitleV(v);
+    if (!typeTouched) setType(inferBlockType(v));
   }
 
   return (
@@ -47,7 +54,14 @@ export default function SchedulePanel({ camp }: { camp: Camp }) {
             <label className="flabel" style={{ flex: 1 }}>Start<input type="time" style={{ ...field, appearance: 'auto' }} value={start} onChange={(e) => setStart(e.target.value)} /></label>
             <label className="flabel" style={{ flex: 1 }}>End<input type="time" style={{ ...field, appearance: 'auto' }} value={end} onChange={(e) => setEnd(e.target.value)} /></label>
           </div>
-          <input style={{ ...field, marginTop: 8 }} value={titleV} onChange={(e) => setTitleV(e.target.value)} placeholder="What's happening? e.g. Campfire & worship" />
+          <input style={{ ...field, marginTop: 8 }} value={titleV} onChange={(e) => onTitle(e.target.value)} placeholder="What's happening? e.g. Campfire & worship" />
+          <div className="blk-types">
+            {BLOCK_TYPES.map((b) => (
+              <button key={b.key} type="button" className={'blk-type' + (type === b.key ? ' on' : '')} style={type === b.key ? { color: b.tint, borderColor: b.tint } : undefined} onClick={() => { setType(b.key); setTypeTouched(true); }}>
+                <i className={'ti ' + b.icon} /> {b.label}
+              </button>
+            ))}
+          </div>
           <input style={{ ...field, marginTop: 8 }} value={loc} onChange={(e) => setLoc(e.target.value)} placeholder="Location (optional)" />
           <div className="seg" style={{ marginTop: 8 }}>
             {(['everyone', 'bus', 'cabin', 'team', 'person'] as AudienceKind[]).map((k) => (
@@ -75,6 +89,7 @@ export default function SchedulePanel({ camp }: { camp: Camp }) {
           <div className="sch-day-h">{fmtDateLong(g.day)}</div>
           {g.items.map((s) => (
             <div key={s.id} className="sch-item">
+              <div className="sch-type" style={{ color: blockMeta(s.type).tint }} title={blockMeta(s.type).label}><i className={'ti ' + blockMeta(s.type).icon} /></div>
               <div className="sch-time">{fmtClock(s.start)}{s.end ? <span className="sch-end">{fmtClock(s.end)}</span> : null}</div>
               <div className="sch-main">
                 <div className="sch-title">{s.title}</div>

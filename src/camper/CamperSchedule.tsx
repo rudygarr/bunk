@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
-import { scheduleForCamper, daysOf, nowNext, todayKey, fmtClock } from '../lib/schedule';
+import { scheduleForCamper, daysOf, nowNext, todayKey, fmtClock, blockMeta } from '../lib/schedule';
 import { fmtDate } from '../lib/format';
 import type { Attendee, AudienceKind } from '../lib/types';
 
@@ -38,10 +38,10 @@ export default function CamperSchedule({ me }: { me: Attendee }) {
           return (
             <div key={s.id} className={'c-tl-item ' + state}>
               <div className="c-tl-time">{fmtClock(s.start)}{s.end && <span className="c-tl-end">{fmtClock(s.end)}</span>}</div>
-              <div className="c-tl-line"><span className="c-tl-dot" /></div>
+              <div className="c-tl-line"><span className="c-tl-dot" style={state ? undefined : { background: blockMeta(s.type).tint }} /></div>
               <div className="c-tl-card">
                 {state && <span className={'c-tl-badge ' + state}>{state === 'now' ? 'Now' : 'Up next'}</span>}
-                <div className="c-tl-title">{s.title}</div>
+                <div className="c-tl-title"><i className={'ti ' + blockMeta(s.type).icon} style={{ color: blockMeta(s.type).tint, marginRight: 7 }} />{s.title}</div>
                 <div className="c-tl-meta">
                   {s.location && <span><i className="ti ti-map-pin" /> {s.location}</span>}
                   {s.audienceKind !== 'everyone' && <span className="c-tl-tag">{TAG[s.audienceKind]}</span>}

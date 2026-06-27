@@ -1,5 +1,27 @@
-import type { Database, ScheduleItem, Attendee } from './types';
+import type { Database, ScheduleItem, Attendee, ScheduleBlockType } from './types';
 import { inAudience } from './announce';
+
+// The block typology for "the Day" — icon + label + accent per type.
+export const BLOCK_TYPES: { key: ScheduleBlockType; label: string; icon: string; tint: string }[] = [
+  { key: 'activity', label: 'Activity', icon: 'ti-ball-football', tint: 'var(--pine)' },
+  { key: 'meal', label: 'Meal', icon: 'ti-tools-kitchen-2', tint: 'var(--amber)' },
+  { key: 'gathering', label: 'Gathering', icon: 'ti-speakerphone', tint: 'var(--info)' },
+  { key: 'travel', label: 'Travel', icon: 'ti-bus', tint: 'var(--warn)' },
+  { key: 'free', label: 'Free time', icon: 'ti-sun', tint: 'var(--ok)' },
+];
+export function blockMeta(t?: ScheduleBlockType) {
+  return BLOCK_TYPES.find((b) => b.key === (t ?? 'activity')) ?? BLOCK_TYPES[0];
+}
+// Best-guess type from a title — used to tag legacy/seed items and to default a
+// sensible type as an organizer types a new block.
+export function inferBlockType(title: string): ScheduleBlockType {
+  const t = title.toLowerCase();
+  if (/breakfast|lunch|dinner|brunch|snack|meal|cookout|banquet/.test(t)) return 'meal';
+  if (/depart|arrive|arrival|bus|travel|load|return|airport|drive/.test(t)) return 'travel';
+  if (/session|worship|chapel|service|keynote|speaker|message|assembly|gathering/.test(t)) return 'gathering';
+  if (/free time|free|rest|down ?time|hang|pool time|open /.test(t)) return 'free';
+  return 'activity';
+}
 
 export function scheduleOf(db: Database, campId: string): ScheduleItem[] {
   return (db.schedule ?? [])

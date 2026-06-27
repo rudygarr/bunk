@@ -36,7 +36,7 @@ const TABLES: TableDef[] = [
   { coll: 'smallGroups', table: 'small_groups' },
   { coll: 'attendees', table: 'attendees' },
   { coll: 'duties', table: 'duties' },
-  { coll: 'schedule', table: 'schedule_items', overrides: { start: 'start_time', end: 'end_time' } },
+  { coll: 'schedule', table: 'schedule_items', overrides: { start: 'start_time', end: 'end_time', type: 'block_type' } },
   { coll: 'announcements', table: 'announcements' },
   { coll: 'photos', table: 'photos' },
   { coll: 'packing', table: 'packing_items', overrides: { text: 'item' } },
