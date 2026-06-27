@@ -11,7 +11,7 @@ export type Gender = 'male' | 'female' | 'other';
 // editable later). Roster + Overview are always on, so they aren't listed here.
 export type FeatureKey =
   | 'buses' | 'cabins' | 'smallGroups' | 'teams' | 'roles'
-  | 'schedule' | 'announce' | 'photos' | 'info' | 'attendance';
+  | 'schedule' | 'announce' | 'photos' | 'info' | 'attendance' | 'tables';
 
 // A known person in the directory you can invite from (vs. an ad-hoc email).
 export interface Person {
@@ -91,6 +91,15 @@ export interface SmallGroup {
   leaderName?: string;
 }
 
+// An assigned meal-seating table. Members + table leaders are attendees
+// (attendee.tableId / attendee.tableLeader), like cabins.
+export interface Table {
+  id: string;
+  campId: string;
+  name: string; // "Table 5"
+  seats?: number;
+}
+
 // One line on a camp's packing checklist, grouped by category.
 export interface PackingItem {
   id: string;
@@ -121,6 +130,8 @@ export interface Attendee {
   cabinLeader?: boolean;
   teamId?: string; // competitive team (Warrior Week-style games)
   smallGroupId?: string; // discipleship / activity small group
+  tableId?: string; // assigned meal-seating table
+  tableLeader?: boolean; // a table host/leader (multiple allowed per table)
   // Inputs the auto-fill algorithm sorts on (all optional).
   grade?: number; // school grade / age band
   gender?: Gender; // for gender-specific cabins
@@ -268,6 +279,7 @@ export interface Database {
   attendees: Attendee[];
   teams: Team[];
   smallGroups: SmallGroup[];
+  tables: Table[];
   docs: CampDoc[];
   announcements: Announcement[];
   schedule: ScheduleItem[];

@@ -1,10 +1,10 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc,
+  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc, Table,
 } from './types';
 import { inferBlockType } from './schedule';
 
-export const SEED_VERSION = 17;
+export const SEED_VERSION = 18;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -121,6 +121,11 @@ const smallGroups: SmallGroup[] = [
 ];
 const [G1, G2, G3] = ['sg-1', 'sg-2', 'sg-3'];
 
+const tables: Table[] = [
+  { id: 'tbl-1', campId: 'camp-ww', name: 'Table 5', seats: 8 },
+  { id: 'tbl-2', campId: 'camp-ww', name: 'Table 6', seats: 8 },
+];
+
 // campers already housed (boys in Pine, girls in Cedar)
 att('camp-ww', 'camper', 'Eli Robinson', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', grade: 10, gender: 'male', teamId: T1, smallGroupId: G1, health: { allergies: 'Peanuts (EpiPen in his bag)', emergencyName: 'Donna Robinson', emergencyPhone: '(305) 555-0142' } });
 att('camp-ww', 'camper', 'Noah Park', { busId: wBus1, cabinId: pine, cabinRoomId: pineA, role: 'Camper', grade: 10, gender: 'male', teamId: T2, smallGroupId: G1, health: { meds: 'Inhaler — albuterol, as needed', dietary: 'Vegetarian', emergencyName: 'Grace Park', emergencyPhone: '(305) 555-0177' } });
@@ -230,6 +235,11 @@ for (const s of schedule) {
 const tueDinner = schedule.find((s) => s.day === D2 && s.start === '18:00');
 if (tueDinner) { tueDinner.menu = 'Cuban-style chicken, rice, plantains, flan'; tueDinner.theme = 'Havana Nights (semi-formal)'; }
 
+// Seat the demo campers at the two tables, with a table leader at each.
+attendees.filter((a) => a.campId === 'camp-ww' && a.kind === 'camper').forEach((a, i) => { a.tableId = i % 2 === 0 ? 'tbl-1' : 'tbl-2'; });
+{ const d = attendees.find((a) => a.name === 'Dan Rivera'); if (d) { d.tableId = 'tbl-1'; d.tableLeader = true; } }
+{ const t = attendees.find((a) => a.name === 'Tara Hill'); if (t) { t.tableId = 'tbl-2'; t.tableLeader = true; } }
+
 // Seed feed photos as gradient placeholders (no binary assets in the repo); real
 // posts are downscaled camera photos.
 const grad = (c1: string, c2: string, emoji: string) =>
@@ -307,7 +317,7 @@ camps[0].mapPins = [
 
 export function buildSeed(): Database {
   return {
-    users, people, camps, teams: [...teams], smallGroups: [...smallGroups], docs: [...docs], announcements: [...announcements], schedule: [...schedule], photos: [...photos], packing: [...packing],
+    users, people, camps, teams: [...teams], smallGroups: [...smallGroups], tables: [...tables], docs: [...docs], announcements: [...announcements], schedule: [...schedule], photos: [...photos], packing: [...packing],
     attendees: [...attendees], buses: [...buses], cabins: [...cabins], cabinRooms: [...cabinRooms],
     roles: [...roles], shifts: [...shifts], duties: [...duties],
     seedVersion: SEED_VERSION,

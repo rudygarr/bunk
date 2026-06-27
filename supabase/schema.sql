@@ -121,6 +121,16 @@ create table if not exists public.small_groups (
   leader_name text
 );
 
+create table if not exists public.tables (
+  id text primary key,
+  camp_id text not null references public.camps(id) on delete cascade,
+  name text not null,
+  seats int
+);
+-- attendees gained table seating columns:
+alter table public.attendees add column if not exists table_id text;
+alter table public.attendees add column if not exists table_leader boolean;
+
 create table if not exists public.roles (
   id text primary key,
   camp_id text not null references public.camps(id) on delete cascade,
@@ -242,6 +252,7 @@ alter table public.cabins          enable row level security;
 alter table public.cabin_rooms     enable row level security;
 alter table public.teams           enable row level security;
 alter table public.small_groups    enable row level security;
+alter table public.tables          enable row level security;
 alter table public.roles           enable row level security;
 alter table public.shifts          enable row level security;
 alter table public.duties          enable row level security;
@@ -280,6 +291,10 @@ create policy cabin_rooms_owner on public.cabin_rooms for all
 
 drop policy if exists small_groups_owner on public.small_groups;
 create policy small_groups_owner on public.small_groups for all
+  using (public.owns_camp(camp_id)) with check (public.owns_camp(camp_id));
+
+drop policy if exists tables_owner on public.tables;
+create policy tables_owner on public.tables for all
   using (public.owns_camp(camp_id)) with check (public.owns_camp(camp_id));
 
 drop policy if exists roles_owner on public.roles;

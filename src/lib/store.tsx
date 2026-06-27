@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc, Table,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -12,7 +12,7 @@ import { useSession } from './session';
 function emptyDatabase(): Database {
   return {
     users: [], people: [], camps: [], attendees: [], buses: [], cabins: [], cabinRooms: [],
-    teams: [], smallGroups: [], roles: [], shifts: [], duties: [], schedule: [],
+    teams: [], smallGroups: [], tables: [], roles: [], shifts: [], duties: [], schedule: [],
     announcements: [], photos: [], packing: [], docs: [], seedVersion: SEED_VERSION,
   };
 }
@@ -63,6 +63,11 @@ interface Ctx {
   updateSmallGroup: (id: string, patch: { name?: string; color?: string; leaderName?: string }) => void;
   assignSmallGroup: (attendeeId: string, groupId: string | undefined) => void;
   autoBalanceSmallGroups: (campId: string) => void;
+  addTable: (campId: string, t: { name: string; seats?: number }) => void;
+  removeTable: (id: string) => void;
+  assignTable: (attendeeId: string, tableId: string | undefined) => void;
+  setTableLeader: (attendeeId: string, leader: boolean) => void;
+  autoBalanceTables: (campId: string) => void;
   autoBalanceTeams: (campId: string) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
@@ -458,6 +463,35 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const map = new Map<string, string>();
         campers.forEach((c, i) => map.set(c.id, groups[i % groups.length].id));
         return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, smallGroupId: map.get(a.id) } : a)) };
+      });
+    },
+    addTable(campId, t) {
+      const table: Table = { id: uid('tbl'), campId, name: t.name, seats: t.seats };
+      commit((d) => ({ ...d, tables: [...(d.tables ?? []), table] }));
+    },
+    removeTable(id) {
+      commit((d) => ({
+        ...d,
+        tables: (d.tables ?? []).filter((t) => t.id !== id),
+        attendees: d.attendees.map((a) => (a.tableId === id ? { ...a, tableId: undefined, tableLeader: undefined } : a)),
+      }));
+    },
+    assignTable(attendeeId, tableId) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, tableId, tableLeader: tableId ? a.tableLeader : undefined } : a)) }));
+    },
+    setTableLeader(attendeeId, leader) {
+      commit((d) => ({ ...d, attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, tableLeader: leader } : a)) }));
+    },
+    autoBalanceTables(campId) {
+      commit((d) => {
+        const tables = (d.tables ?? []).filter((t) => t.campId === campId);
+        if (tables.length === 0) return d;
+        const campers = d.attendees
+          .filter((a) => a.campId === campId && a.kind === 'camper')
+          .sort((a, b) => (a.grade ?? 0) - (b.grade ?? 0) || a.name.localeCompare(b.name));
+        const map = new Map<string, string>();
+        campers.forEach((c, i) => map.set(c.id, tables[i % tables.length].id));
+        return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, tableId: map.get(a.id) } : a)) };
       });
     },
     reset() {

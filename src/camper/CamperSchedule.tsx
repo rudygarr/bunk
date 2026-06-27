@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
 import { scheduleForCamper, daysOf, nowNext, todayKey, fmtClock, blockMeta } from '../lib/schedule';
+import { tableOf } from '../lib/camps';
 import { fmtDate } from '../lib/format';
 import type { Attendee, AudienceKind } from '../lib/types';
 
@@ -8,6 +9,7 @@ const TAG: Record<AudienceKind, string> = { everyone: '', bus: 'Your bus', cabin
 
 export default function CamperSchedule({ me }: { me: Attendee }) {
   const { db } = useStore();
+  const myTable = tableOf(db, me);
   const items = scheduleForCamper(db, me);
   const days = daysOf(items);
   const today = todayKey();
@@ -43,6 +45,7 @@ export default function CamperSchedule({ me }: { me: Attendee }) {
                 {state && <span className={'c-tl-badge ' + state}>{state === 'now' ? 'Now' : 'Up next'}</span>}
                 <div className="c-tl-title"><i className={'ti ' + blockMeta(s.type).icon} style={{ color: blockMeta(s.type).tint, marginRight: 7 }} />{s.title}{s.theme && <span className="sch-theme">{s.theme}</span>}</div>
                 {s.menu && <div className="c-tl-menu"><i className="ti ti-tools-kitchen-2" /> {s.menu}</div>}
+                {s.type === 'meal' && myTable && <div className="c-tl-table"><i className="ti ti-armchair" /> Your table: <strong>{myTable.name}</strong>{me.tableLeader ? ' · you host' : ''}</div>}
                 <div className="c-tl-meta">
                   {s.location && <span><i className="ti ti-map-pin" /> {s.location}</span>}
                   {s.audienceKind !== 'everyone' && <span className="c-tl-tag">{TAG[s.audienceKind]}</span>}

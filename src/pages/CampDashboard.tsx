@@ -14,6 +14,7 @@ import PhotosPanel from '../components/PhotosPanel';
 import TeamsPanel from '../components/TeamsPanel';
 import RollCallPanel from '../components/RollCallPanel';
 import SmallGroupPanel from '../components/SmallGroupPanel';
+import TablePanel from '../components/TablePanel';
 import InfoPanel from '../components/InfoPanel';
 import PrintPackets from '../components/PrintPackets';
 import CampSettings from '../components/CampSettings';
@@ -21,7 +22,7 @@ import PublishModal from '../components/PublishModal';
 import { daysLeft, isArchived, tierById } from '../lib/billing';
 import type { FeatureKey } from '../lib/types';
 
-type Tab = 'overview' | 'roster' | 'buses' | 'rollcall' | 'cabins' | 'smallGroups' | 'roles' | 'attendance' | 'announce' | 'schedule' | 'photos' | 'teams' | 'info';
+type Tab = 'overview' | 'roster' | 'buses' | 'rollcall' | 'cabins' | 'smallGroups' | 'tables' | 'roles' | 'attendance' | 'announce' | 'schedule' | 'photos' | 'teams' | 'info';
 // Each tab maps to a feature flag (or null when it's always shown).
 const TABS: { key: Tab; label: string; icon: string; feature: FeatureKey | null }[] = [
   { key: 'overview', label: 'Overview', icon: 'ti-layout-dashboard', feature: null },
@@ -31,6 +32,7 @@ const TABS: { key: Tab; label: string; icon: string; feature: FeatureKey | null 
   { key: 'rollcall', label: 'Roll call', icon: 'ti-list-check', feature: 'buses' },
   { key: 'cabins', label: 'Cabins', icon: 'ti-home', feature: 'cabins' },
   { key: 'smallGroups', label: 'Groups', icon: 'ti-users-group', feature: 'smallGroups' },
+  { key: 'tables', label: 'Tables', icon: 'ti-armchair', feature: 'tables' },
   { key: 'teams', label: 'Teams', icon: 'ti-flag', feature: 'teams' },
   { key: 'roles', label: 'Roles', icon: 'ti-clipboard-check', feature: 'roles' },
   { key: 'schedule', label: 'Schedule', icon: 'ti-calendar-event', feature: 'schedule' },
@@ -110,6 +112,7 @@ export default function CampDashboard() {
         {activeTab === 'photos' && <PhotosPanel camp={camp} />}
         {activeTab === 'teams' && <TeamsPanel camp={camp} />}
         {activeTab === 'smallGroups' && <SmallGroupPanel camp={camp} />}
+        {activeTab === 'tables' && <TablePanel camp={camp} />}
         {activeTab === 'info' && <InfoPanel camp={camp} />}
       </div>
 

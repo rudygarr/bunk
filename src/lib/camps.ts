@@ -1,4 +1,4 @@
-import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty, CheckStage, FeatureKey, SmallGroup } from './types';
+import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty, CheckStage, FeatureKey, SmallGroup, Table } from './types';
 
 // ---- Features ----
 // Every toggleable module, in the order they appear in the wizard and dashboard.
@@ -7,6 +7,7 @@ export const FEATURES: { key: FeatureKey; label: string; icon: string; desc: str
   { key: 'buses', label: 'Buses', icon: 'ti-bus', desc: 'Charter buses with rosters & departure times', core: true },
   { key: 'cabins', label: 'Cabins', icon: 'ti-home', desc: 'Lodging with beds, rooms & cabin leaders', core: true },
   { key: 'smallGroups', label: 'Small groups', icon: 'ti-users-group', desc: 'Discipleship / activity groups with leaders' },
+  { key: 'tables', label: 'Meal tables', icon: 'ti-armchair', desc: 'Assigned dining seating with table leaders' },
   { key: 'teams', label: 'Teams', icon: 'ti-flag', desc: 'Competitive teams with a points standings board' },
   { key: 'roles', label: 'Crew roles', icon: 'ti-clipboard-check', desc: 'Assign adults to jobs & shifts (nurse, kitchen…)' },
   { key: 'schedule', label: 'Daily schedule', icon: 'ti-calendar-event', desc: 'The day-by-day calendar everyone follows', core: true },
@@ -184,4 +185,18 @@ export function smallGroupRoster(db: Database, groupId: string): Attendee[] {
 }
 export function smallGroupOf(db: Database, a: Attendee): SmallGroup | undefined {
   return a.smallGroupId ? db.smallGroups.find((g) => g.id === a.smallGroupId) : undefined;
+}
+
+// ---- Meal tables (assigned seating) ----
+export function tablesOf(db: Database, campId: string): Table[] {
+  return (db.tables ?? []).filter((t) => t.campId === campId).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+}
+export function tableRoster(db: Database, tableId: string): Attendee[] {
+  return db.attendees.filter((a) => a.tableId === tableId);
+}
+export function tableLeaders(db: Database, tableId: string): Attendee[] {
+  return tableRoster(db, tableId).filter((a) => a.tableLeader);
+}
+export function tableOf(db: Database, a: Attendee): Table | undefined {
+  return a.tableId ? (db.tables ?? []).find((t) => t.id === a.tableId) : undefined;
 }
