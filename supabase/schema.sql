@@ -130,6 +130,10 @@ create table if not exists public.tables (
 -- attendees gained table seating columns:
 alter table public.attendees add column if not exists table_id text;
 alter table public.attendees add column if not exists table_leader boolean;
+alter table public.attendees add column if not exists travel_mode text;
+alter table public.attendees add column if not exists flight_no text;
+alter table public.attendees add column if not exists travel_note text;
+alter table public.camps add column if not exists default_travel text;
 
 create table if not exists public.roles (
   id text primary key,

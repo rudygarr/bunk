@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
-import { busOf, busLabel, cabinOf, roomOf } from '../lib/camps';
+import { busOf, busLabel, cabinOf, roomOf, campById } from '../lib/camps';
+import { TRAVEL_MODES, travelMeta } from '../lib/travel';
+import type { TravelMode } from '../lib/types';
 import type { Attendee, Health, Gender } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
 
@@ -18,9 +20,16 @@ export default function AttendeeModal({ attendee, onClose }: { attendee: Attende
   const [grade, setGrade] = useState(a.grade ? String(a.grade) : '');
   const [gender, setGender] = useState<Gender | ''>(a.gender ?? '');
   const [friends, setFriends] = useState(a.friends ?? '');
+  const camp = campById(db, a.campId);
+  const [travelMode, setTravelMode] = useState<TravelMode | ''>(a.travelMode ?? '');
+  const [flightNo, setFlightNo] = useState(a.flightNo ?? '');
+  const [travelNote, setTravelNote] = useState(a.travelNote ?? '');
   function save() {
     setHealth(a.id, h);
-    updateAttendee(a.id, { grade: grade ? Number(grade) : undefined, gender: gender || undefined, friends: friends.trim() || undefined });
+    updateAttendee(a.id, {
+      grade: grade ? Number(grade) : undefined, gender: gender || undefined, friends: friends.trim() || undefined,
+      travelMode: travelMode || undefined, flightNo: flightNo.trim() || undefined, travelNote: travelNote.trim() || undefined,
+    });
     onClose();
   }
 
@@ -53,6 +62,20 @@ export default function AttendeeModal({ attendee, onClose }: { attendee: Attende
           </div>
           <label className="flabel">Friend request(s)<input style={field} value={friends} onChange={(e) => setFriends(e.target.value)} placeholder="Bunkmate name(s), comma-separated" /></label>
         </>
+      )}
+
+      <div className="am-section"><i className="ti ti-route" /> Travel</div>
+      <label className="flabel">How they get to camp
+        <select style={{ ...field, appearance: 'auto' }} value={travelMode} onChange={(e) => setTravelMode(e.target.value as TravelMode | '')}>
+          <option value="">Camp default{camp?.defaultTravel ? ` — ${travelMeta(camp.defaultTravel).label}` : ' — Bus'}</option>
+          {TRAVEL_MODES.map((m) => <option key={m.key} value={m.key}>{m.label}</option>)}
+        </select>
+      </label>
+      {(travelMode === 'plane' || travelMode === 'other') && (
+        <div style={{ display: 'flex', gap: 10 }}>
+          {travelMode === 'plane' && <label className="flabel" style={{ flex: 1 }}>Flight #<input style={field} value={flightNo} onChange={(e) => setFlightNo(e.target.value)} placeholder="DL 1234" /></label>}
+          <label className="flabel" style={{ flex: 1.5 }}>Arrival note<input style={field} value={travelNote} onChange={(e) => setTravelNote(e.target.value)} placeholder="Lands 4:10p · Rudy picks up" /></label>
+        </div>
       )}
 
       <div className="am-section"><i className="ti ti-stethoscope" /> Health &amp; emergency</div>

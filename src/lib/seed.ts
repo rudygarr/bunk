@@ -247,6 +247,11 @@ attendees.filter((a) => a.campId === 'camp-ww' && a.kind === 'camper').forEach((
 { const d = attendees.find((a) => a.name === 'Dan Rivera'); if (d) { d.tableId = 'tbl-1'; d.tableLeader = true; } }
 { const t = attendees.find((a) => a.name === 'Tara Hill'); if (t) { t.tableId = 'tbl-2'; t.tableLeader = true; } }
 
+// Travel: most ride the bus (camp default); the guest speaker flies in.
+camps[0].defaultTravel = 'bus';
+{ const m = attendees.find((a) => a.name === 'Pastor Mike Allen'); if (m) { m.travelMode = 'plane'; m.flightNo = 'DL 1422'; m.travelNote = 'Lands 3:40p Wed · Rudy picks up at ATL'; } }
+{ const k = attendees.find((a) => a.name === 'Karen Phillips'); if (k) { k.travelMode = 'car'; } }
+
 // Seed feed photos as gradient placeholders (no binary assets in the repo); real
 // posts are downscaled camera photos.
 const grad = (c1: string, c2: string, emoji: string) =>

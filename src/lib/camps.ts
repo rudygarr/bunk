@@ -4,7 +4,7 @@ import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty
 // Every toggleable module, in the order they appear in the wizard and dashboard.
 // `core` features default on for a new camp; the rest are opt-in.
 export const FEATURES: { key: FeatureKey; label: string; icon: string; desc: string; core?: boolean }[] = [
-  { key: 'buses', label: 'Buses', icon: 'ti-bus', desc: 'Charter buses with rosters & departure times', core: true },
+  { key: 'buses', label: 'Travel', icon: 'ti-route', desc: 'How everyone gets there — buses, cars, flights & more', core: true },
   { key: 'cabins', label: 'Cabins', icon: 'ti-home', desc: 'Lodging with beds, rooms & cabin leaders', core: true },
   { key: 'smallGroups', label: 'Small groups', icon: 'ti-users-group', desc: 'Discipleship / activity groups with leaders' },
   { key: 'tables', label: 'Meal tables', icon: 'ti-armchair', desc: 'Assigned dining seating with table leaders' },

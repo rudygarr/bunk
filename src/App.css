@@ -854,3 +854,14 @@
 .kc-call { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--pine); text-decoration: none; white-space: nowrap; background: var(--pine-tint); padding: 5px 10px; border-radius: 999px; }
 .kc-x { border: none; background: none; color: var(--text-3); cursor: pointer; padding: 4px; flex-shrink: 0; }
 .kc-x:hover { color: var(--bad); }
+
+/* ===== travel summary ===== */
+.travel-sum { margin-bottom: 16px; }
+.travel-modes { display: flex; flex-wrap: wrap; gap: 7px; }
+.travel-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 999px; padding: 4px 11px; }
+.travel-chip b { color: var(--pine); }
+.travel-special { margin-top: 12px; border: 1px solid var(--border-2); border-radius: var(--r-md); padding: 10px 12px; background: var(--amber-tint); }
+.travel-special-h { font-size: 12.5px; font-weight: 700; color: var(--warn); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.travel-special-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 3px 0; }
+.travel-special-n { font-weight: 600; }
+.travel-special-d { color: var(--text-2); text-align: right; }

@@ -6,6 +6,8 @@ export type RsvpStatus = 'invited' | 'accepted' | 'declined' | 'tentative';
 export type AttendeeKind = 'camper' | 'staff' | 'parent' | 'guest';
 export type CabinKind = 'student' | 'staff' | 'parent' | 'guest';
 export type Gender = 'male' | 'female' | 'other';
+// How someone travels to camp — buses are just one option.
+export type TravelMode = 'bus' | 'car' | 'plane' | 'onsite' | 'na' | 'other';
 
 // Modular features an organizer turns on per camp (in the setup wizard, and
 // editable later). Roster + Overview are always on, so they aren't listed here.
@@ -55,6 +57,7 @@ export interface Camp {
   published?: boolean;
   publishedAt?: string; // ISO — start of the 60-day window
   tier?: string; // billing tier id locked at publish
+  defaultTravel?: TravelMode; // most people travel this way; overridden per person
 }
 
 // An uploaded or linked document in the camp's files library — designed
@@ -136,6 +139,11 @@ export interface Attendee {
   role?: string; // free label e.g. "Cabin Leader", "Camper"
   status: RsvpStatus;
   busId?: string;
+  // How this person gets to camp. Falls back to the camp's default travel mode
+  // when unset. 'bus' uses busId; 'plane' can carry a flight number + pickup note.
+  travelMode?: TravelMode;
+  flightNo?: string;
+  travelNote?: string; // arrival details, who's picking them up, etc.
   cabinId?: string;
   cabinRoomId?: string;
   cabinLeader?: boolean;

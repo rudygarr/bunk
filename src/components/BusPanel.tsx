@@ -3,6 +3,7 @@ import { useStore } from '../lib/store';
 import { initials } from '../lib/format';
 import { busesOf, busRoster, attendeesOf, busLabel } from '../lib/camps';
 import { autoAssignBuses } from '../lib/assign';
+import { travelSummary, travelMeta, travelModeOf } from '../lib/travel';
 import type { Camp, Bus } from '../lib/types';
 import Modal, { field, primaryBtn } from './Modal';
 import AutoFillPreview from './AutoFillPreview';
@@ -15,8 +16,29 @@ export default function BusPanel({ camp }: { camp: Camp }) {
   const buses = busesOf(db, camp.id);
   const unassigned = attendeesOf(db, camp.id).filter((a) => !a.busId);
 
+  const summary = travelSummary(db, camp);
+
   return (
     <div>
+      <div className="travel-sum">
+        <div className="travel-modes">
+          {summary.counts.map((c) => (
+            <span key={c.mode} className="travel-chip"><i className={'ti ' + travelMeta(c.mode).icon} /> {travelMeta(c.mode).label} · <b>{c.n}</b></span>
+          ))}
+        </div>
+        {summary.special.length > 0 && (
+          <div className="travel-special">
+            <div className="travel-special-h"><i className="ti ti-plane" /> Special arrangements</div>
+            {summary.special.map((a) => (
+              <div key={a.id} className="travel-special-row">
+                <span className="travel-special-n">{a.name}</span>
+                <span className="travel-special-d">{a.flightNo ? <b>{a.flightNo}</b> : null}{a.flightNo && a.travelNote ? ' · ' : ''}{a.travelNote || (!a.flightNo ? travelMeta(travelModeOf(a, camp)).label : '')}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="panel-head">
         <div className="panel-title"><i className="ti ti-bus" /> Buses <span className="rental">rental</span></div>
         <div className="panel-actions">

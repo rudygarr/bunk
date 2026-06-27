@@ -28,7 +28,7 @@ const TABS: { key: Tab; label: string; icon: string; feature: FeatureKey | null 
   { key: 'overview', label: 'Overview', icon: 'ti-layout-dashboard', feature: null },
   { key: 'roster', label: 'Roster', icon: 'ti-users', feature: null },
   { key: 'attendance', label: 'Attendance', icon: 'ti-checkbox', feature: 'attendance' },
-  { key: 'buses', label: 'Buses', icon: 'ti-bus', feature: 'buses' },
+  { key: 'buses', label: 'Travel', icon: 'ti-route', feature: 'buses' },
   { key: 'rollcall', label: 'Roll call', icon: 'ti-list-check', feature: 'buses' },
   { key: 'cabins', label: 'Cabins', icon: 'ti-home', feature: 'cabins' },
   { key: 'smallGroups', label: 'Groups', icon: 'ti-users-group', feature: 'smallGroups' },
