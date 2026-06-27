@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useStore } from '../lib/store';
 import { packingByCategory } from '../lib/packing';
+import { contactsOf } from '../lib/camps';
 import { downscaleImage } from '../lib/photos';
 import { field } from './Modal';
 import CampMap from './CampMap';
@@ -90,6 +91,9 @@ export default function InfoPanel({ camp }: { camp: Camp }) {
         <input style={field} defaultValue={liveCamp.contact ?? ''} onBlur={(e) => updateCamp(camp.id, { contact: e.target.value.trim() || undefined })} placeholder="Who to reach with questions" />
       </div>
 
+      {/* Key contacts */}
+      <KeyContacts camp={camp} />
+
       {/* Packing list */}
       <div className="info-block">
         <div className="info-block-h">Packing list</div>
@@ -118,6 +122,41 @@ export default function InfoPanel({ camp }: { camp: Camp }) {
         <div className="info-block-h">Files &amp; forms</div>
         <div className="page-sub" style={{ fontSize: 12.5, margin: '0 0 10px' }}>Designed schedules, the official map, consent forms, parent letters — upload or link them and tag who they're for.</div>
         <CampFiles camp={camp} mode="edit" />
+      </div>
+    </div>
+  );
+}
+
+// Who-to-call directory (Logistics): nurse, front office, venue facilities —
+// including people not on the roster. Phone numbers are tap-to-call.
+function KeyContacts({ camp }: { camp: Camp }) {
+  const { db, addContact, removeContact } = useStore();
+  const list = contactsOf(db, camp.id);
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('');
+  const [phone, setPhone] = useState('');
+  function add() {
+    if (!name.trim()) return;
+    addContact(camp.id, { name: name.trim(), role: role.trim() || undefined, phone: phone.trim() || undefined });
+    setName(''); setRole(''); setPhone('');
+  }
+  return (
+    <div className="info-block">
+      <div className="info-block-h">Key contacts</div>
+      <div className="page-sub" style={{ fontSize: 12.5, margin: '0 0 10px' }}>Who to call when something comes up — including the venue's own staff.</div>
+      {list.map((c) => (
+        <div key={c.id} className="kc-row">
+          <span className="kc-who"><span className="kc-name">{c.name}</span>{c.role && <span className="kc-role">{c.role}</span>}{c.note && <span className="kc-note">{c.note}</span>}</span>
+          {c.phone && <a className="kc-call" href={`tel:${c.phone.replace(/[^\d+]/g, '')}`}><i className="ti ti-phone" /> {c.phone}</a>}
+          <button className="kc-x" onClick={() => removeContact(c.id)}><i className="ti ti-x" /></button>
+        </div>
+      ))}
+      {list.length === 0 && <div className="empty" style={{ margin: '0 0 8px' }}>No contacts yet.</div>}
+      <div className="info-add">
+        <input style={{ ...field, flex: 1.4 }} value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+        <input style={{ ...field, flex: 1.2 }} value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role" />
+        <input style={{ ...field, flex: 1.2 }} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" onKeyDown={(e) => e.key === 'Enter' && add()} />
+        <button className="btn-primary sm" onClick={add}><i className="ti ti-plus" /></button>
       </div>
     </div>
   );

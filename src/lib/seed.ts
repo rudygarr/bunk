@@ -1,6 +1,6 @@
 import type {
   Database, User, Person, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc, Table,
+  RsvpStatus, AttendeeKind, Health, Gender, Announcement, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc, Table, Contact,
 } from './types';
 import { inferBlockType } from './schedule';
 
@@ -124,6 +124,13 @@ const [G1, G2, G3] = ['sg-1', 'sg-2', 'sg-3'];
 const tables: Table[] = [
   { id: 'tbl-1', campId: 'camp-ww', name: 'Table 5', seats: 8 },
   { id: 'tbl-2', campId: 'camp-ww', name: 'Table 6', seats: 8 },
+];
+
+const contacts: Contact[] = [
+  { id: 'ct-1', campId: 'camp-ww', name: 'Rudy Garrido', role: 'Camp Director', phone: '(305) 555-0100' },
+  { id: 'ct-2', campId: 'camp-ww', name: 'Karen Phillips', role: 'Camp Nurse', phone: '(305) 555-0123', note: 'On-site, Maple Hall' },
+  { id: 'ct-3', campId: 'camp-ww', name: 'WCS Front Office', role: 'School office', phone: '(305) 555-0000' },
+  { id: 'ct-4', campId: 'camp-ww', name: 'Sharptop Cove', role: 'Venue facilities', phone: '(706) 555-0199', note: '24/7 ranger line' },
 ];
 
 // campers already housed (boys in Pine, girls in Cedar)
@@ -317,7 +324,7 @@ camps[0].mapPins = [
 
 export function buildSeed(): Database {
   return {
-    users, people, camps, teams: [...teams], smallGroups: [...smallGroups], tables: [...tables], docs: [...docs], announcements: [...announcements], schedule: [...schedule], photos: [...photos], packing: [...packing],
+    users, people, camps, teams: [...teams], smallGroups: [...smallGroups], tables: [...tables], contacts: [...contacts], docs: [...docs], announcements: [...announcements], schedule: [...schedule], photos: [...photos], packing: [...packing],
     attendees: [...attendees], buses: [...buses], cabins: [...cabins], cabinRooms: [...cabinRooms],
     roles: [...roles], shifts: [...shifts], duties: [...duties],
     seedVersion: SEED_VERSION,

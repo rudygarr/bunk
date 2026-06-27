@@ -100,6 +100,17 @@ export interface Table {
   seats?: number;
 }
 
+// A who-to-call entry (Logistics). Includes people not on the roster — the
+// venue's facilities manager, the camp ranger, the front office.
+export interface Contact {
+  id: string;
+  campId: string;
+  name: string;
+  role?: string; // "Nurse", "Front office", "Venue facilities"
+  phone?: string;
+  note?: string;
+}
+
 // One line on a camp's packing checklist, grouped by category.
 export interface PackingItem {
   id: string;
@@ -280,6 +291,7 @@ export interface Database {
   teams: Team[];
   smallGroups: SmallGroup[];
   tables: Table[];
+  contacts: Contact[];
   docs: CampDoc[];
   announcements: Announcement[];
   schedule: ScheduleItem[];

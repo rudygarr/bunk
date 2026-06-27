@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type {
   Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty,
-  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc, Table,
+  RsvpStatus, AttendeeKind, CabinKind, Health, CheckStage, Announcement, AudienceKind, ScheduleItem, Photo, Team, PackingItem, SmallGroup, CampDoc, Table, Contact,
 } from './types';
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
@@ -12,7 +12,7 @@ import { useSession } from './session';
 function emptyDatabase(): Database {
   return {
     users: [], people: [], camps: [], attendees: [], buses: [], cabins: [], cabinRooms: [],
-    teams: [], smallGroups: [], tables: [], roles: [], shifts: [], duties: [], schedule: [],
+    teams: [], smallGroups: [], tables: [], contacts: [], roles: [], shifts: [], duties: [], schedule: [],
     announcements: [], photos: [], packing: [], docs: [], seedVersion: SEED_VERSION,
   };
 }
@@ -68,6 +68,8 @@ interface Ctx {
   assignTable: (attendeeId: string, tableId: string | undefined) => void;
   setTableLeader: (attendeeId: string, leader: boolean) => void;
   autoBalanceTables: (campId: string) => void;
+  addContact: (campId: string, c: { name: string; role?: string; phone?: string; note?: string }) => void;
+  removeContact: (id: string) => void;
   autoBalanceTeams: (campId: string) => void;
   // buses
   addBus: (campId: string, bus: Omit<Bus, 'id' | 'campId'>) => void;
@@ -493,6 +495,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         campers.forEach((c, i) => map.set(c.id, tables[i % tables.length].id));
         return { ...d, attendees: d.attendees.map((a) => (map.has(a.id) ? { ...a, tableId: map.get(a.id) } : a)) };
       });
+    },
+    addContact(campId, c) {
+      const contact: Contact = { id: uid('ct'), campId, name: c.name, role: c.role, phone: c.phone, note: c.note };
+      commit((d) => ({ ...d, contacts: [...(d.contacts ?? []), contact] }));
+    },
+    removeContact(id) {
+      commit((d) => ({ ...d, contacts: (d.contacts ?? []).filter((c) => c.id !== id) }));
     },
     reset() {
       if (isCloud) return; // demo-only — never touch a real cloud account

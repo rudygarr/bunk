@@ -42,6 +42,7 @@ const TABLES: TableDef[] = [
   { coll: 'photos', table: 'photos' },
   { coll: 'packing', table: 'packing_items', overrides: { text: 'item' } },
   { coll: 'docs', table: 'docs' },
+  { coll: 'contacts', table: 'contacts' },
 ];
 
 function toRow(obj: Record<string, unknown>, overrides: Record<string, string> = {}): Record<string, unknown> {

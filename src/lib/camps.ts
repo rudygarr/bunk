@@ -1,4 +1,4 @@
-import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty, CheckStage, FeatureKey, SmallGroup, Table } from './types';
+import type { Database, Camp, Attendee, Bus, Cabin, CabinRoom, Role, Shift, Duty, CheckStage, FeatureKey, SmallGroup, Table, Contact } from './types';
 
 // ---- Features ----
 // Every toggleable module, in the order they appear in the wizard and dashboard.
@@ -199,4 +199,9 @@ export function tableLeaders(db: Database, tableId: string): Attendee[] {
 }
 export function tableOf(db: Database, a: Attendee): Table | undefined {
   return a.tableId ? (db.tables ?? []).find((t) => t.id === a.tableId) : undefined;
+}
+
+// ---- Key contacts (who-to-call) ----
+export function contactsOf(db: Database, campId: string): Contact[] {
+  return (db.contacts ?? []).filter((c) => c.campId === campId);
 }

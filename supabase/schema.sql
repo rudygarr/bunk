@@ -206,6 +206,15 @@ create table if not exists public.packing_items (
   category text
 );
 
+create table if not exists public.contacts (
+  id text primary key,
+  camp_id text not null references public.camps(id) on delete cascade,
+  name text not null,
+  role text,
+  phone text,
+  note text
+);
+
 create table if not exists public.docs (
   id text primary key,
   camp_id text not null references public.camps(id) on delete cascade,
@@ -261,6 +270,7 @@ alter table public.announcements   enable row level security;
 alter table public.photos          enable row level security;
 alter table public.packing_items   enable row level security;
 alter table public.docs            enable row level security;
+alter table public.contacts        enable row level security;
 
 -- ---------- camps: owner does everything; anyone may read a PUBLISHED camp ----------
 drop policy if exists camps_owner on public.camps;
@@ -354,6 +364,10 @@ create policy announcements_public_read on public.announcements for select
 -- docs: public can read only the 'everyone' (parent-facing) files
 drop policy if exists docs_owner on public.docs;
 create policy docs_owner on public.docs for all
+  using (public.owns_camp(camp_id)) with check (public.owns_camp(camp_id));
+
+drop policy if exists contacts_owner on public.contacts;
+create policy contacts_owner on public.contacts for all
   using (public.owns_camp(camp_id)) with check (public.owns_camp(camp_id));
 drop policy if exists docs_public_read on public.docs;
 create policy docs_public_read on public.docs for select
