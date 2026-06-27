@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import { StoreProvider } from './lib/store';
+import { StoreProvider, useStore } from './lib/store';
 import { SessionProvider, useSession } from './lib/session';
 import Shell from './components/Shell';
 import Login from './pages/Login';
@@ -15,6 +15,7 @@ import './App.css';
 
 function Gate() {
   const { authed, mode } = useSession();
+  const { memberId } = useStore();
   // Track the hash so navigating to a public link in-session re-renders the gate.
   const [hash, setHash] = useState(typeof window !== 'undefined' ? window.location.hash : '');
   useEffect(() => {
@@ -36,7 +37,7 @@ function Gate() {
     );
   }
   if (!authed) return <Login />;
-  if (mode === 'camper') return <CamperApp />;
+  if (mode === 'camper' || memberId) return <CamperApp />;
   return (
     <HashRouter>
       <Shell>

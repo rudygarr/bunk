@@ -6,6 +6,7 @@ import type {
 import { buildSeed, SEED_VERSION } from './seed';
 import { loadDB, saveDB, clearDB } from './persistence';
 import { loadCloudDB, saveCloudDB } from './cloudDb';
+import { loadMemberCamp, memberRsvp, memberTogglePacked } from './memberDb';
 import { useSession } from './session';
 
 // An empty workspace for a brand-new cloud account (or a cloud load failure).
@@ -97,6 +98,8 @@ interface Ctx {
   assignDuty: (campId: string, roleId: string, who: { personId?: string; name: string; email?: string; shiftId?: string }) => void;
   removeDuty: (id: string) => void;
   reset: () => void;
+  // When signed in as a cloud camper, their own attendee id (else null).
+  memberId: string | null;
 }
 
 const C = createContext<Ctx | null>(null);
@@ -104,17 +107,27 @@ const C = createContext<Ctx | null>(null);
 export function StoreProvider({ children }: { children: ReactNode }) {
   const { ready, isCloud, user } = useSession();
   const [db, setDb] = useState<Database | null>(null);
+  const [memberId, setMemberId] = useState<string | null>(null);
 
-  // Load the right workspace: a signed-in organizer's data from Supabase, or the
-  // localStorage demo. Re-runs when auth changes (sign in/out) so the store
-  // swaps backends cleanly.
+  // Load the right workspace: a signed-in organizer's data from Supabase, a
+  // signed-in camper's curated payload (member RPC), or the localStorage demo.
+  // Re-runs when auth changes (sign in/out) so the store swaps backends cleanly.
   useEffect(() => {
     if (!ready) return;
     let active = true;
     setDb(null);
+    setMemberId(null);
     if (isCloud) {
       loadCloudDB()
-        .then((d) => { if (active) setDb(d); })
+        .then(async (d) => {
+          if (!active) return;
+          if (d.camps.length > 0) { setDb(d); return; } // owns camps → organizer
+          // Not an owner — maybe a camper in someone else's published camp.
+          const member = await loadMemberCamp();
+          if (!active) return;
+          if (member) { setDb(member.db); setMemberId(member.meId); }
+          else setDb(d); // signed in but not in any camp yet
+        })
         .catch((e) => { console.error('Cloud load failed', e); if (active) setDb(emptyDatabase()); });
     } else {
       loadDB().then((saved) => {
@@ -139,6 +152,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const api: Ctx = {
     db,
+    memberId,
     addCamp(c) {
       const camp: Camp = { ...c, id: uid('camp') };
       commit((d) => ({ ...d, camps: [...d.camps, camp] }));
@@ -189,6 +203,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return batch.length;
     },
     respond(attendeeId, status) {
+      // A cloud camper writes only their own RSVP, via the locked-down function.
+      if (isCloud && memberId) {
+        setDb((prev) => ({ ...(prev as Database), attendees: (prev as Database).attendees.map((a) => (a.id === attendeeId ? { ...a, status, respondedAt: now() } : a)) }));
+        void memberRsvp(status).catch((e) => console.error('RSVP failed', e));
+        return;
+      }
       commit((d) => ({
         ...d,
         attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, status, respondedAt: now() } : a)),
@@ -498,14 +518,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
     },
     togglePacked(attendeeId, itemId) {
+      const flip = (a: Attendee) => {
+        const have = a.packed ?? [];
+        return have.includes(itemId) ? have.filter((x) => x !== itemId) : [...have, itemId];
+      };
+      if (isCloud && memberId) {
+        setDb((prev) => ({ ...(prev as Database), attendees: (prev as Database).attendees.map((a) => (a.id === attendeeId ? { ...a, packed: flip(a) } : a)) }));
+        void memberTogglePacked(itemId).catch((e) => console.error('Packing toggle failed', e));
+        return;
+      }
       commit((d) => ({
         ...d,
-        attendees: d.attendees.map((a) => {
-          if (a.id !== attendeeId) return a;
-          const have = a.packed ?? [];
-          const packed = have.includes(itemId) ? have.filter((x) => x !== itemId) : [...have, itemId];
-          return { ...a, packed };
-        }),
+        attendees: d.attendees.map((a) => (a.id === attendeeId ? { ...a, packed: flip(a) } : a)),
       }));
     },
     addContact(campId, c) {

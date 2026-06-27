@@ -17,16 +17,18 @@ type Tab = 'home' | 'schedule' | 'info' | 'photos' | 'alerts' | 'rollcall';
 
 // The camper-facing side of CampHQ. A signed-in camper sees only their own camp.
 export default function CamperApp() {
-  const { db } = useStore();
+  const { db, memberId } = useStore();
   const { camperId, signOut } = useSession();
   const [tab, setTab] = useState<Tab>('home');
+  // Cloud camper (memberId from the store) or demo camper (session camperId).
+  const meId = memberId ?? camperId;
   // Which announcement ids this camper has already seen (id-based so it's robust
   // to the demo's mixed real/seed dates). Persisted per camper.
-  const seenKey = `camphq-seen-${camperId}`;
+  const seenKey = `camphq-seen-${meId}`;
   const [seen, setSeen] = useState<Set<string>>(() => {
     try { return new Set<string>(JSON.parse(localStorage.getItem(seenKey) || '[]')); } catch { return new Set(); }
   });
-  const me = db.attendees.find((a) => a.id === camperId);
+  const me = db.attendees.find((a) => a.id === meId);
 
   if (!me) {
     return (
