@@ -4,7 +4,7 @@ import type {
 } from './types';
 import { inferBlockType } from './schedule';
 
-export const SEED_VERSION = 18;
+export const SEED_VERSION = 19;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -96,6 +96,11 @@ const att = (campId: string, kind: AttendeeKind, name: string, o: AO = {}) => {
 // ===== Warrior Week =====
 const wBus1 = bus('camp-ww', 'Bus 1', 'Gold Squad', 30, 'Gold Coast Coach', 'Departs 8:00 AM · Gym Lot');
 const wBus2 = bus('camp-ww', 'Bus 2', 'Green Squad', 30, 'Gold Coast Coach', 'Departs 8:00 AM · Gym Lot');
+// Multi-modal travel: a guest speaker's flight and an early-crew van.
+const wFlight = 'veh-flight-1';
+buses.push({ id: wFlight, campId: 'camp-ww', type: 'flight', name: 'Delta 1284', label: 'Guest arrival', capacity: 2, charterOrg: 'Delta', flightNo: 'DL1284', departInfo: 'Arrives 4:10 PM · Atlanta' });
+const wVan = 'veh-car-1';
+buses.push({ id: wVan, campId: 'camp-ww', type: 'car', name: 'Staff Van A', label: 'Early crew', capacity: 8, charterOrg: 'Coach Dan (driver)', departInfo: 'Departs 6:00 AM' });
 
 const pine = cabin('camp-ww', 'Pine Lodge', 'student', undefined, 'male');
 const pineA = room(pine, 'Room A', 8);
@@ -246,6 +251,9 @@ if (tueDinner) { tueDinner.menu = 'Cuban-style chicken, rice, plantains, flan'; 
 attendees.filter((a) => a.campId === 'camp-ww' && a.kind === 'camper').forEach((a, i) => { a.tableId = i % 2 === 0 ? 'tbl-1' : 'tbl-2'; });
 { const d = attendees.find((a) => a.name === 'Dan Rivera'); if (d) { d.tableId = 'tbl-1'; d.tableLeader = true; } }
 { const t = attendees.find((a) => a.name === 'Tara Hill'); if (t) { t.tableId = 'tbl-2'; t.tableLeader = true; } }
+// Put the guest speaker on the flight and an AV lead on the early van.
+{ const g = attendees.find((a) => a.name === 'Pastor Mike Allen'); if (g) { g.busId = 'veh-flight-1'; g.travelMode = 'plane'; g.flightNo = 'DL1284'; } }
+{ const m = attendees.find((a) => a.name === 'Mason Reed'); if (m) { m.busId = 'veh-car-1'; m.travelMode = 'car'; } }
 
 // Travel: most ride the bus (camp default); the guest speaker flies in.
 camps[0].defaultTravel = 'bus';

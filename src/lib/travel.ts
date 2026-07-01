@@ -1,5 +1,15 @@
-import type { Database, Attendee, Camp, TravelMode } from './types';
+import type { Database, Attendee, Camp, TravelMode, Bus, VehicleType } from './types';
 import { attendeesOf } from './camps';
+
+// Vehicle kinds the organizer can add on the Travel tab.
+export const VEHICLE_TYPES: { key: VehicleType; label: string; plural: string; icon: string; add: string }[] = [
+  { key: 'bus', label: 'Bus', plural: 'Buses', icon: 'ti-bus', add: 'Add a bus' },
+  { key: 'flight', label: 'Flight', plural: 'Flights', icon: 'ti-plane', add: 'Add a flight' },
+  { key: 'car', label: 'Car / van', plural: 'Cars & vans', icon: 'ti-car', add: 'Add a car' },
+  { key: 'other', label: 'Other', plural: 'Other', icon: 'ti-dots', add: 'Add another' },
+];
+export function vehicleType(b: Bus): VehicleType { return b.type ?? 'bus'; }
+export function vehicleTypeMeta(t: VehicleType) { return VEHICLE_TYPES.find((v) => v.key === t) ?? VEHICLE_TYPES[0]; }
 
 // Buses are one way to camp; this models all of them.
 export const TRAVEL_MODES: { key: TravelMode; label: string; icon: string }[] = [

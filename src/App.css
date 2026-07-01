@@ -881,3 +881,24 @@
 .c-pack-item i { font-size: 20px; color: var(--text-3); flex-shrink: 0; }
 .c-pack-item.on i { color: var(--ok); }
 .c-pack-item.on span { color: var(--text-3); text-decoration: line-through; }
+
+/* ===== Travel: multi-type vehicles ===== */
+.veh-add-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 6px 0 14px; }
+.veh-add-label { font-size: 13px; color: var(--text-3); }
+.veh-add-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-1); cursor: pointer; }
+.veh-add-btn:hover { border-color: color-mix(in srgb, var(--pine) 40%, transparent); background: var(--pine-tint); color: var(--pine); }
+.veh-add-btn .ti { color: var(--pine); }
+.veh-group { margin-bottom: 18px; }
+.veh-group-h { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 8px; }
+.veh-group-h .ti { color: var(--pine); font-size: 16px; }
+.veh-group-n { font-size: 11px; font-weight: 700; color: var(--pine); background: var(--pine-tint); border-radius: 999px; padding: 1px 8px; }
+.veh-ic { width: 30px; height: 30px; border-radius: 8px; background: var(--pine-tint); color: var(--pine); display: grid; place-items: center; font-size: 16px; flex-shrink: 0; }
+.veh-flight { margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--info); background: var(--info-tint); padding: 1px 7px; border-radius: 6px; }
+.veh-seats { display: flex; align-items: center; gap: 10px; margin: 8px 0 4px; }
+.seat-step { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-1); display: grid; place-items: center; cursor: pointer; font-size: 14px; }
+.seat-step:hover { background: var(--pine-tint); color: var(--pine); border-color: color-mix(in srgb, var(--pine) 30%, transparent); }
+.seat-count { font-size: 14px; color: var(--text-2); }
+.seat-count b { color: var(--text-1); font-size: 15px; }
+.seat-count.full b { color: var(--warn); }
+.seat-count.over b { color: var(--bad); }
+.seat-warn { font-size: 11.5px; font-weight: 600; color: var(--bad); background: var(--bad-tint); padding: 1px 8px; border-radius: 999px; }

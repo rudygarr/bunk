@@ -192,15 +192,20 @@ export interface Team {
   points: number;
 }
 
+// A travel vehicle — bus, flight, car, or something else. (The table is still
+// called "buses" for backward-compat; `type` distinguishes them.)
+export type VehicleType = 'bus' | 'flight' | 'car' | 'other';
 export interface Bus {
   id: string;
   campId: string;
-  name: string; // "Bus 1"
+  type?: VehicleType; // undefined = bus (legacy)
+  name: string; // "Bus 1", "Delta 1284", "Van A"
   label?: string; // "Coral Crew"
-  capacity?: number;
-  charterOrg?: string; // these are rental buses
+  capacity?: number; // seats
+  charterOrg?: string; // charter company (buses) / airline (flights) / driver (cars)
   departInfo?: string;
-  captainIds?: string[]; // attendees who run roll call for this bus (1–5)
+  flightNo?: string; // for flights
+  captainIds?: string[]; // attendees who run roll call for this vehicle (1–5)
   groupName?: string; // departure wave / band, e.g. "Seniors (Day 1)", "Staff"
   trackingUrl?: string; // link-out to live location (Life360 etc.)
 }

@@ -31,7 +31,7 @@ const TABLES: TableDef[] = [
   { coll: 'cabinRooms', table: 'cabin_rooms' },
   { coll: 'roles', table: 'roles' },
   { coll: 'shifts', table: 'shifts', overrides: { start: 'start_time', end: 'end_time' } },
-  { coll: 'buses', table: 'buses' },
+  { coll: 'buses', table: 'buses', overrides: { type: 'vehicle_type' } },
   { coll: 'teams', table: 'teams' },
   { coll: 'smallGroups', table: 'small_groups' },
   { coll: 'tables', table: 'tables' },
