@@ -62,9 +62,9 @@ h1, h2, h3 {
 
     --surface: #161b19;
     --surface-2: #1f2623;
-    --text-1: #eef2ef;
-    --text-2: #b6c1bb;
-    --text-3: #7e8b85;
+    --text-1: #f1f5f2;
+    --text-2: #c6d0cb; /* was #b6c1bb — brighter for readability */
+    --text-3: #9ca9a3; /* was #7e8b85 — the low-contrast one; now passes AA */
     --border: #2a322e;
     --border-2: #232a27;
     --pine-tint: #14241f;
@@ -77,7 +77,10 @@ h1, h2, h3 {
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
 body { background: var(--bg); }
-button { font-family: inherit; }
+/* Buttons must inherit the theme text color — otherwise their label falls back
+   to the UA default (black), which is unreadable in dark mode. Buttons that want
+   their own color set it explicitly and override this. */
+button { font-family: inherit; color: inherit; }
 a { color: inherit; }
 input, select, textarea { font-family: inherit; }
 
