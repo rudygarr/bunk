@@ -5,3 +5,6 @@ dist-ssr
 .DS_Store
 .vite
 node_modules/.tmp
+
+# Capacitor native project (regenerate with: npx cap add ios)
+/ios
