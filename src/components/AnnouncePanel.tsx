@@ -106,8 +106,8 @@ export default function AnnouncePanel({ camp }: { camp: Camp }) {
               <div className="ann-by">— {a.author}</div>
             </div>
             <div className="ann-actions">
-              <button title={a.pinned ? 'Unpin' : 'Pin'} onClick={() => togglePin(a.id)}><i className={'ti ' + (a.pinned ? 'ti-pin-filled' : 'ti-pin')} /></button>
-              <button title="Delete" onClick={() => removeAnnouncement(a.id)}><i className="ti ti-trash" /></button>
+              <button aria-label={a.pinned ? 'Unpin announcement' : 'Pin announcement'} title={a.pinned ? 'Unpin' : 'Pin'} onClick={() => togglePin(a.id)}><i className={'ti ' + (a.pinned ? 'ti-pin-filled' : 'ti-pin')} aria-hidden="true" /></button>
+              <button aria-label="Delete announcement" title="Delete" onClick={() => removeAnnouncement(a.id)}><i className="ti ti-trash" aria-hidden="true" /></button>
             </div>
           </div>
         ))}

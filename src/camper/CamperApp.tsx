@@ -60,7 +60,7 @@ export default function CamperApp() {
         {(() => { const camp = db.camps.find((c) => c.id === me.campId); return camp?.logoUrl
           ? <img className="camper-camp-logo" src={camp.logoUrl} alt={camp.name} />
           : <div className="brand"><Logo size={24} /> <span className="brand-name"><Wordmark /></span></div>; })()}
-        <button className="camper-out" onClick={signOut} title="Sign out"><i className="ti ti-logout" /></button>
+        <button className="camper-out" aria-label="Sign out" onClick={signOut} title="Sign out"><i className="ti ti-logout" aria-hidden="true" /></button>
       </header>
       <main className="camper-main">
         {tab === 'home' && <CamperHome me={me} />}

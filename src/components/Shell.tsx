@@ -20,8 +20,8 @@ export default function Shell({ children }: { children: ReactNode }) {
             <span className="avatar">{initials(user.name)}</span>
             <span className="userchip-name">{user.name.split(' ')[0]}</span>
           </div>
-          <button className="signout-btn" title={isCloud ? 'Sign out' : 'Leave demo'} onClick={() => { void signOut(); nav('/'); }}>
-            <i className="ti ti-logout" />
+          <button className="signout-btn" aria-label={isCloud ? 'Sign out' : 'Leave demo'} title={isCloud ? 'Sign out' : 'Leave demo'} onClick={() => { void signOut(); nav('/'); }}>
+            <i className="ti ti-logout" aria-hidden="true" />
           </button>
         </div>
       </header>

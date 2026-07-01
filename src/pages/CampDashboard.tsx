@@ -67,11 +67,11 @@ export default function CampDashboard() {
         <div className="camp-hero-row">
           <h1 className="camp-hero-name">{camp.name}</h1>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button className="iconbtn" title={copied ? 'Link copied!' : 'Share public view'} onClick={() => {
+            <button className="iconbtn" aria-label="Share public view link" title={copied ? 'Link copied!' : 'Share public view'} onClick={() => {
               const url = `${location.origin}${location.pathname}#/view/${camp.id}`;
               navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {});
-            }}><i className={'ti ' + (copied ? 'ti-check' : 'ti-share')} /></button>
-            <button className="iconbtn" title="Camp features" onClick={() => setShowSettings(true)}><i className="ti ti-settings" /></button>
+            }}><i className={'ti ' + (copied ? 'ti-check' : 'ti-share')} aria-hidden="true" /></button>
+            <button className="iconbtn" aria-label="Camp settings" title="Camp features" onClick={() => setShowSettings(true)}><i className="ti ti-settings" aria-hidden="true" /></button>
             <PrintPackets camp={camp} />
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function CampDashboard() {
       <div className="tabs">
         {tabs.map((t) => (
           <button key={t.key} className={'tab' + (activeTab === t.key ? ' on' : '')} onClick={() => go(t.key)}>
-            <i className={'ti ' + t.icon} /> {t.label}
+            <i className={'ti ' + t.icon} aria-hidden="true" /> {t.label}
           </button>
         ))}
       </div>
