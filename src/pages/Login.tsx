@@ -3,45 +3,19 @@ import { useSession } from '../lib/session';
 import { useStore } from '../lib/store';
 import { findCamperByContact } from '../lib/camper';
 import { campById } from '../lib/camps';
-import Logo from '../components/Logo';
 import Wordmark from '../components/Wordmark';
-import Countdown from '../components/Countdown';
+import PixelCampfire from '../components/PixelCampfire';
 import { field } from '../components/Modal';
-import { fmtDate } from '../lib/format';
-import type { Attendee, Camp } from '../lib/types';
-
-// The next camp to count down to: soonest kickoff (or start date) still ahead.
-function kickoffOf(c: Camp): Date {
-  return new Date(c.kickoff ?? `${c.startDate}T09:00:00`);
-}
-function soonestCamp(camps: Camp[]): Camp | null {
-  const upcoming = camps
-    .map((c) => ({ c, t: kickoffOf(c).getTime() }))
-    .filter((x) => x.t > Date.now())
-    .sort((a, b) => a.t - b.t);
-  return upcoming[0]?.c ?? null;
-}
+import type { Attendee } from '../lib/types';
 
 export default function Login() {
-  const { db } = useStore();
   const [mode, setMode] = useState<'organizer' | 'camper' | 'viewer'>('organizer');
-  const next = soonestCamp(db.camps);
   return (
     <div className="login">
       <div className="login-card">
-        <div className="login-mark"><Logo size={56} /></div>
+        <div className="login-fire"><PixelCampfire size={132} /></div>
         <h1 className="login-title"><Wordmark /></h1>
         <p className="login-tag">Run your camp — rosters, buses, cabins, and crew, all in one place.</p>
-
-        {next && (
-          <div className="login-cd">
-            <div className="login-cd-h">
-              <i className="ti ti-calendar-event" /> {next.name} · {next.kickoffLabel ?? 'starts'}
-            </div>
-            <Countdown target={kickoffOf(next)} />
-            <div className="login-cd-when">{fmtDate(next.startDate)} · {next.location}</div>
-          </div>
-        )}
 
         <div className="seg login-seg">
           <button className={mode === 'organizer' ? 'on' : ''} onClick={() => setMode('organizer')}>Run a camp</button>

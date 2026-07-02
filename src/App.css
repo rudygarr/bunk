@@ -905,3 +905,15 @@
 
 /* contact share selector */
 .kc-share { font-size: 11.5px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-2); border-radius: 6px; padding: 2px 4px; max-width: 120px; }
+
+/* ===== login: pixel campfire hero ===== */
+.login-fire {
+  display: grid; place-items: center; width: 188px; margin: 0 auto 10px;
+  padding: 16px 16px 12px; border-radius: 16px;
+  background: radial-gradient(120% 90% at 50% 30%, #223458 0%, #131f34 55%, #0e1626 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), 0 6px 20px rgba(0,0,0,0.25);
+}
+.pixelfire { display: block; filter: drop-shadow(0 0 9px rgba(245,136,59,0.4)); }
+.pf-flame { animation: pf-flicker 1.7s ease-in-out infinite; }
+@keyframes pf-flicker { 0%,100% { opacity: 1; } 45% { opacity: .8; } 72% { opacity: .93; } }
+@media (prefers-reduced-motion: reduce) { .pf-flame { animation: none; } }
