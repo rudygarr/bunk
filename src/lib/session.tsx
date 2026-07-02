@@ -21,6 +21,10 @@ interface SessionCtx {
   isCloud: boolean;
   user: User;
   camperId: string | null;
+  // Organizer "view as camper" preview — an attendee id to render the camper app
+  // as, without leaving the organizer session. null = normal organizer view.
+  previewId: string | null;
+  setPreview: (attendeeId: string | null) => void;
   enterDemo: () => void;
   signUp: (email: string, password: string, name?: string) => Promise<string | null>;
   signIn: (email: string, password: string) => Promise<string | null>;
@@ -41,6 +45,7 @@ function userFromSupa(u: SupaUser): User {
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [demoMode, setDemoMode] = useState<DemoMode>(null);
   const [camperId, setCamperId] = useState<string | null>(null);
+  const [previewId, setPreviewId] = useState<string | null>(null);
   const [supaUser, setSupaUser] = useState<SupaUser | null>(null);
   const [ready, setReady] = useState(false);
 
@@ -58,6 +63,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const value: SessionCtx = {
     ready, mode, authed, isCloud, user, camperId,
+    previewId, setPreview: setPreviewId,
     enterDemo: () => { setCamperId(null); setDemoMode('organizer'); },
     signUp: async (email, password, name) => {
       const { error } = await signUpOrganizer(email, password, name);
@@ -74,7 +80,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     signInCamper: (id) => { setCamperId(id); setDemoMode('camper'); },
     signOut: async () => {
       if (supaUser) { await signOutOrganizer(); resetCloudSnapshot(); }
-      setCamperId(null); setDemoMode(null);
+      setCamperId(null); setDemoMode(null); setPreviewId(null);
     },
   };
 

@@ -14,7 +14,7 @@ import CamperApp from './camper/CamperApp';
 import './App.css';
 
 function Gate() {
-  const { authed, mode } = useSession();
+  const { authed, mode, previewId } = useSession();
   const { memberId } = useStore();
   // Track the hash so navigating to a public link in-session re-renders the gate.
   const [hash, setHash] = useState(typeof window !== 'undefined' ? window.location.hash : '');
@@ -37,7 +37,7 @@ function Gate() {
     );
   }
   if (!authed) return <Login />;
-  if (mode === 'camper' || memberId) return <CamperApp />;
+  if (mode === 'camper' || memberId || previewId) return <CamperApp />;
   return (
     <HashRouter>
       <Shell>

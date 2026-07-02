@@ -18,10 +18,10 @@ type Tab = 'home' | 'schedule' | 'info' | 'photos' | 'alerts' | 'rollcall';
 // The camper-facing side of CampHQ. A signed-in camper sees only their own camp.
 export default function CamperApp() {
   const { db, memberId } = useStore();
-  const { camperId, signOut } = useSession();
+  const { camperId, signOut, previewId, setPreview } = useSession();
   const [tab, setTab] = useState<Tab>('home');
-  // Cloud camper (memberId from the store) or demo camper (session camperId).
-  const meId = memberId ?? camperId;
+  // Organizer preview takes precedence, then cloud camper (memberId), then demo.
+  const meId = previewId ?? memberId ?? camperId;
   // Which announcement ids this camper has already seen (id-based so it's robust
   // to the demo's mixed real/seed dates). Persisted per camper.
   const seenKey = `camphq-seen-${meId}`;
@@ -56,11 +56,19 @@ export default function CamperApp() {
 
   return (
     <div className="camper">
+      {previewId && (
+        <div className="preview-bar">
+          <span><i className="ti ti-eye" aria-hidden="true" /> Previewing as <strong>{me.name.split(' ')[0]}</strong> — this is the camper view</span>
+          <button className="preview-exit" onClick={() => setPreview(null)}><i className="ti ti-arrow-back-up" aria-hidden="true" /> Back to organizer</button>
+        </div>
+      )}
       <header className="camper-top">
         {(() => { const camp = db.camps.find((c) => c.id === me.campId); return camp?.logoUrl
           ? <img className="camper-camp-logo" src={camp.logoUrl} alt={camp.name} />
           : <div className="brand"><Logo size={24} /> <span className="brand-name"><Wordmark /></span></div>; })()}
-        <button className="camper-out" aria-label="Sign out" onClick={signOut} title="Sign out"><i className="ti ti-logout" aria-hidden="true" /></button>
+        {previewId
+          ? <button className="camper-out" aria-label="Back to organizer" title="Back to organizer" onClick={() => setPreview(null)}><i className="ti ti-arrow-back-up" aria-hidden="true" /></button>
+          : <button className="camper-out" aria-label="Sign out" onClick={signOut} title="Sign out"><i className="ti ti-logout" aria-hidden="true" /></button>}
       </header>
       <main className="camper-main">
         {tab === 'home' && <CamperHome me={me} />}

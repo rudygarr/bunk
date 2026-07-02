@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStore } from '../lib/store';
+import { useSession } from '../lib/session';
 import { fmtRange } from '../lib/format';
 import { campById, attendeesOf, rsvp, busesOf, cabinsOf, cabinBeds, cabinRoster, rolesOf, coverageGaps, flaggedCount, checkedCount, hasFeature, setupSteps } from '../lib/camps';
 import RosterPanel from '../components/RosterPanel';
@@ -45,6 +46,7 @@ export default function CampDashboard() {
   const { id } = useParams();
   const nav = useNavigate();
   const { db } = useStore();
+  const { setPreview } = useSession();
   const [tab, setTab] = useState<Tab>('overview');
   const [rosterFilter, setRosterFilter] = useState<'flagged' | undefined>(undefined);
   const [showSettings, setShowSettings] = useState(false);
@@ -72,6 +74,9 @@ export default function CampDashboard() {
               navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {});
             }}><i className={'ti ' + (copied ? 'ti-check' : 'ti-share')} aria-hidden="true" /></button>
             <button className="iconbtn" aria-label="Camp settings" title="Camp features" onClick={() => setShowSettings(true)}><i className="ti ti-settings" aria-hidden="true" /></button>
+            {(() => { const rep = attendeesOf(db, camp.id).find((a) => a.kind === 'camper') ?? attendeesOf(db, camp.id)[0]; return rep ? (
+              <button className="iconbtn" aria-label="Preview as camper" title="Preview as camper" onClick={() => setPreview(rep.id)}><i className="ti ti-eye" aria-hidden="true" /></button>
+            ) : null; })()}
             <PrintPackets camp={camp} />
           </div>
         </div>
