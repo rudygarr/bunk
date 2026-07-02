@@ -14,6 +14,7 @@
 
 -- For future per-camp visibility toggles (not enforced yet; safe defaults apply).
 alter table public.camps add column if not exists privacy jsonb;
+alter table public.contacts add column if not exists share text;
 
 -- ---------- the camper's curated view of their camp ----------
 create or replace function public.member_camp()
@@ -76,7 +77,8 @@ begin
                      join public.cabins cb on cb.id = cr.cabin_id where cb.camp_id = v_camp.id),
     'buses', (select coalesce(jsonb_agg(to_jsonb(b)), '[]') from public.buses b where b.camp_id = v_camp.id),
     'packing', (select coalesce(jsonb_agg(to_jsonb(p)), '[]') from public.packing_items p where p.camp_id = v_camp.id),
-    'contacts', (select coalesce(jsonb_agg(to_jsonb(ct)), '[]') from public.contacts ct where ct.camp_id = v_camp.id),
+    'contacts', (select coalesce(jsonb_agg(to_jsonb(ct)), '[]') from public.contacts ct
+        where ct.camp_id = v_camp.id and (ct.share = 'everyone' or (ct.share = 'staff' and v_att.kind = 'staff'))),
     'docs', (select coalesce(jsonb_agg(to_jsonb(d)), '[]') from public.docs d
               where d.camp_id = v_camp.id and d.audience in ('everyone', 'campers'))
   );

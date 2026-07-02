@@ -202,6 +202,21 @@ export function tableOf(db: Database, a: Attendee): Table | undefined {
 }
 
 // ---- Key contacts (who-to-call) ----
+export const CONTACT_SHARE: { key: NonNullable<Contact['share']>; label: string; icon: string }[] = [
+  { key: 'everyone', label: 'Everyone', icon: 'ti-users' },
+  { key: 'staff', label: 'Staff & leaders', icon: 'ti-id-badge' },
+  { key: 'organizers', label: 'Organizers only', icon: 'ti-lock' },
+];
 export function contactsOf(db: Database, campId: string): Contact[] {
   return (db.contacts ?? []).filter((c) => c.campId === campId);
+}
+// Contacts a given viewer may see. 'organizer' sees all; 'staff' sees everyone +
+// staff; anyone else (camper/parent/guest) sees only 'everyone'.
+export function contactsForViewer(db: Database, campId: string, viewer: 'organizer' | 'staff' | 'camper'): Contact[] {
+  return contactsOf(db, campId).filter((c) => {
+    const s = c.share ?? 'organizers';
+    if (viewer === 'organizer') return true;
+    if (viewer === 'staff') return s === 'everyone' || s === 'staff';
+    return s === 'everyone';
+  });
 }

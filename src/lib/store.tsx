@@ -70,7 +70,8 @@ interface Ctx {
   setTableLeader: (attendeeId: string, leader: boolean) => void;
   autoBalanceTables: (campId: string) => void;
   togglePacked: (attendeeId: string, itemId: string) => void;
-  addContact: (campId: string, c: { name: string; role?: string; phone?: string; note?: string }) => void;
+  addContact: (campId: string, c: { name: string; role?: string; phone?: string; note?: string; share?: Contact['share'] }) => void;
+  updateContact: (id: string, patch: Partial<Contact>) => void;
   removeContact: (id: string) => void;
   autoBalanceTeams: (campId: string) => void;
   // buses
@@ -533,8 +534,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }));
     },
     addContact(campId, c) {
-      const contact: Contact = { id: uid('ct'), campId, name: c.name, role: c.role, phone: c.phone, note: c.note };
+      const contact: Contact = { id: uid('ct'), campId, name: c.name, role: c.role, phone: c.phone, note: c.note, share: c.share ?? 'everyone' };
       commit((d) => ({ ...d, contacts: [...(d.contacts ?? []), contact] }));
+    },
+    updateContact(id, patch) {
+      commit((d) => ({ ...d, contacts: (d.contacts ?? []).map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
     },
     removeContact(id) {
       commit((d) => ({ ...d, contacts: (d.contacts ?? []).filter((c) => c.id !== id) }));

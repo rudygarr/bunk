@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../lib/store';
-import { campById, docsOf } from '../lib/camps';
+import { campById, docsOf, contactsForViewer } from '../lib/camps';
 import { packingByCategory } from '../lib/packing';
 import CampMap from '../components/CampMap';
 import CampFiles from '../components/CampFiles';
@@ -41,6 +41,22 @@ export default function CamperInfo({ me }: { me: Attendee }) {
         {camp.departInfo && <div className="c-info-line"><i className="ti ti-bus" /> {camp.departInfo}</div>}
         {camp.contact && <div className="c-info-line"><i className="ti ti-user" /> {camp.contact}</div>}
       </div>
+
+      {/* Who to call — only contacts shared with this person */}
+      {(() => {
+        const contacts = contactsForViewer(db, camp.id, me.kind === 'staff' ? 'staff' : 'camper');
+        return contacts.length > 0 ? (
+          <div className="c-card">
+            <div className="c-card-h"><i className="ti ti-phone" /> Who to call</div>
+            {contacts.map((c) => (
+              <div key={c.id} className="c-info-line" style={{ justifyContent: 'space-between' }}>
+                <span><strong>{c.name}</strong>{c.role ? ` · ${c.role}` : ''}</span>
+                {c.phone && <a className="kc-call" href={`tel:${c.phone.replace(/[^\d+]/g, '')}`}><i className="ti ti-phone" aria-hidden="true" /> {c.phone}</a>}
+              </div>
+            ))}
+          </div>
+        ) : null;
+      })()}
 
       {/* Map */}
       {camp.mapUrl && (

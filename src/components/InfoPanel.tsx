@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import { useStore } from '../lib/store';
 import { packingByCategory } from '../lib/packing';
-import { contactsOf } from '../lib/camps';
+import { contactsOf, CONTACT_SHARE } from '../lib/camps';
 import { downscaleImage } from '../lib/photos';
 import { field } from './Modal';
 import CampMap from './CampMap';
 import CampFiles from './CampFiles';
-import type { Camp } from '../lib/types';
+import type { Camp, Contact } from '../lib/types';
 
 export default function InfoPanel({ camp }: { camp: Camp }) {
   const { db, updateCamp, addPackingItem, removePackingItem } = useStore();
@@ -130,33 +130,44 @@ export default function InfoPanel({ camp }: { camp: Camp }) {
 // Who-to-call directory (Logistics): nurse, front office, venue facilities —
 // including people not on the roster. Phone numbers are tap-to-call.
 function KeyContacts({ camp }: { camp: Camp }) {
-  const { db, addContact, removeContact } = useStore();
+  const { db, addContact, updateContact, removeContact } = useStore();
   const list = contactsOf(db, camp.id);
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [phone, setPhone] = useState('');
+  const [share, setShare] = useState<NonNullable<Contact['share']>>('everyone');
   function add() {
     if (!name.trim()) return;
-    addContact(camp.id, { name: name.trim(), role: role.trim() || undefined, phone: phone.trim() || undefined });
+    addContact(camp.id, { name: name.trim(), role: role.trim() || undefined, phone: phone.trim() || undefined, share });
     setName(''); setRole(''); setPhone('');
   }
+  const shareMeta = (s: string) => CONTACT_SHARE.find((x) => x.key === s) ?? CONTACT_SHARE[0];
   return (
     <div className="info-block">
       <div className="info-block-h">Key contacts</div>
-      <div className="page-sub" style={{ fontSize: 12.5, margin: '0 0 10px' }}>Who to call when something comes up — including the venue's own staff.</div>
-      {list.map((c) => (
-        <div key={c.id} className="kc-row">
-          <span className="kc-who"><span className="kc-name">{c.name}</span>{c.role && <span className="kc-role">{c.role}</span>}{c.note && <span className="kc-note">{c.note}</span>}</span>
-          {c.phone && <a className="kc-call" href={`tel:${c.phone.replace(/[^\d+]/g, '')}`}><i className="ti ti-phone" /> {c.phone}</a>}
-          <button className="kc-x" onClick={() => removeContact(c.id)}><i className="ti ti-x" /></button>
-        </div>
-      ))}
+      <div className="page-sub" style={{ fontSize: 12.5, margin: '0 0 10px' }}>Who to call when something comes up — including the venue's own staff. Set who each contact is shared with.</div>
+      {list.map((c) => {
+        const m = shareMeta(c.share ?? 'organizers');
+        return (
+          <div key={c.id} className="kc-row">
+            <span className="kc-who"><span className="kc-name">{c.name}</span>{c.role && <span className="kc-role">{c.role}</span>}{c.note && <span className="kc-note">{c.note}</span>}</span>
+            {c.phone && <a className="kc-call" href={`tel:${c.phone.replace(/[^\d+]/g, '')}`}><i className="ti ti-phone" /> {c.phone}</a>}
+            <select className="kc-share" value={c.share ?? 'organizers'} onChange={(e) => updateContact(c.id, { share: e.target.value as Contact['share'] })} title={`Visible to ${m.label}`}>
+              {CONTACT_SHARE.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
+            </select>
+            <button className="kc-x" aria-label={`Remove ${c.name}`} onClick={() => removeContact(c.id)}><i className="ti ti-x" aria-hidden="true" /></button>
+          </div>
+        );
+      })}
       {list.length === 0 && <div className="empty" style={{ margin: '0 0 8px' }}>No contacts yet.</div>}
       <div className="info-add">
         <input style={{ ...field, flex: 1.4 }} value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-        <input style={{ ...field, flex: 1.2 }} value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role" />
-        <input style={{ ...field, flex: 1.2 }} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" onKeyDown={(e) => e.key === 'Enter' && add()} />
-        <button className="btn-primary sm" onClick={add}><i className="ti ti-plus" /></button>
+        <input style={{ ...field, flex: 1 }} value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role" />
+        <input style={{ ...field, flex: 1 }} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" onKeyDown={(e) => e.key === 'Enter' && add()} />
+        <select style={{ ...field, flex: 1, appearance: 'auto' }} value={share} onChange={(e) => setShare(e.target.value as NonNullable<Contact['share']>)}>
+          {CONTACT_SHARE.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
+        </select>
+        <button className="btn-primary sm" aria-label="Add contact" onClick={add}><i className="ti ti-plus" aria-hidden="true" /></button>
       </div>
     </div>
   );

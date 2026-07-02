@@ -4,7 +4,7 @@ import type {
 } from './types';
 import { inferBlockType } from './schedule';
 
-export const SEED_VERSION = 19;
+export const SEED_VERSION = 20;
 
 // A small directory you can invite from (demo). Real builds pull this from the
 // org's people source.
@@ -132,10 +132,10 @@ const tables: Table[] = [
 ];
 
 const contacts: Contact[] = [
-  { id: 'ct-1', campId: 'camp-ww', name: 'Rudy Garrido', role: 'Camp Director', phone: '(305) 555-0100' },
-  { id: 'ct-2', campId: 'camp-ww', name: 'Karen Phillips', role: 'Camp Nurse', phone: '(305) 555-0123', note: 'On-site, Maple Hall' },
-  { id: 'ct-3', campId: 'camp-ww', name: 'WCS Front Office', role: 'School office', phone: '(305) 555-0000' },
-  { id: 'ct-4', campId: 'camp-ww', name: 'Sharptop Cove', role: 'Venue facilities', phone: '(706) 555-0199', note: '24/7 ranger line' },
+  { id: 'ct-1', campId: 'camp-ww', name: 'Rudy Garrido', role: 'Camp Director', phone: '(305) 555-0100', share: 'everyone' },
+  { id: 'ct-2', campId: 'camp-ww', name: 'Karen Phillips', role: 'Camp Nurse', phone: '(305) 555-0123', note: 'On-site, Maple Hall', share: 'everyone' },
+  { id: 'ct-3', campId: 'camp-ww', name: 'WCS Front Office', role: 'School office', phone: '(305) 555-0000', share: 'everyone' },
+  { id: 'ct-4', campId: 'camp-ww', name: 'Sharptop Cove', role: 'Venue facilities', phone: '(706) 555-0199', note: '24/7 ranger line', share: 'staff' },
 ];
 
 // campers already housed (boys in Pine, girls in Cedar)

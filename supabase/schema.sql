@@ -219,7 +219,8 @@ create table if not exists public.contacts (
   name text not null,
   role text,
   phone text,
-  note text
+  note text,
+  share text
 );
 
 create table if not exists public.docs (

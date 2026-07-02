@@ -902,3 +902,6 @@
 .seat-count.full b { color: var(--warn); }
 .seat-count.over b { color: var(--bad); }
 .seat-warn { font-size: 11.5px; font-weight: 600; color: var(--bad); background: var(--bad-tint); padding: 1px 8px; border-radius: 999px; }
+
+/* contact share selector */
+.kc-share { font-size: 11.5px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-2); border-radius: 6px; padding: 2px 4px; max-width: 120px; }

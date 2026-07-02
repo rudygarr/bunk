@@ -105,6 +105,8 @@ export interface Table {
 
 // A who-to-call entry (Logistics). Includes people not on the roster — the
 // venue's facilities manager, the camp ranger, the front office.
+// Who a contact is shared with. Organizers always see all.
+export type ContactShare = 'everyone' | 'staff' | 'organizers';
 export interface Contact {
   id: string;
   campId: string;
@@ -112,6 +114,7 @@ export interface Contact {
   role?: string; // "Nurse", "Front office", "Venue facilities"
   phone?: string;
   note?: string;
+  share?: ContactShare; // undefined = organizers only (private default)
 }
 
 // One line on a camp's packing checklist, grouped by category.
