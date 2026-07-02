@@ -39,6 +39,20 @@
 .empty-inline { color: var(--text-3); font-size: 12.5px; font-style: italic; }
 
 /* ===== camps list ===== */
+/* New-user welcome (signed in, no camps yet) */
+.welcome { max-width: 720px; margin: 40px auto 0; text-align: center; }
+.welcome-h { font-size: 28px; margin: 0 0 8px; }
+.welcome-sub { color: var(--text-2); margin: 0 auto 28px; max-width: 460px; }
+.welcome-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; text-align: left; }
+.welcome-card { display: flex; flex-direction: column; gap: 6px; background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--r-lg); padding: 22px; cursor: pointer; text-align: left; }
+button.welcome-card:hover { border-color: var(--pine); }
+.welcome-card > .ti { font-size: 26px; color: var(--pine); margin-bottom: 4px; }
+.welcome-card-h { font-size: 17px; font-weight: 700; }
+.welcome-card-sub { color: var(--text-2); font-size: 14px; }
+.welcome-join { display: flex; gap: 8px; margin-top: 10px; }
+.welcome-join input { flex: 1; min-width: 0; padding: 9px 11px; border: 1px solid var(--border-2); border-radius: var(--r-md); background: var(--bg); color: var(--text-1); }
+.welcome-join .btn-primary { padding: 9px 12px; }
+
 .camp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .camp-card { display: flex; text-align: left; background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--r-lg); overflow: hidden; cursor: pointer; padding: 0; }
 .camp-card:hover { border-color: var(--accent); }

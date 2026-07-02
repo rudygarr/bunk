@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useSession } from '../lib/session';
 import { useStore } from '../lib/store';
-import { findCamperByContact } from '../lib/camper';
-import { campById } from '../lib/camps';
 import Wordmark from '../components/Wordmark';
 import { field } from '../components/Modal';
-import type { Attendee } from '../lib/types';
 
+// One sign-in for everyone. Campers, leaders, and organizers all sign in the
+// same way — once authenticated, the store auto-routes each person to the right
+// view (own a camp → organizer; on a published roster → camper; neither → a
+// "create or join" home). A separate code entry opens the no-account viewer.
 export default function Login() {
-  const [mode, setMode] = useState<'organizer' | 'camper' | 'viewer'>('organizer');
+  const [viewer, setViewer] = useState(false);
   return (
     <div className="login">
       <div className="login-card">
@@ -16,18 +17,16 @@ export default function Login() {
         <h1 className="login-title"><Wordmark /></h1>
         <p className="login-tag">Everything for your camp — all in one place.</p>
 
-        <div className="seg login-seg">
-          <button className={mode === 'organizer' ? 'on' : ''} onClick={() => setMode('organizer')}>Run a camp</button>
-          <button className={mode === 'camper' ? 'on' : ''} onClick={() => setMode('camper')}>I'm a camper</button>
-          <button className={mode === 'viewer' ? 'on' : ''} onClick={() => setMode('viewer')}>View only</button>
-        </div>
-
-        {mode === 'organizer' ? (
-          <OrganizerAuth />
-        ) : mode === 'camper' ? (
-          <CamperLogin />
+        {viewer ? (
+          <>
+            <ViewerEntry />
+            <div className="login-foot"><button className="login-link" onClick={() => setViewer(false)}>← Back to sign in</button></div>
+          </>
         ) : (
-          <ViewerEntry />
+          <>
+            <OrganizerAuth />
+            <div className="login-foot">Have a camp code? <button className="login-link" onClick={() => setViewer(true)}>View a camp →</button></div>
+          </>
         )}
       </div>
     </div>
@@ -83,7 +82,7 @@ function OrganizerAuth() {
         <i className="ti ti-arrow-right" /> {busy ? 'One sec…' : isNew ? 'Create account' : 'Sign in'}
       </button>
       <button className="login-back" onClick={() => { setIsNew(!isNew); setErr(''); }}>
-        {isNew ? 'Already have an account? Sign in' : 'New to CampHQ? Create an account'}
+        {isNew ? 'Already have an account? Sign in' : 'First time here? Create an account'}
       </button>
       <div className="login-foot">Just exploring? <button className="login-link" onClick={enterDemo}>Try the live demo →</button></div>
     </>
@@ -106,60 +105,6 @@ function ViewerEntry() {
       <input style={{ ...field, marginBottom: 10 }} value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter your camp code" onKeyDown={(e) => e.key === 'Enter' && open()} autoFocus />
       <button className="login-btn" onClick={open}><i className="ti ti-eye" /> View camp</button>
       <div className="login-foot">No account needed. Demo codes: {db.camps.map((c) => <strong key={c.id} style={{ marginRight: 6 }}>{c.id}</strong>)}</div>
-    </>
-  );
-}
-
-function CamperLogin() {
-  const { signInCamper } = useSession();
-  const { db, updateAttendee } = useStore();
-  const [contact, setContact] = useState('');
-  const [found, setFound] = useState<Attendee | null>(null);
-  const [pw, setPw] = useState('');
-  const [pw2, setPw2] = useState('');
-  const [err, setErr] = useState('');
-
-  function lookup() {
-    const a = findCamperByContact(db, contact);
-    if (!a) { setErr("We couldn't find you. Check the email your camp has on file, or ask your organizer."); return; }
-    setErr(''); setFound(a);
-  }
-  function submit() {
-    if (!found) return;
-    const live = db.attendees.find((x) => x.id === found.id) ?? found;
-    if (live.password) {
-      if (pw !== live.password) { setErr('That password doesn’t match. Try again.'); return; }
-      signInCamper(found.id);
-    } else {
-      if (pw.length < 4) { setErr('Pick a password of at least 4 characters.'); return; }
-      if (pw !== pw2) { setErr('The two passwords don’t match.'); return; }
-      updateAttendee(found.id, { password: pw });
-      signInCamper(found.id);
-    }
-  }
-
-  if (!found) {
-    return (
-      <>
-        <input style={{ ...field, marginBottom: 10 }} type="email" value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Email address" onKeyDown={(e) => e.key === 'Enter' && lookup()} autoFocus />
-        {err && <div className="login-err">{err}</div>}
-        <button className="login-btn" onClick={lookup}><i className="ti ti-arrow-right" /> Continue</button>
-        <div className="login-foot">Use the email your camp registered. Demo: try <strong>eli@demo.camp</strong>.</div>
-      </>
-    );
-  }
-
-  const live = db.attendees.find((x) => x.id === found.id) ?? found;
-  const camp = campById(db, found.campId);
-  const isNew = !live.password;
-  return (
-    <>
-      <div className="login-hello">Hi {found.name.split(' ')[0]}! {camp ? <>You're signed up for <strong>{camp.name}</strong>.</> : null}</div>
-      <input style={{ ...field, marginBottom: 10 }} type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder={isNew ? 'Create a password' : 'Your password'} onKeyDown={(e) => e.key === 'Enter' && !isNew && submit()} autoFocus />
-      {isNew && <input style={{ ...field, marginBottom: 10 }} type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="Confirm password" onKeyDown={(e) => e.key === 'Enter' && submit()} />}
-      {err && <div className="login-err">{err}</div>}
-      <button className="login-btn" onClick={submit}><i className="ti ti-arrow-right" /> {isNew ? 'Create account & enter' : 'Log in'}</button>
-      <button className="login-back" onClick={() => { setFound(null); setPw(''); setPw2(''); setErr(''); }}>← Not you?</button>
     </>
   );
 }

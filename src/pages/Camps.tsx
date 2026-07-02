@@ -8,7 +8,37 @@ export default function Camps() {
   const nav = useNavigate();
   const { db, reset } = useStore();
   const [confirmReset, setConfirmReset] = useState(false);
+  const [joinCode, setJoinCode] = useState('');
   const camps = [...db.camps].sort((a, b) => a.startDate.localeCompare(b.startDate));
+
+  // No camps yet — a brand-new signed-in person who neither owns a camp nor sits
+  // on a published roster. Give them the two clear ways in: start one, or open
+  // one someone shared with a code.
+  if (camps.length === 0) {
+    const join = () => { const id = joinCode.trim(); if (id) window.location.hash = '#/view/' + id; };
+    return (
+      <div className="welcome">
+        <h1 className="welcome-h">Welcome to CampHQ 👋</h1>
+        <p className="welcome-sub">You're all signed in. Start your own camp, or open one a friend or organizer shared with you.</p>
+        <div className="welcome-cards">
+          <button className="welcome-card" onClick={() => nav('/new')}>
+            <i className="ti ti-plus" />
+            <span className="welcome-card-h">Create a camp</span>
+            <span className="welcome-card-sub">Set up a new camp and invite your people.</span>
+          </button>
+          <div className="welcome-card">
+            <i className="ti ti-eye" />
+            <span className="welcome-card-h">Join a camp</span>
+            <span className="welcome-card-sub">Have a camp code? View it here.</span>
+            <div className="welcome-join">
+              <input value={joinCode} onChange={(e) => setJoinCode(e.target.value)} placeholder="Camp code" onKeyDown={(e) => e.key === 'Enter' && join()} />
+              <button className="btn-primary" onClick={join}><i className="ti ti-arrow-right" /></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
