@@ -14,7 +14,7 @@ export default function Login() {
       <div className="login-card">
         <img className="login-splash" src="./splash.png" alt="CampHQ" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
         <h1 className="login-title"><Wordmark /></h1>
-        <p className="login-tag">Run your camp — rosters, buses, cabins, and crew, all in one place.</p>
+        <p className="login-tag">Everything for your camp — all in one place.</p>
 
         <div className="seg login-seg">
           <button className={mode === 'organizer' ? 'on' : ''} onClick={() => setMode('organizer')}>Run a camp</button>
@@ -121,7 +121,7 @@ function CamperLogin() {
 
   function lookup() {
     const a = findCamperByContact(db, contact);
-    if (!a) { setErr("We couldn't find you. Check the email or phone your camp has on file, or ask your organizer."); return; }
+    if (!a) { setErr("We couldn't find you. Check the email your camp has on file, or ask your organizer."); return; }
     setErr(''); setFound(a);
   }
   function submit() {
@@ -141,10 +141,10 @@ function CamperLogin() {
   if (!found) {
     return (
       <>
-        <input style={{ ...field, marginBottom: 10 }} value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Email or phone number" onKeyDown={(e) => e.key === 'Enter' && lookup()} autoFocus />
+        <input style={{ ...field, marginBottom: 10 }} type="email" value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Email address" onKeyDown={(e) => e.key === 'Enter' && lookup()} autoFocus />
         {err && <div className="login-err">{err}</div>}
         <button className="login-btn" onClick={lookup}><i className="ti ti-arrow-right" /> Continue</button>
-        <div className="login-foot">Use the email or phone your camp registered. Demo: try <strong>eli@demo.camp</strong>.</div>
+        <div className="login-foot">Use the email your camp registered. Demo: try <strong>eli@demo.camp</strong>.</div>
       </>
     );
   }
