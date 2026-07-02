@@ -6,6 +6,7 @@ import { cabinmates } from '../lib/camper';
 import { teamOf, standings, ordinal } from '../lib/teams';
 import { scheduleForCamper, daysOf, nowNext, todayKey, fmtClock } from '../lib/schedule';
 import PackedCard from './PackedCard';
+import Countdown from '../components/Countdown';
 import type { Attendee, RsvpStatus } from '../lib/types';
 
 export default function CamperHome({ me }: { me: Attendee }) {
@@ -41,6 +42,13 @@ export default function CamperHome({ me }: { me: Attendee }) {
           <div className="c-camp-meta"><i className="ti ti-map-pin" /> {camp.location}</div>
         </div>
       )}
+
+      {camp && (() => { const k = new Date(camp.kickoff ?? `${camp.startDate}T09:00:00`); return k.getTime() > Date.now() ? (
+        <div className="c-card c-countdown">
+          <div className="c-card-h" style={{ justifyContent: 'center' }}><i className="ti ti-flame" /> {camp.kickoffLabel ? camp.kickoffLabel : 'Camp starts'} in</div>
+          <Countdown target={k} />
+        </div>
+      ) : null; })()}
 
       {/* Now / up next */}
       {upNext && (

@@ -917,3 +917,12 @@
 .pf-flame { animation: pf-flicker 1.7s ease-in-out infinite; }
 @keyframes pf-flicker { 0%,100% { opacity: 1; } 45% { opacity: .8; } 72% { opacity: .93; } }
 @media (prefers-reduced-motion: reduce) { .pf-flame { animation: none; } }
+
+/* login splash image (the camp-fire icon art) */
+.login-splash { display: block; width: 148px; height: 148px; object-fit: contain; margin: 0 auto 10px; border-radius: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+/* countdown card on camper home + hero chip for organizers */
+.c-countdown { text-align: center; }
+.camp-hero-cd { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--pine); background: var(--pine-tint); padding: 4px 12px; border-radius: 999px; }
+
+/* splash image is landscape (1080x600) — show as a rounded banner, not a square */
+.login-splash { width: 100%; max-width: 300px; height: auto; object-fit: cover; border-radius: 16px; }

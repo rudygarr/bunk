@@ -4,7 +4,6 @@ import { useStore } from '../lib/store';
 import { findCamperByContact } from '../lib/camper';
 import { campById } from '../lib/camps';
 import Wordmark from '../components/Wordmark';
-import PixelCampfire from '../components/PixelCampfire';
 import { field } from '../components/Modal';
 import type { Attendee } from '../lib/types';
 
@@ -13,7 +12,7 @@ export default function Login() {
   return (
     <div className="login">
       <div className="login-card">
-        <div className="login-fire"><PixelCampfire size={132} /></div>
+        <img className="login-splash" src="./splash.png" alt="CampHQ" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
         <h1 className="login-title"><Wordmark /></h1>
         <p className="login-tag">Run your camp — rosters, buses, cabins, and crew, all in one place.</p>
 

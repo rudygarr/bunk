@@ -79,6 +79,11 @@ export default function CampDashboard() {
           <span><i className="ti ti-calendar" /> {fmtRange(camp.startDate, camp.endDate)}</span>
           <span><i className="ti ti-map-pin" /> {camp.location}</span>
         </div>
+        {(() => {
+          const k = new Date(camp.kickoff ?? `${camp.startDate}T09:00:00`).getTime();
+          const days = Math.ceil((k - Date.now()) / 86400000);
+          return days > 0 ? <div className="camp-hero-cd"><i className="ti ti-flame" aria-hidden="true" /> {days} day{days === 1 ? '' : 's'} to {camp.kickoffLabel ? 'departure' : 'kickoff'}</div> : null;
+        })()}
         {camp.blurb && <div className="camp-hero-blurb">{camp.blurb}</div>}
         <div className="camp-status">
           {!camp.published ? (
