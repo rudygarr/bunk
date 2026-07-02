@@ -13,6 +13,9 @@ Non-urgent, revisit anytime. Nothing here blocks launch.
 - [ ] Role-specific home views; camp-day mode; empty/loading/offline states (poor camp signal).
 - [ ] Announcement clearance (who can send what) + organizer privacy-toggle UI (privacy column already exists).
 
+## Growth (when profitable)
+- [ ] SMS / phone-number login (Supabase phone auth + Twilio-type provider). Friendly for phone-first kids/parents who lack Google/Microsoft/Apple. Costs per-text — add once revenue covers it.
+
 ## Ops reminders
 - [ ] Apple SSO secret expires ~Dec 28 2026 — re-run apple-secret.js, update Supabase.
 - [ ] Google consent screen still "Testing" — Publish before real directors use Google.
