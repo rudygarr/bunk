@@ -19,22 +19,20 @@ export default function Camps() {
     return (
       <div className="welcome">
         <h1 className="welcome-h">Welcome to CampHQ 👋</h1>
-        <p className="welcome-sub">You're all signed in. Start your own camp, or open one a friend or organizer shared with you.</p>
-        <div className="welcome-cards">
-          <button className="welcome-card" onClick={() => nav('/new')}>
-            <i className="ti ti-plus" />
-            <span className="welcome-card-h">Create a camp</span>
-            <span className="welcome-card-sub">Set up a new camp and invite your people.</span>
-          </button>
-          <div className="welcome-card">
-            <i className="ti ti-eye" />
-            <span className="welcome-card-h">Join a camp</span>
-            <span className="welcome-card-sub">Have a camp code? View it here.</span>
-            <div className="welcome-join">
-              <input value={joinCode} onChange={(e) => setJoinCode(e.target.value)} placeholder="Camp code" onKeyDown={(e) => e.key === 'Enter' && join()} />
-              <button className="btn-primary" onClick={join}><i className="ti ti-arrow-right" /></button>
-            </div>
+        <p className="welcome-sub">Looking for your camp? Open it with the code your organizer gave you.</p>
+        <div className="welcome-join-card">
+          <i className="ti ti-tent" />
+          <span className="welcome-card-h">Join your camp</span>
+          <span className="welcome-card-sub">Enter the camp code from your invite, email, or QR poster.</span>
+          <div className="welcome-join">
+            <input value={joinCode} onChange={(e) => setJoinCode(e.target.value)} placeholder="Camp code" onKeyDown={(e) => e.key === 'Enter' && join()} autoFocus />
+            <button className="btn-primary" onClick={join}><i className="ti ti-arrow-right" /> Open</button>
           </div>
+        </div>
+        <div className="welcome-org">
+          Organizing a camp?{' '}
+          <button className="linklike" onClick={() => nav('/new')}>Start one here →</button>
+          <div className="welcome-org-sub">Free to set up. A payment method is only needed when you publish and go live.</div>
         </div>
       </div>
     );
